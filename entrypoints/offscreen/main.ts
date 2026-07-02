@@ -227,7 +227,9 @@ function getLatestRecordingId(): Promise<number | null> {
 }
 
 async function storeRecordingBlob(blob: Blob, duration: number, mimeType: string): Promise<number> {
+  console.log('[SnapCraft Offscreen] storeRecordingBlob called, blob size:', blob.size);
   const thumbnail = await createVideoThumbnail(blob);
+  console.log('[SnapCraft Offscreen] Thumbnail created, size:', thumbnail.size);
 
   return new Promise((resolve, reject) => {
     const dbRequest = indexedDB.open('SnapCraftDB', 1);
@@ -268,32 +270,49 @@ async function storeRecordingBlob(blob: Blob, duration: number, mimeType: string
 
 async function createVideoThumbnail(blob: Blob): Promise<Blob> {
   return new Promise((resolve) => {
+    // Timeout: if thumbnail can't be generated in 3s, return empty blob
+    const timeout = setTimeout(() => {
+      console.warn('[SnapCraft Offscreen] Thumbnail generation timed out');
+      resolve(new Blob());
+    }, 3000);
+
     const video = document.createElement('video');
     video.muted = true;
+    video.preload = 'auto';
     video.src = URL.createObjectURL(blob);
 
     video.onloadeddata = () => {
+      console.log('[SnapCraft Offscreen] Video loaded for thumbnail');
       video.currentTime = 0.5;
     };
 
     video.onseeked = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 200;
-      canvas.height = Math.round((200 / video.videoWidth) * video.videoHeight) || 150;
-      const ctx = canvas.getContext('2d')!;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      clearTimeout(timeout);
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 200;
+        canvas.height = Math.round((200 / video.videoWidth) * video.videoHeight) || 150;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      canvas.toBlob(
-        (thumbBlob) => {
-          URL.revokeObjectURL(video.src);
-          resolve(thumbBlob || new Blob());
-        },
-        'image/jpeg',
-        0.7
-      );
+        canvas.toBlob(
+          (thumbBlob) => {
+            URL.revokeObjectURL(video.src);
+            resolve(thumbBlob || new Blob());
+          },
+          'image/jpeg',
+          0.7
+        );
+      } catch (e) {
+        console.error('[SnapCraft Offscreen] Thumbnail draw error:', e);
+        URL.revokeObjectURL(video.src);
+        resolve(new Blob());
+      }
     };
 
-    video.onerror = () => {
+    video.onerror = (e) => {
+      clearTimeout(timeout);
+      console.error('[SnapCraft Offscreen] Video load error for thumbnail:', e);
       URL.revokeObjectURL(video.src);
       resolve(new Blob());
     };
