@@ -53,8 +53,12 @@ export default defineBackground(() => {
         handleRecordingComplete(message.payload);
         return false;
 
-      case 'CAPTURE_REGION_RESULT':
-        handleCaptureRegionResult(message.payload, sender);
+      case 'FULLPAGE_SCROLL_NEXT':
+        handleFullPageScrollStep(sender, message.payload);
+        return false;
+
+      case 'FULLPAGE_SCROLL_DONE':
+        handleFullPageScrollDone(message.payload);
         return false;
 
       default:
@@ -122,18 +126,7 @@ export default defineBackground(() => {
   let fullPageCaptures: string[] = [];
   let fullPageTabId: number | null = null;
 
-  // Listen for full-page scroll messages
-  onMessage((message: Message, sender) => {
-    if (message.type === 'FULLPAGE_SCROLL_NEXT') {
-      handleFullPageScrollStep(sender, message.payload);
-      return true;
-    }
-    if (message.type === 'FULLPAGE_SCROLL_DONE') {
-      handleFullPageScrollDone(message.payload);
-      return true;
-    }
-    return false;
-  });
+  // Full-page scroll state handled in main message router above
 
   async function handleFullPageScrollStep(
     sender: chrome.runtime.MessageSender,
@@ -160,11 +153,7 @@ export default defineBackground(() => {
   async function handleFullPageScrollDone(payload: { lastCropHeight?: number }) {
     if (fullPageCaptures.length === 0) return;
 
-    // Open editor with stitching instructions
-    const editorUrl = browser.runtime.getURL('/editor.html');
-    const tab = await browser.tabs.create({ url: editorUrl });
-
-    // Store captures temporarily for the editor to pick up
+    // Store captures FIRST, before opening editor
     await browser.storage.local.set({
       _pendingStitch: {
         captures: fullPageCaptures,
@@ -174,6 +163,10 @@ export default defineBackground(() => {
 
     fullPageCaptures = [];
     fullPageTabId = null;
+
+    // Then open editor
+    const editorUrl = browser.runtime.getURL('/editor.html');
+    await browser.tabs.create({ url: editorUrl });
   }
 
   async function handleCaptureRegion(

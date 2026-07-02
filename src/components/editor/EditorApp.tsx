@@ -64,6 +64,21 @@ export default function EditorApp() {
   }, []);
 
   async function loadPendingImage() {
+    // Check for full-page stitch data first
+    const stitchResult = await browser.storage.local.get('_pendingStitch');
+    if (stitchResult._pendingStitch) {
+      const stitchData = stitchResult._pendingStitch;
+      browser.storage.local.remove('_pendingStitch');
+
+      if (stitchData.captures && stitchData.captures.length > 0) {
+        const { stitchImages } = await import('../../utils/image');
+        const imageUrl = await stitchImages(stitchData.captures, stitchData.lastCropHeight);
+        loadImageUrl(imageUrl);
+        return;
+      }
+    }
+
+    // Check for single screenshot / region capture
     const result = await browser.storage.local.get('_pendingEdit');
     const pending = result._pendingEdit;
     if (!pending?.dataUrl) return;
@@ -80,6 +95,10 @@ export default function EditorApp() {
       imageUrl = await cropImage(pending.dataUrl, pending.cropBounds, dpr);
     }
 
+    loadImageUrl(imageUrl);
+  }
+
+  function loadImageUrl(imageUrl: string) {
     const img = new Image();
     img.onload = () => {
       setBackgroundImage(img);
