@@ -290,7 +290,7 @@ function App() {
       {/* Footer */}
       <footer className="popup-footer">
         <span className="popup-footer-text">SnapCraft</span>
-        <span className="popup-footer-version">v1.0.0</span>
+        <span className="popup-footer-version">v{chrome.runtime.getManifest().version}</span>
       </footer>
     </div>
   );
