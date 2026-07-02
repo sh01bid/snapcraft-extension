@@ -70,47 +70,65 @@ export default defineContentScript({
         }
         .sc-toolbar {
           position: absolute;
-          bottom: -56px;
+          bottom: -60px;
           left: 50%;
           transform: translateX(-50%);
           display: flex;
           align-items: center;
-          gap: 8px;
-          padding: 8px 12px;
-          background: #1a1a2e;
-          border: 1px solid rgba(108, 99, 255, 0.5);
-          border-radius: 12px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+          gap: 4px;
+          padding: 6px;
+          background: #0f0f1a;
+          border: 2px solid #6c63ff;
+          border-radius: 14px;
+          box-shadow: 0 4px 24px rgba(108, 99, 255, 0.35), 0 12px 40px rgba(0, 0, 0, 0.5);
           pointer-events: auto;
           white-space: nowrap;
+          animation: sc-toolbar-in 0.15s ease-out;
+        }
+        .sc-toolbar-top {
+          bottom: auto;
+          top: -60px;
+        }
+        @keyframes sc-toolbar-in {
+          from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+          to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         .sc-toolbar button {
           all: unset;
+          box-sizing: border-box;
           display: flex;
           align-items: center;
-          gap: 6px;
-          padding: 8px 18px;
-          border-radius: 8px;
+          gap: 8px;
+          padding: 10px 22px;
+          border-radius: 10px;
           cursor: pointer;
-          font-family: 'Inter', -apple-system, sans-serif;
-          font-size: 13px;
+          font-family: -apple-system, 'Segoe UI', sans-serif;
+          font-size: 14px;
           font-weight: 600;
-          transition: opacity 0.15s ease;
-        }
-        .sc-toolbar button:hover {
-          opacity: 0.85;
+          transition: all 0.12s ease;
+          line-height: 1;
         }
         .sc-toolbar button:active {
-          transform: scale(0.97);
+          transform: scale(0.96);
+        }
+        .sc-toolbar button svg {
+          flex-shrink: 0;
         }
         .sc-btn-confirm {
           background: #6c63ff;
           color: white;
         }
+        .sc-btn-confirm:hover {
+          background: #7c74ff;
+          box-shadow: 0 0 12px rgba(108, 99, 255, 0.4);
+        }
         .sc-btn-cancel {
-          background: rgba(255, 255, 255, 0.08);
-          color: rgba(255, 255, 255, 0.7);
-          border: 1px solid rgba(255, 255, 255, 0.12);
+          background: transparent;
+          color: rgba(255, 255, 255, 0.65);
+        }
+        .sc-btn-cancel:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: white;
         }
         .sc-crosshair-h, .sc-crosshair-v {
           position: fixed;
@@ -242,6 +260,14 @@ export default defineContentScript({
         const rect = getSelectionRect(e.clientX, e.clientY);
         if (rect.width > 5 && rect.height > 5) {
           toolbar.style.display = 'flex';
+          // Flip toolbar above selection if too close to bottom of viewport
+          const viewportH = window.innerHeight;
+          const selectionBottom = rect.top + rect.height;
+          if (selectionBottom + 80 > viewportH) {
+            toolbar.classList.add('sc-toolbar-top');
+          } else {
+            toolbar.classList.remove('sc-toolbar-top');
+          }
         } else {
           selection.style.display = 'none';
           hint.style.display = 'block';
