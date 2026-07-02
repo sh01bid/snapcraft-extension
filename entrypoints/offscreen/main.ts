@@ -1,5 +1,8 @@
 /* SnapCraft — Offscreen Document: Recording Engine */
 
+import { db } from '../../src/lib/storage';
+
+
 let mediaRecorder: MediaRecorder | null = null;
 let recordedChunks: Blob[] = [];
 let mediaStream: MediaStream | null = null;
@@ -223,41 +226,15 @@ async function stopRecording(): Promise<{ success: boolean; captureId?: number; 
 async function storeRecordingBlob(blob: Blob, duration: number, mimeType: string): Promise<number> {
   const thumbnail = await createVideoThumbnail(blob);
 
-  return new Promise((resolve, reject) => {
-    const dbRequest = indexedDB.open('SnapCraftDB', 1);
-
-    dbRequest.onupgradeneeded = () => {
-      const db = dbRequest.result;
-      if (!db.objectStoreNames.contains('captures')) {
-        const store = db.createObjectStore('captures', {
-          keyPath: 'id',
-          autoIncrement: true,
-        });
-        store.createIndex('type', 'type');
-        store.createIndex('mode', 'mode');
-        store.createIndex('createdAt', 'createdAt');
-      }
-    };
-
-    dbRequest.onsuccess = () => {
-      const db = dbRequest.result;
-      const tx = db.transaction('captures', 'readwrite');
-      const store = tx.objectStore('captures');
-      const addRequest = store.add({
-        type: 'recording',
-        mode: 'tab',
-        thumbnail,
-        data: blob,
-        duration,
-        fileSize: blob.size,
-        mimeType,
-        createdAt: Date.now(),
-      });
-      addRequest.onsuccess = () => resolve(addRequest.result as number);
-      addRequest.onerror = () => reject(addRequest.error);
-    };
-
-    dbRequest.onerror = () => reject(dbRequest.error);
+  return db.captures.add({
+    type: 'recording',
+    mode: 'tab',
+    thumbnail,
+    data: blob,
+    duration,
+    fileSize: blob.size,
+    mimeType,
+    createdAt: Date.now(),
   });
 }
 

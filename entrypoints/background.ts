@@ -230,6 +230,14 @@ export default defineBackground(() => {
     openEditor(dataUrl, bounds);
   }
 
+  function isInjectableUrl(url?: string): boolean {
+    if (!url) return false;
+    return !url.startsWith('chrome://') && 
+           !url.startsWith('edge://') && 
+           !url.startsWith('about:') && 
+           !url.startsWith('https://chrome.google.com/webstore');
+  }
+
   // ── Recording Handlers ──
 
   async function handleStartRecordingTab(
@@ -251,15 +259,17 @@ export default defineBackground(() => {
         payload: { streamId, tabId: tab.id },
       });
 
-      // Inject recording control overlay
-      await browser.scripting.executeScript({
-        target: { tabId: tab.id },
-        files: ['/content-scripts/recording-controls.js'],
-      });
+      // Inject recording control overlay if the URL is injectable
+      if (isInjectableUrl(tab.url)) {
+        await browser.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['/content-scripts/recording-controls.js'],
+        });
 
-      // Tell the content script to show the controls
-      await new Promise((r) => setTimeout(r, 100));
-      await browser.tabs.sendMessage(tab.id, { type: 'SHOW_RECORDING_CONTROLS' });
+        // Tell the content script to show the controls
+        await new Promise((r) => setTimeout(r, 100));
+        await browser.tabs.sendMessage(tab.id, { type: 'SHOW_RECORDING_CONTROLS' });
+      }
 
       return { success: true };
     } catch (e) {
@@ -280,9 +290,9 @@ export default defineBackground(() => {
         target: 'offscreen',
       });
 
-      // Show recording controls on the active tab
+      // Show recording controls on the active tab if injectable
       const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-      if (tab?.id) {
+      if (tab?.id && isInjectableUrl(tab.url)) {
         await browser.scripting.executeScript({
           target: { tabId: tab.id },
           files: ['/content-scripts/recording-controls.js'],
