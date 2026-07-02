@@ -1,6 +1,22 @@
 # SnapCraft — Screenshot & Screen Recorder
 
-A powerful Chrome extension for capturing screenshots and recording your screen, built with modern web technologies.
+<p align="center">
+  <img src="public/icon/128.png" width="80" alt="SnapCraft Logo" />
+</p>
+
+<p align="center">
+  <strong>Capture screenshots, record your screen, and annotate — all without leaving your browser.</strong>
+</p>
+
+<p align="center">
+  <a href="#-features">Features</a> •
+  <a href="#-getting-started">Getting Started</a> •
+  <a href="#-project-structure">Structure</a> •
+  <a href="#-store-assets">Store Assets</a> •
+  <a href="#-license">License</a>
+</p>
+
+---
 
 ## ✨ Features
 
@@ -14,28 +30,54 @@ A powerful Chrome extension for capturing screenshots and recording your screen,
 - **Tab Recording** — Record a specific browser tab with audio
 - **Screen Recording** — Record your entire screen, window, or specific app
 - **Recording Controls** — Floating control bar with timer, pause/resume, drag-to-move
-- **Preview & Download** — Preview recordings before saving
+- **Preview & Export** — Preview recordings, export as WebM or MP4 (H.264) with real-time conversion
 
 ### ✏️ Annotation Editor
 | Tool | Description |
 |------|-------------|
-| ✏️ Pen | Freehand drawing |
+| ✏️ Pen | Freehand drawing with custom color & thickness |
 | 🖊️ Highlighter | Semi-transparent marker |
 | ➡️ Arrow | Draw arrows |
 | 📏 Line | Straight lines |
 | ▬ Rectangle | Rectangles & squares |
 | ⭕ Ellipse | Circles & ovals |
-| 🔤 Text | Add text labels |
+| 🔤 Text | Add text labels with adjustable font size |
 | 🔢 Step Number | Numbered circles for tutorials |
-| 🟦 Blur/Mosaic | Pixelate sensitive info |
+| 🟦 Blur/Mosaic | Pixelate sensitive information |
 | ✂️ Crop | Crop to selection |
 
-### 📦 Other Features
-- **History** — Browse all captures stored locally in IndexedDB
-- **Settings** — Customize format, quality, FPS, shortcuts
-- **HiDPI Support** — Retina/4K display aware
-- **Dark Theme** — Beautiful glassmorphism dark UI
-- **Keyboard Shortcuts** — Configurable via `chrome://extensions/shortcuts`
+### 📋 Smart Features
+- **Auto-copy** to clipboard after capture
+- **Keyboard shortcuts** — `Alt+Shift+V` / `F` / `S` for quick capture
+- **Right-click context menu** for instant access
+- **Desktop notifications** on capture completion
+- **Customizable filename patterns** with date/time variables
+
+### 📁 Capture History
+- Gallery view with thumbnail previews
+- Search & filter by type (screenshots / recordings)
+- Batch select, download, and delete
+- Quick preview with metadata (size, date, dimensions)
+
+### ⚙️ Customizable Settings
+- Image format: PNG, JPEG, WebP
+- Image quality slider (1–100)
+- Video format: WebM (VP9) or MP4 (H.264)
+- Recording quality: 720p / 1080p / Original
+- Frame rate: 15 / 24 / 30 / 60 FPS
+- Recording countdown timer
+- System audio & microphone toggle
+- Dark theme
+- Max history items control
+
+### 🌍 Multilingual
+- English and Chinese (Simplified) interface
+- All UI text via `chrome.i18n`
+
+### 🔒 Privacy
+- All data stays local — no cloud uploads, no tracking
+- No account required
+- Open source
 
 ## 🛠️ Tech Stack
 
@@ -95,20 +137,46 @@ src/
 │   ├── editor/EditorApp.tsx     # Canvas-based annotation editor
 │   ├── history/HistoryApp.tsx   # Capture history gallery
 │   ├── options/OptionsApp.tsx   # Settings UI
-│   └── preview/PreviewApp.tsx   # Recording preview
+│   └── preview/PreviewApp.tsx   # Recording preview & MP4 converter
 ├── lib/
 │   ├── editor/engine.ts   # Canvas rendering & export engine
 │   ├── storage.ts         # IndexedDB + Chrome Storage layer
 │   ├── messaging.ts       # Message passing utilities
+│   ├── i18n.ts            # Internationalization helper
 │   └── types.ts           # Shared TypeScript types
 ├── utils/
 │   ├── download.ts        # File download & clipboard utilities
-│   └── image.ts           # Image processing (crop, stitch, thumbnail)
+│   ├── image.ts           # Image processing (crop, stitch, thumbnail)
+│   └── mp4-converter.ts   # WebM → MP4 real-time conversion (WebCodecs)
 └── styles/
     ├── design-system.css  # CSS variables & design tokens
     ├── reset.css          # CSS reset
     └── animations.css     # Shared animations
+
+public/
+├── _locales/              # i18n messages (en, zh_CN)
+└── icon/                  # Extension icons (16/32/48/96/128px)
+
+store-assets/              # Chrome Web Store listing assets
+├── screenshot-*.png       # EN screenshots (1280×800)
+├── zh-screenshot-*.png    # ZH screenshots (1280×800)
+├── promo-small-440x280.png
+├── promo-marquee-1400x560.png
+└── LISTING.md             # Store description (EN + ZH)
 ```
+
+## 🖼️ Store Assets
+
+Store listing images are generated via SVG → PNG pipeline:
+
+```bash
+node gen-store-assets.cjs
+```
+
+Outputs 13 PNG images to `store-assets/`:
+- 5 English + 5 Chinese screenshots (1280×800)
+- 2 English + 1 Chinese promo tiles
+- All SVG sources retained for easy editing
 
 ## 📝 License
 
