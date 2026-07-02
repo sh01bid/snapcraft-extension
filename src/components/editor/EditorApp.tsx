@@ -84,10 +84,11 @@ export default function EditorApp() {
     img.onload = () => {
       setBackgroundImage(img);
 
-      // Fit-to-screen
+      // Fit-to-screen — cap at 1/dpr to avoid upscaling on HiDPI
+      const dpr = window.devicePixelRatio || 1;
       const maxW = window.innerWidth - 40;
       const maxH = window.innerHeight - 100;
-      const fitRatio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight, 1);
+      const fitRatio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight, 1 / dpr);
       const displayW = img.naturalWidth * fitRatio;
       const displayH = img.naturalHeight * fitRatio;
       setCanvasSize({ width: displayW, height: displayH });
@@ -392,32 +393,38 @@ export default function EditorApp() {
     // Crop
     ctx.drawImage(srcCanvas, cx, cy, cw, ch, 0, 0, cw, ch);
 
-    // Replace background
-    const croppedImg = new Image();
-    croppedImg.onload = () => {
-      setBackgroundImage(croppedImg);
+    // Replace background using Blob URL (lossless, no base64 overhead)
+    tmpCanvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const croppedImg = new Image();
+      croppedImg.onload = () => {
+        setBackgroundImage(croppedImg);
 
-      // Reset shapes & state
-      setState((s) => ({
-        ...s,
-        shapes: [],
-        undoStack: [],
-        redoStack: [],
-      }));
+        // Reset shapes & state
+        setState((s) => ({
+          ...s,
+          shapes: [],
+          undoStack: [],
+          redoStack: [],
+        }));
 
-      // Recalculate display size
-      const maxW = window.innerWidth - 40;
-      const maxH = window.innerHeight - 100;
-      const fitRatio = Math.min(maxW / croppedImg.naturalWidth, maxH / croppedImg.naturalHeight, 1);
-      const displayW = croppedImg.naturalWidth * fitRatio;
-      const displayH = croppedImg.naturalHeight * fitRatio;
-      setCanvasSize({ width: displayW, height: displayH });
-      setBaseDisplaySize({ width: displayW, height: displayH });
-      setDisplayZoom(1);
-      setCropSelection(null);
-      showToast('Image cropped!');
-    };
-    croppedImg.src = tmpCanvas.toDataURL('image/png');
+        // Recalculate display size — avoid upscaling beyond native resolution
+        const dpr = window.devicePixelRatio || 1;
+        const maxW = window.innerWidth - 40;
+        const maxH = window.innerHeight - 100;
+        // Cap at 1/dpr so the image is never upscaled on HiDPI screens
+        const fitRatio = Math.min(maxW / croppedImg.naturalWidth, maxH / croppedImg.naturalHeight, 1 / dpr);
+        const displayW = croppedImg.naturalWidth * fitRatio;
+        const displayH = croppedImg.naturalHeight * fitRatio;
+        setCanvasSize({ width: displayW, height: displayH });
+        setBaseDisplaySize({ width: displayW, height: displayH });
+        setDisplayZoom(1);
+        setCropSelection(null);
+        showToast('Image cropped!');
+      };
+      croppedImg.src = url;
+    }, 'image/png');
   }
 
   function cancelCrop() {
@@ -689,15 +696,69 @@ export default function EditorApp() {
 
         {/* Crop Action Bar — fixed at bottom center */}
         {cropSelection && !isDrawing && Math.abs(cropSelection.width) > 5 && Math.abs(cropSelection.height) > 5 && (
-          <div className="crop-action-bar">
-            <span className="crop-size-info">
-              {Math.round(Math.abs(cropSelection.width))} × {Math.round(Math.abs(cropSelection.height))}
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '10px 20px',
+            background: 'rgba(15, 15, 25, 0.95)',
+            border: '1px solid rgba(99, 102, 241, 0.4)',
+            borderRadius: '12px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+            zIndex: 50,
+            backdropFilter: 'blur(12px)',
+          }}>
+            <span style={{
+              fontFamily: 'monospace',
+              fontSize: '13px',
+              color: 'rgba(255,255,255,0.6)',
+              padding: '0 8px',
+            }}>
+              {Math.round(Math.abs(cropSelection.width))} × {Math.round(Math.abs(cropSelection.height))} px
             </span>
-            <button className="crop-action-btn confirm" onClick={confirmCrop}>
+
+            <button
+              onClick={confirmCrop}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 20px',
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               Apply Crop
             </button>
-            <button className="crop-action-btn cancel" onClick={cancelCrop}>
+
+            <button
+              onClick={cancelCrop}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                background: 'rgba(255,255,255,0.08)',
+                color: 'rgba(255,255,255,0.7)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: 500,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               Cancel
             </button>
