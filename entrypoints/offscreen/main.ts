@@ -80,6 +80,8 @@ async function startScreenRecording() {
   }
 }
 
+let stopResolve: ((result: any) => void) | null = null;
+
 function startRecording(stream: MediaStream) {
   recordedChunks = [];
   startTimestamp = Date.now();
@@ -112,9 +114,41 @@ function startRecording(stream: MediaStream) {
     }
   };
 
-  // onstop is set by stopRecording() — this is just a fallback
-  mediaRecorder.onstop = () => {
-    console.log('[SnapCraft Offscreen] MediaRecorder stopped (fallback handler)');
+  mediaRecorder.onstop = async () => {
+    console.log('[SnapCraft Offscreen] MediaRecorder stopped, chunks:', recordedChunks.length);
+    const duration = Date.now() - startTimestamp;
+    const recMimeType = mediaRecorder?.mimeType || mimeType;
+    const blob = new Blob(recordedChunks, { type: recMimeType });
+    recordedChunks = [];
+
+    if (mediaStream) {
+      mediaStream.getTracks().forEach((t) => t.stop());
+      mediaStream = null;
+    }
+
+    try {
+      const captureId = await storeRecordingBlob(blob, duration, recMimeType);
+      console.log('[SnapCraft Offscreen] Recording stored, captureId:', captureId);
+      const result = { success: true, captureId, duration, mimeType: recMimeType, size: blob.size };
+
+      // Resolve the pending stopRecording promise if it exists
+      if (stopResolve) {
+        stopResolve(result);
+        stopResolve = null;
+      } else {
+        // Auto-stopped (e.g., track ended) — notify background directly
+        chrome.runtime.sendMessage({
+          type: 'RECORDING_COMPLETE',
+          payload: result,
+        });
+      }
+    } catch (e) {
+      console.error('[SnapCraft Offscreen] Failed to store recording:', e);
+      if (stopResolve) {
+        stopResolve({ success: false });
+        stopResolve = null;
+      }
+    }
   };
 
   mediaRecorder.onerror = (event: any) => {
@@ -122,11 +156,7 @@ function startRecording(stream: MediaStream) {
   };
 
   mediaRecorder.start(1000);
-
-  chrome.runtime.sendMessage({
-    type: 'RECORDING_STATUS',
-    payload: { status: 'recording' },
-  });
+  console.log('[SnapCraft Offscreen] Recording started, state:', mediaRecorder.state);
 }
 
 function pauseRecording() {
@@ -150,33 +180,49 @@ function resumeRecording() {
 }
 
 async function stopRecording(): Promise<{ success: boolean; captureId?: number; duration?: number; mimeType?: string; size?: number }> {
+  console.log('[SnapCraft Offscreen] stopRecording called, state:', mediaRecorder?.state);
+
   if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+    // Recorder already stopped — try to find latest recording from IndexedDB
+    console.log('[SnapCraft Offscreen] Recorder inactive, checking IndexedDB for latest...');
+    try {
+      const captureId = await getLatestRecordingId();
+      if (captureId) {
+        return { success: true, captureId };
+      }
+    } catch (e) {
+      console.error('[SnapCraft Offscreen] Failed to get latest recording:', e);
+    }
     return { success: false };
   }
 
   return new Promise((resolve) => {
-    mediaRecorder!.onstop = async () => {
-      const duration = Date.now() - startTimestamp;
-      const mimeType = mediaRecorder!.mimeType || 'video/webm';
-      const blob = new Blob(recordedChunks, { type: mimeType });
-      recordedChunks = [];
-
-      if (mediaStream) {
-        mediaStream.getTracks().forEach((t) => t.stop());
-        mediaStream = null;
-      }
-
-      try {
-        const captureId = await storeRecordingBlob(blob, duration, mimeType);
-        console.log('[SnapCraft Offscreen] Recording stored, captureId:', captureId);
-        resolve({ success: true, captureId, duration, mimeType, size: blob.size });
-      } catch (e) {
-        console.error('[SnapCraft Offscreen] Failed to store recording:', e);
-        resolve({ success: false });
-      }
-    };
-
+    stopResolve = resolve;
     mediaRecorder!.stop();
+  });
+}
+
+// Helper to find the most recent recording if recorder already stopped
+function getLatestRecordingId(): Promise<number | null> {
+  return new Promise((resolve, reject) => {
+    const dbRequest = indexedDB.open('SnapCraftDB', 1);
+    dbRequest.onsuccess = () => {
+      const db = dbRequest.result;
+      const tx = db.transaction('captures', 'readonly');
+      const store = tx.objectStore('captures');
+      const index = store.index('createdAt');
+      const cursorReq = index.openCursor(null, 'prev');
+      cursorReq.onsuccess = () => {
+        const cursor = cursorReq.result;
+        if (cursor && cursor.value.type === 'recording') {
+          resolve(cursor.value.id);
+        } else {
+          resolve(null);
+        }
+      };
+      cursorReq.onerror = () => reject(cursorReq.error);
+    };
+    dbRequest.onerror = () => reject(dbRequest.error);
   });
 }
 
