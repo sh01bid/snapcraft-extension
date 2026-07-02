@@ -41,8 +41,12 @@ input, textarea, select {
   outline: none;
 }
 
-img, svg, video, canvas {
+img, video, canvas {
   display: block;
+  max-width: 100%;
+}
+
+svg {
   max-width: 100%;
 }
 
