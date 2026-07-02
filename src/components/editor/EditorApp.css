@@ -314,3 +314,75 @@ html, body, #root {
   height: 16px;
   color: var(--sc-success-500);
 }
+
+/* ── Crop Overlay ── */
+.crop-overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.crop-selection {
+  position: absolute;
+  border: 2px dashed var(--sc-primary-400);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+}
+
+.crop-size-label {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  background: var(--sc-primary-500);
+  color: white;
+  font-size: 11px;
+  font-family: var(--sc-font-mono);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.crop-actions {
+  position: absolute;
+  display: flex;
+  gap: 4px;
+  pointer-events: auto;
+  transform: translateX(-100%);
+  z-index: 20;
+}
+
+.crop-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--sc-radius-sm);
+  font-size: 12px;
+  font-weight: var(--sc-font-semibold);
+  transition: all var(--sc-transition-fast);
+  cursor: pointer;
+}
+
+.crop-action-btn.confirm {
+  background: var(--sc-primary-500);
+  color: white;
+}
+
+.crop-action-btn.confirm:hover {
+  background: var(--sc-primary-600);
+}
+
+.crop-action-btn.cancel {
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border);
+  color: var(--sc-text-secondary);
+}
+
+.crop-action-btn.cancel:hover {
+  background: var(--sc-bg-hover);
+}
+
+.editor-canvas.tool-crop {
+  cursor: crosshair;
+}

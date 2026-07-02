@@ -7,6 +7,7 @@ import {
   generateShapeId,
   renderShapes,
   exportCanvas,
+  drawShape,
   type EditorState,
 } from '../../lib/editor/engine';
 import { downloadBlob, generateFilename, copyImageToClipboard } from '../../utils/download';
@@ -31,6 +32,7 @@ const TOOLS: Array<{ id: EditorTool; label: string; icon: string }> = [
   { id: 'text', label: 'Text', icon: 'M4 7V4h16v3M9 20h6M12 4v16' },
   { id: 'step', label: 'Step Number', icon: 'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM10 8v8M14 8v4l-4 4' },
   { id: 'blur', label: 'Blur/Mosaic', icon: 'M4 4h4v4H4zM12 4h4v4h-4zM4 12h4v4H4zM12 12h4v4h-4zM20 4h0M20 12h0M4 20h0M12 20h0M20 20h0' },
+  { id: 'crop', label: 'Crop', icon: 'M6 2v14a2 2 0 0 0 2 2h14M6 18H2M18 2v4M18 14v4M2 6h4M14 6h4' },
 ];
 
 export default function EditorApp() {
@@ -51,6 +53,10 @@ export default function EditorApp() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   // Display zoom level (1.0 = fit to screen)
   const [displayZoom, setDisplayZoom] = useState(1);
+  // Crop tool selection (in canvas buffer coordinates)
+  const [cropSelection, setCropSelection] = useState<{
+    x: number; y: number; width: number; height: number;
+  } | null>(null);
 
   // ── Load image from storage ──
   useEffect(() => {
@@ -62,14 +68,23 @@ export default function EditorApp() {
     const pending = result._pendingEdit;
     if (!pending?.dataUrl) return;
 
+    // Clean up storage immediately
+    browser.storage.local.remove('_pendingEdit');
+
+    let imageUrl = pending.dataUrl;
+
+    // If crop bounds are provided (region capture), crop the image first
+    if (pending.cropBounds) {
+      const { cropImage } = await import('../../utils/image');
+      const dpr = pending.dpr || window.devicePixelRatio || 1;
+      imageUrl = await cropImage(pending.dataUrl, pending.cropBounds, dpr);
+    }
+
     const img = new Image();
     img.onload = () => {
       setBackgroundImage(img);
 
-      // Fit-to-screen: compare image natural size vs available viewport
-      // On HiDPI, naturalWidth is physical pixels (e.g. 2880 on a 1440 viewport)
-      // We just fit the image into the viewport — the canvas buffer stays at
-      // naturalWidth×naturalHeight, CSS display size handles the scaling.
+      // Fit-to-screen
       const maxW = window.innerWidth - 40;
       const maxH = window.innerHeight - 100;
       const fitRatio = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight, 1);
@@ -79,10 +94,7 @@ export default function EditorApp() {
       setBaseDisplaySize({ width: displayW, height: displayH });
       setDisplayZoom(1);
     };
-    img.src = pending.dataUrl;
-
-    // Clean up
-    browser.storage.local.remove('_pendingEdit');
+    img.src = imageUrl;
   }
 
   // ── Render ──
@@ -122,6 +134,13 @@ export default function EditorApp() {
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       if (state.currentTool === 'select') return;
       const point = getCanvasPoint(e);
+
+      // Crop tool — start selection
+      if (state.currentTool === 'crop') {
+        setIsDrawing(true);
+        setCropSelection({ x: point.x, y: point.y, width: 0, height: 0 });
+        return;
+      }
 
       if (state.currentTool === 'text') {
         setTextInput({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY, visible: true });
@@ -169,8 +188,20 @@ export default function EditorApp() {
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!isDrawing || !currentShape) return;
+      if (!isDrawing) return;
       const point = getCanvasPoint(e);
+
+      // Crop tool — update selection
+      if (cropSelection && state.currentTool === 'crop') {
+        setCropSelection({
+          ...cropSelection,
+          width: point.x - cropSelection.x,
+          height: point.y - cropSelection.y,
+        });
+        return;
+      }
+
+      if (!currentShape) return;
 
       if (currentShape.type === 'pen' || currentShape.type === 'highlighter') {
         setCurrentShape({
@@ -185,15 +216,21 @@ export default function EditorApp() {
         });
       }
     },
-    [isDrawing, currentShape, getCanvasPoint]
+    [isDrawing, currentShape, cropSelection, state.currentTool, getCanvasPoint]
   );
 
   const handleMouseUp = useCallback(() => {
-    if (!isDrawing || !currentShape) return;
+    if (!isDrawing) return;
     setIsDrawing(false);
-    pushShape(currentShape);
-    setCurrentShape(null);
-  }, [isDrawing, currentShape]);
+
+    // Crop tool — keep selection visible for confirmation
+    if (state.currentTool === 'crop') return;
+
+    if (currentShape) {
+      pushShape(currentShape);
+      setCurrentShape(null);
+    }
+  }, [isDrawing, currentShape, state.currentTool]);
 
   // ── Shape Management ──
   function pushShape(shape: EditorShape) {
@@ -247,9 +284,13 @@ export default function EditorApp() {
       setTextInput({ ...textInput, visible: false });
       return;
     }
+    const canvas = canvasRef.current;
+    const rect = canvas?.getBoundingClientRect();
+    const scaleX = canvas && rect ? canvas.width / rect.width : 1;
+    const scaleY = canvas && rect ? canvas.height / rect.height : 1;
     const point = {
-      x: textInput.x / state.zoom,
-      y: textInput.y / state.zoom,
+      x: textInput.x * scaleX,
+      y: textInput.y * scaleY,
     };
     const shape: EditorShape = {
       id: generateShapeId(),
@@ -264,6 +305,79 @@ export default function EditorApp() {
     pushShape(shape);
     setTextInput({ ...textInput, visible: false });
     setTextValue('');
+  }
+
+  // ── Crop Confirm ──
+  function confirmCrop() {
+    if (!cropSelection || !backgroundImage) return;
+
+    // Normalize selection (handle negative width/height from right-to-left drag)
+    const x = cropSelection.width < 0 ? cropSelection.x + cropSelection.width : cropSelection.x;
+    const y = cropSelection.height < 0 ? cropSelection.y + cropSelection.height : cropSelection.y;
+    const w = Math.abs(cropSelection.width);
+    const h = Math.abs(cropSelection.height);
+
+    if (w < 5 || h < 5) {
+      setCropSelection(null);
+      showToast('Selection too small');
+      return;
+    }
+
+    // Clamp to canvas bounds
+    const cx = Math.max(0, Math.round(x));
+    const cy = Math.max(0, Math.round(y));
+    const cw = Math.min(Math.round(w), backgroundImage.naturalWidth - cx);
+    const ch = Math.min(Math.round(h), backgroundImage.naturalHeight - cy);
+
+    // Create cropped image
+    const tmpCanvas = document.createElement('canvas');
+    tmpCanvas.width = cw;
+    tmpCanvas.height = ch;
+    const ctx = tmpCanvas.getContext('2d')!;
+
+    // Draw existing shapes onto the background first (bake them in)
+    const srcCanvas = document.createElement('canvas');
+    srcCanvas.width = backgroundImage.naturalWidth;
+    srcCanvas.height = backgroundImage.naturalHeight;
+    const srcCtx = srcCanvas.getContext('2d')!;
+    srcCtx.drawImage(backgroundImage, 0, 0);
+    for (const shape of state.shapes) {
+      drawShape(srcCtx, shape);
+    }
+
+    // Crop
+    ctx.drawImage(srcCanvas, cx, cy, cw, ch, 0, 0, cw, ch);
+
+    // Replace background
+    const croppedImg = new Image();
+    croppedImg.onload = () => {
+      setBackgroundImage(croppedImg);
+
+      // Reset shapes & state
+      setState((s) => ({
+        ...s,
+        shapes: [],
+        undoStack: [],
+        redoStack: [],
+      }));
+
+      // Recalculate display size
+      const maxW = window.innerWidth - 40;
+      const maxH = window.innerHeight - 100;
+      const fitRatio = Math.min(maxW / croppedImg.naturalWidth, maxH / croppedImg.naturalHeight, 1);
+      const displayW = croppedImg.naturalWidth * fitRatio;
+      const displayH = croppedImg.naturalHeight * fitRatio;
+      setCanvasSize({ width: displayW, height: displayH });
+      setBaseDisplaySize({ width: displayW, height: displayH });
+      setDisplayZoom(1);
+      setCropSelection(null);
+      showToast('Image cropped!');
+    };
+    croppedImg.src = tmpCanvas.toDataURL('image/png');
+  }
+
+  function cancelCrop() {
+    setCropSelection(null);
   }
 
   // ── Export ──
@@ -393,6 +507,8 @@ export default function EditorApp() {
       ? 'tool-text'
       : state.currentTool === 'step'
       ? 'tool-step'
+      : state.currentTool === 'crop'
+      ? 'tool-crop'
       : '';
 
   return (
@@ -525,6 +641,63 @@ export default function EditorApp() {
               }
             }}
           />
+        )}
+
+        {/* Crop Selection Overlay */}
+        {cropSelection && canvasRef.current && (
+          (() => {
+            const canvas = canvasRef.current!;
+            const rect = canvas.getBoundingClientRect();
+            const cssScaleX = rect.width / canvas.width;
+            const cssScaleY = rect.height / canvas.height;
+            // Normalize (handle negative dimensions)
+            const nx = cropSelection.width < 0 ? cropSelection.x + cropSelection.width : cropSelection.x;
+            const ny = cropSelection.height < 0 ? cropSelection.y + cropSelection.height : cropSelection.y;
+            const nw = Math.abs(cropSelection.width);
+            const nh = Math.abs(cropSelection.height);
+            return (
+              <div
+                className="crop-overlay"
+                style={{
+                  left: canvas.offsetLeft,
+                  top: canvas.offsetTop,
+                  width: rect.width,
+                  height: rect.height,
+                }}
+              >
+                <div
+                  className="crop-selection"
+                  style={{
+                    left: nx * cssScaleX,
+                    top: ny * cssScaleY,
+                    width: nw * cssScaleX,
+                    height: nh * cssScaleY,
+                  }}
+                >
+                  <div className="crop-size-label">
+                    {Math.round(nw)} × {Math.round(nh)}
+                  </div>
+                </div>
+                {!isDrawing && nw > 5 && nh > 5 && (
+                  <div
+                    className="crop-actions"
+                    style={{
+                      left: (nx + nw) * cssScaleX,
+                      top: (ny + nh) * cssScaleY + 8,
+                    }}
+                  >
+                    <button className="crop-action-btn confirm" onClick={confirmCrop}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      Crop
+                    </button>
+                    <button className="crop-action-btn cancel" onClick={cancelCrop}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })()
         )}
 
         {/* Zoom Controls */}
