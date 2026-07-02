@@ -122,12 +122,13 @@ function startRecording(stream: MediaStream) {
       mediaStream = null;
     }
 
+    // Store first, then notify (so preview can find it)
+    const captureId = await storeRecordingBlob(blob, duration, mimeType);
+
     chrome.runtime.sendMessage({
       type: 'RECORDING_COMPLETE',
-      payload: { duration, mimeType, size: blob.size },
+      payload: { duration, mimeType, size: blob.size, captureId },
     });
-
-    await storeRecordingBlob(blob, duration, mimeType);
   };
 
   mediaRecorder.onerror = (event: any) => {
@@ -169,38 +170,44 @@ async function stopRecording() {
   return { success: true };
 }
 
-async function storeRecordingBlob(blob: Blob, duration: number, mimeType: string) {
+async function storeRecordingBlob(blob: Blob, duration: number, mimeType: string): Promise<number> {
   const thumbnail = await createVideoThumbnail(blob);
 
-  const dbRequest = indexedDB.open('SnapCraftDB', 1);
-  dbRequest.onupgradeneeded = () => {
-    const db = dbRequest.result;
-    if (!db.objectStoreNames.contains('captures')) {
-      const store = db.createObjectStore('captures', {
-        keyPath: 'id',
-        autoIncrement: true,
-      });
-      store.createIndex('type', 'type');
-      store.createIndex('mode', 'mode');
-      store.createIndex('createdAt', 'createdAt');
-    }
-  };
+  return new Promise((resolve, reject) => {
+    const dbRequest = indexedDB.open('SnapCraftDB', 1);
+    dbRequest.onupgradeneeded = () => {
+      const db = dbRequest.result;
+      if (!db.objectStoreNames.contains('captures')) {
+        const store = db.createObjectStore('captures', {
+          keyPath: 'id',
+          autoIncrement: true,
+        });
+        store.createIndex('type', 'type');
+        store.createIndex('mode', 'mode');
+        store.createIndex('createdAt', 'createdAt');
+      }
+    };
 
-  dbRequest.onsuccess = () => {
-    const db = dbRequest.result;
-    const tx = db.transaction('captures', 'readwrite');
-    const store = tx.objectStore('captures');
-    store.add({
-      type: 'recording',
-      mode: 'tab',
-      thumbnail,
-      data: blob,
-      duration,
-      fileSize: blob.size,
-      mimeType,
-      createdAt: Date.now(),
-    });
-  };
+    dbRequest.onsuccess = () => {
+      const db = dbRequest.result;
+      const tx = db.transaction('captures', 'readwrite');
+      const store = tx.objectStore('captures');
+      const addRequest = store.add({
+        type: 'recording',
+        mode: 'tab',
+        thumbnail,
+        data: blob,
+        duration,
+        fileSize: blob.size,
+        mimeType,
+        createdAt: Date.now(),
+      });
+      addRequest.onsuccess = () => resolve(addRequest.result as number);
+      addRequest.onerror = () => reject(addRequest.error);
+    };
+
+    dbRequest.onerror = () => reject(dbRequest.error);
+  });
 }
 
 async function createVideoThumbnail(blob: Blob): Promise<Blob> {

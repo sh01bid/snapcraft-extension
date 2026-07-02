@@ -304,12 +304,18 @@ export default defineBackground(() => {
     duration: number;
     mimeType: string;
     size: number;
+    captureId?: number;
   }) {
+    // Store the capture ID so the preview page can find it
+    if (payload.captureId) {
+      await browser.storage.local.set({
+        _pendingPreview: { captureId: payload.captureId },
+      });
+    }
+
     // Open the preview page
     const previewUrl = browser.runtime.getURL('/preview.html');
-    // The offscreen doc already saved the recording to IndexedDB
-    // Just open the preview — it will load the latest recording
-    browser.tabs.create({ url: previewUrl });
+    await browser.tabs.create({ url: previewUrl });
 
     // Hide recording controls on the recorded tab
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
