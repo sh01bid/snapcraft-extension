@@ -192,11 +192,14 @@ export default defineBackground(() => {
     try {
       await browser.tabs.sendMessage(tabId, { type: 'CAPTURE_REGION' });
     } catch {
-      // Content script not injected yet, inject it
+      // Content script not injected yet, inject it first
       await browser.scripting.executeScript({
         target: { tabId },
         files: ['/content-scripts/region-selector.js'],
       });
+      // Wait briefly for the script to initialize, then send the message
+      await new Promise((r) => setTimeout(r, 100));
+      await browser.tabs.sendMessage(tabId, { type: 'CAPTURE_REGION' });
     }
   }
 
