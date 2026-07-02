@@ -16,6 +16,10 @@
   <a href="#-license">License</a>
 </p>
 
+<p align="center">
+  <strong>English</strong> | <a href="README_ZH.md">中文</a>
+</p>
+
 ---
 
 ## ✨ Features
