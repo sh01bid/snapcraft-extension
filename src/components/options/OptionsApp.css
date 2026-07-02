@@ -161,8 +161,8 @@ html, body, #root {
 .setting-toggle-track {
   position: absolute;
   inset: 0;
-  background: var(--sc-bg-elevated);
-  border: 1px solid var(--sc-border);
+  background: rgba(120, 120, 140, 0.35);
+  border: 1px solid rgba(120, 120, 140, 0.3);
   border-radius: 11px;
   transition: all var(--sc-transition-base);
 }
@@ -170,6 +170,7 @@ html, body, #root {
 .setting-toggle input:checked + .setting-toggle-track {
   background: var(--sc-primary-500);
   border-color: var(--sc-primary-500);
+  box-shadow: 0 0 12px rgba(108, 99, 255, 0.4);
 }
 
 .setting-toggle-track::after {
@@ -182,7 +183,7 @@ html, body, #root {
   top: 2px;
   left: 2px;
   transition: transform var(--sc-transition-base);
-  box-shadow: var(--sc-shadow-sm);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .setting-toggle input:checked + .setting-toggle-track::after {
