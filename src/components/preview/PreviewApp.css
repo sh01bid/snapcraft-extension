@@ -241,3 +241,56 @@ html, body, #root {
   border-radius: 2px;
   transition: width 0.3s ease;
 }
+
+/* ── Warning Banner ── */
+.preview-warning {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-3);
+  padding: var(--sc-space-3) var(--sc-space-6);
+  background: rgba(234, 179, 8, 0.1);
+  border-bottom: 1px solid rgba(234, 179, 8, 0.2);
+  color: var(--sc-warning-400);
+  font-size: var(--sc-text-sm);
+  animation: sc-fade-in var(--sc-transition-base);
+}
+
+.preview-warning svg {
+  flex-shrink: 0;
+  color: var(--sc-warning-400);
+}
+
+/* ── Conversion Progress Bar ── */
+.conversion-progress-bar {
+  height: 3px;
+  background: var(--sc-bg-tertiary);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.conversion-progress-fill {
+  height: 100%;
+  background: var(--sc-gradient-primary);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px rgba(108, 99, 255, 0.5);
+}
+
+/* ── Button Spinner ── */
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: btnSpin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes btnSpin {
+  to { transform: rotate(360deg); }
+}
+
+.preview-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { getCapture, deleteCapture, getSettings } from '../../lib/storage';
 import { downloadBlob, generateFilename } from '../../utils/download';
+import { convertWebMToMP4, getConversionWarning, type ConversionProgress } from '../../utils/mp4-converter';
 import './PreviewApp.css';
 
 export default function PreviewApp() {
@@ -17,6 +18,9 @@ export default function PreviewApp() {
     mimeType: string;
   } | null>(null);
   const [downloadFormat, setDownloadFormat] = useState<'webm' | 'mp4'>('webm');
+  const [converting, setConverting] = useState(false);
+  const [conversionProgress, setConversionProgress] = useState<ConversionProgress | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
 
   useEffect(() => {
     loadRecording();
@@ -25,9 +29,17 @@ export default function PreviewApp() {
     };
   }, []);
 
+  // Update warning when format or duration changes
+  useEffect(() => {
+    if (downloadFormat === 'mp4' && meta?.duration) {
+      setWarning(getConversionWarning(meta.duration));
+    } else {
+      setWarning(null);
+    }
+  }, [downloadFormat, meta]);
+
   async function loadRecording() {
     try {
-      // Get the captureId from chrome.storage.local
       const result = await browser.storage.local.get('_pendingPreview');
       const pending = result._pendingPreview;
 
@@ -43,7 +55,6 @@ export default function PreviewApp() {
             mimeType: capture.mimeType || 'video/webm',
           });
         }
-        // Clean up storage (don't await, let it happen in background)
         browser.storage.local.remove('_pendingPreview');
       }
     } catch (err) {
@@ -67,6 +78,17 @@ export default function PreviewApp() {
     return (bytes / 1048576).toFixed(1) + ' MB';
   }
 
+  function getProgressText(p: ConversionProgress): string {
+    const pct = Math.round(p.progress * 100);
+    switch (p.phase) {
+      case 'decoding': return 'Preparing video...';
+      case 'encoding': return `Converting: ${pct}%`;
+      case 'muxing': return 'Finalizing MP4...';
+      case 'done': return 'Done!';
+      default: return 'Processing...';
+    }
+  }
+
   async function handleDownload() {
     if (!videoBlob) return;
     const settings = await getSettings();
@@ -77,16 +99,33 @@ export default function PreviewApp() {
       await downloadBlob(videoBlob, filename);
       showToast('Downloaded as WebM!');
     } else {
-      showToast('MP4 conversion coming soon — downloading as WebM');
-      const filename = generateFilename(pattern, 'webm');
-      await downloadBlob(videoBlob, filename);
+      // MP4 conversion
+      try {
+        setConverting(true);
+        setConversionProgress({ phase: 'decoding', progress: 0 });
+
+        const mp4Blob = await convertWebMToMP4(videoBlob, (p) => {
+          setConversionProgress(p);
+        });
+
+        const filename = generateFilename(pattern, 'mp4');
+        await downloadBlob(mp4Blob, filename);
+        showToast('Downloaded as MP4!');
+      } catch (err: any) {
+        console.error('[SnapCraft] MP4 conversion error:', err);
+        showToast(`Conversion failed: ${err.message}. Downloading as WebM.`);
+        const filename = generateFilename(pattern, 'webm');
+        await downloadBlob(videoBlob, filename);
+      } finally {
+        setConverting(false);
+        setConversionProgress(null);
+      }
     }
   }
 
   async function handleDelete() {
     if (!videoBlob) return;
     try {
-      // Try to delete from IndexedDB
       const result = await browser.storage.local.get('_pendingPreview');
       if (result._pendingPreview?.captureId) {
         await deleteCapture(result._pendingPreview.captureId);
@@ -105,7 +144,7 @@ export default function PreviewApp() {
 
   function showToast(msg: string) {
     setToast(msg);
-    setTimeout(() => setToast(null), 2500);
+    setTimeout(() => setToast(null), 3000);
   }
 
   return (
@@ -140,21 +179,35 @@ export default function PreviewApp() {
             className="format-select"
             value={downloadFormat}
             onChange={(e) => setDownloadFormat(e.target.value as any)}
+            disabled={converting}
           >
             <option value="webm">WebM</option>
-            <option value="mp4">MP4 (coming soon)</option>
+            <option value="mp4">MP4 (H.264)</option>
           </select>
 
-          <button className="preview-btn primary" onClick={handleDownload}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="7 10 12 15 17 10"/>
-              <line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            Download
+          <button
+            className="preview-btn primary"
+            onClick={handleDownload}
+            disabled={converting}
+          >
+            {converting ? (
+              <>
+                <div className="btn-spinner" />
+                {conversionProgress ? getProgressText(conversionProgress) : 'Converting...'}
+              </>
+            ) : (
+              <>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Download
+              </>
+            )}
           </button>
 
-          <button className="preview-btn danger" onClick={handleDelete}>
+          <button className="preview-btn danger" onClick={handleDelete} disabled={converting}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
             </svg>
@@ -162,6 +215,28 @@ export default function PreviewApp() {
           </button>
         </div>
       </header>
+
+      {/* Warning Banner */}
+      {warning && (
+        <div className="preview-warning">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <span>{warning}</span>
+        </div>
+      )}
+
+      {/* Conversion Progress Bar */}
+      {converting && conversionProgress && (
+        <div className="conversion-progress-bar">
+          <div
+            className="conversion-progress-fill"
+            style={{ width: `${Math.round(conversionProgress.progress * 100)}%` }}
+          />
+        </div>
+      )}
 
       {/* Content */}
       <main className="preview-content">
