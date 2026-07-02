@@ -1,6 +1,7 @@
 /* SnapCraft — Recording Preview Page */
 
 import { useState, useEffect, useRef } from 'react';
+import { getCapture, deleteCapture } from '../../lib/storage';
 import { downloadBlob, generateFilename } from '../../utils/download';
 import './PreviewApp.css';
 
@@ -26,24 +27,24 @@ export default function PreviewApp() {
 
   async function loadRecording() {
     try {
-      // Get the recording from chrome.storage.local
-      const result = await browser.storage.local.get('_pendingRecording');
-      const pending = result._pendingRecording;
+      // Get the captureId from chrome.storage.local
+      const result = await browser.storage.local.get('_pendingPreview');
+      const pending = result._pendingPreview;
 
-      if (pending?.dataUrl) {
-        // Convert data URL back to Blob
-        const response = await fetch(pending.dataUrl);
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        setVideoUrl(url);
-        setVideoBlob(blob);
-        setMeta({
-          duration: pending.duration || 0,
-          size: pending.size || blob.size,
-          mimeType: pending.mimeType || 'video/webm',
-        });
+      if (pending?.captureId) {
+        const capture = await getCapture(pending.captureId);
+        if (capture && capture.data) {
+          const url = URL.createObjectURL(capture.data);
+          setVideoUrl(url);
+          setVideoBlob(capture.data);
+          setMeta({
+            duration: capture.duration || 0,
+            size: capture.fileSize || capture.data.size,
+            mimeType: capture.mimeType || 'video/webm',
+          });
+        }
         // Clean up storage (don't await, let it happen in background)
-        browser.storage.local.remove('_pendingRecording');
+        browser.storage.local.remove('_pendingPreview');
       }
     } catch (err) {
       console.error('[SnapCraft Preview] Load error:', err);
@@ -82,8 +83,15 @@ export default function PreviewApp() {
   }
 
   async function handleDelete() {
+    if (!videoBlob) return;
     try {
-      await browser.storage.local.remove('_pendingRecording');
+      // Try to delete from IndexedDB
+      const result = await browser.storage.local.get('_pendingPreview');
+      if (result._pendingPreview?.captureId) {
+        await deleteCapture(result._pendingPreview.captureId);
+      }
+      browser.storage.local.remove('_pendingPreview');
+
       if (videoUrl) URL.revokeObjectURL(videoUrl);
       setVideoUrl(null);
       setVideoBlob(null);

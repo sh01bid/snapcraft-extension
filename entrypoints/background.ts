@@ -232,23 +232,17 @@ export default defineBackground(() => {
     if (!tab?.id) return { success: false };
 
     try {
-      console.log('[SnapCraft] Starting tab recording for tab:', tab.id);
       await ensureOffscreenDocument();
-      console.log('[SnapCraft] Offscreen document ready');
 
-      // Get the media stream ID for tab capture
       const streamId = await (chrome.tabCapture as any).getMediaStreamId({
         targetTabId: tab.id,
       });
-      console.log('[SnapCraft] Got stream ID:', streamId?.substring(0, 20) + '...');
 
-      // Send to offscreen document to start recording
-      const startResult = await browser.runtime.sendMessage({
+      await browser.runtime.sendMessage({
         type: 'START_RECORDING_TAB',
         target: 'offscreen',
         payload: { streamId, tabId: tab.id },
       });
-      console.log('[SnapCraft] Start recording result:', startResult);
 
       // Inject recording control overlay
       await browser.scripting.executeScript({
@@ -300,16 +294,9 @@ export default defineBackground(() => {
   async function handleStopRecording(): Promise<{ success: boolean }> {
     try {
       const result = await sendMessageToOffscreen({ type: 'STOP_RECORDING' });
-      console.log('[SnapCraft] Stop recording result:', result);
 
-      // The offscreen now waits for full store + returns captureId
       if (result?.captureId) {
-        await handleRecordingComplete({
-          duration: result.duration,
-          mimeType: result.mimeType,
-          size: result.size,
-          captureId: result.captureId,
-        });
+        await handleRecordingComplete(result);
       }
 
       return { success: true };
@@ -320,14 +307,15 @@ export default defineBackground(() => {
   }
 
   async function handleRecordingComplete(payload: {
-    duration?: number;
-    mimeType?: string;
-    size?: number;
+    captureId?: number;
+    [key: string]: any;
   }) {
-    console.log('[SnapCraft] handleRecordingComplete called:', payload);
-    // Data is already stored in chrome.storage.local as _pendingRecording by offscreen
+    if (payload.captureId) {
+      await browser.storage.local.set({
+        _pendingPreview: { captureId: payload.captureId },
+      });
+    }
 
-    // Open the preview page
     const previewUrl = browser.runtime.getURL('/preview.html');
     await browser.tabs.create({ url: previewUrl });
 
@@ -345,18 +333,13 @@ export default defineBackground(() => {
       contextTypes: ['OFFSCREEN_DOCUMENT'],
     });
 
-    if (existingContexts.length > 0) {
-      console.log('[SnapCraft] Offscreen document already exists');
-      return;
-    }
+    if (existingContexts.length > 0) return;
 
-    console.log('[SnapCraft] Creating offscreen document...');
     await (chrome.offscreen as any).createDocument({
       url: browser.runtime.getURL('/offscreen.html'),
       reasons: ['USER_MEDIA', 'DISPLAY_MEDIA'],
       justification: 'Recording tab or screen',
     });
-    console.log('[SnapCraft] Offscreen document created');
   }
 
   async function sendMessageToOffscreen(message: Message): Promise<any> {
