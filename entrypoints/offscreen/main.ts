@@ -131,16 +131,17 @@ function startRecording(stream: MediaStream) {
       console.log('[SnapCraft Offscreen] Recording stored, captureId:', captureId);
       const result = { success: true, captureId, duration, mimeType: recMimeType, size: blob.size };
 
-      // Resolve the pending stopRecording promise if it exists
+      // Always send RECORDING_COMPLETE — belt and suspenders
+      // (the sendResponse from stopRecording may fail if Chrome closed the port)
+      chrome.runtime.sendMessage({
+        type: 'RECORDING_COMPLETE',
+        payload: result,
+      });
+
+      // Also resolve the pending promise if it exists
       if (stopResolve) {
         stopResolve(result);
         stopResolve = null;
-      } else {
-        // Auto-stopped (e.g., track ended) — notify background directly
-        chrome.runtime.sendMessage({
-          type: 'RECORDING_COMPLETE',
-          payload: result,
-        });
       }
     } catch (e) {
       console.error('[SnapCraft Offscreen] Failed to store recording:', e);
@@ -247,6 +248,7 @@ async function storeRecordingBlob(blob: Blob, duration: number, mimeType: string
     };
 
     dbRequest.onsuccess = () => {
+      console.log('[SnapCraft Offscreen] IndexedDB opened successfully');
       const db = dbRequest.result;
       const tx = db.transaction('captures', 'readwrite');
       const store = tx.objectStore('captures');
@@ -260,11 +262,32 @@ async function storeRecordingBlob(blob: Blob, duration: number, mimeType: string
         mimeType,
         createdAt: Date.now(),
       });
-      addRequest.onsuccess = () => resolve(addRequest.result as number);
-      addRequest.onerror = () => reject(addRequest.error);
+      addRequest.onsuccess = () => {
+        console.log('[SnapCraft Offscreen] IndexedDB add success, id:', addRequest.result);
+        resolve(addRequest.result as number);
+      };
+      addRequest.onerror = () => {
+        console.error('[SnapCraft Offscreen] IndexedDB add error:', addRequest.error);
+        reject(addRequest.error);
+      };
+      tx.onerror = () => {
+        console.error('[SnapCraft Offscreen] Transaction error:', tx.error);
+      };
+      tx.onabort = () => {
+        console.error('[SnapCraft Offscreen] Transaction aborted:', tx.error);
+        reject(tx.error || new Error('Transaction aborted'));
+      };
     };
 
-    dbRequest.onerror = () => reject(dbRequest.error);
+    dbRequest.onerror = () => {
+      console.error('[SnapCraft Offscreen] IndexedDB open error:', dbRequest.error);
+      reject(dbRequest.error);
+    };
+
+    (dbRequest as any).onblocked = () => {
+      console.error('[SnapCraft Offscreen] IndexedDB BLOCKED — another connection is open');
+      reject(new Error('IndexedDB blocked'));
+    };
   });
 }
 
