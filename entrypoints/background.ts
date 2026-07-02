@@ -1,7 +1,8 @@
 /* SnapCraft — Background Service Worker */
 
 import { onMessage } from '../src/lib/messaging';
-import type { Message, RegionBounds } from '../src/lib/types';
+import { getSettings, cleanupCaptures } from '../src/lib/storage';
+import type { Message, RegionBounds, AppSettings } from '../src/lib/types';
 
 export default defineBackground(() => {
   console.log('[SnapCraft] Background service worker started');
@@ -104,8 +105,14 @@ export default defineBackground(() => {
     const dataUrl = await browser.tabs.captureVisibleTab(undefined, {
       format: 'png',
     });
-    // Open editor with the captured image
     openEditor(dataUrl);
+
+    // Auto-copy & notify
+    const settings = await getSettings();
+    if (settings.autoCopyToClipboard) {
+      await autoCopyScreenshot(dataUrl);
+    }
+    showNotification(settings, 'Screenshot captured', 'Visible area captured successfully.');
     return { dataUrl };
   }
 
@@ -223,11 +230,16 @@ export default defineBackground(() => {
   ) {
     if (!sender.tab?.id) return;
 
-    // Capture visible area and crop
     const dataUrl = await browser.tabs.captureVisibleTab(undefined, {
       format: 'png',
     });
     openEditor(dataUrl, bounds);
+
+    const settings = await getSettings();
+    if (settings.autoCopyToClipboard) {
+      await autoCopyScreenshot(dataUrl);
+    }
+    showNotification(settings, 'Screenshot captured', 'Region captured successfully.');
   }
 
   function isInjectableUrl(url?: string): boolean {
@@ -247,6 +259,36 @@ export default defineBackground(() => {
     if (!tab?.id) return { success: false };
 
     try {
+      const settings = await getSettings();
+
+      // Inject controls first (needed for both countdown and recording UI)
+      if (isInjectableUrl(tab.url)) {
+        await browser.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['/content-scripts/recording-controls.js'],
+        });
+        await new Promise((r) => setTimeout(r, 100));
+
+        // Show countdown if configured
+        if (settings.recordingCountdown > 0) {
+          await browser.tabs.sendMessage(tab.id, {
+            type: 'RECORDING_COUNTDOWN',
+            payload: { seconds: settings.recordingCountdown },
+          });
+
+          // Wait for countdown to finish
+          await new Promise<void>((resolve) => {
+            const handler = (msg: any) => {
+              if (msg.type === 'RECORDING_COUNTDOWN' && msg.payload?.done) {
+                browser.runtime.onMessage.removeListener(handler);
+                resolve();
+              }
+            };
+            browser.runtime.onMessage.addListener(handler);
+          });
+        }
+      }
+
       await ensureOffscreenDocument();
 
       const streamId = await (chrome.tabCapture as any).getMediaStreamId({
@@ -256,18 +298,16 @@ export default defineBackground(() => {
       await browser.runtime.sendMessage({
         type: 'START_RECORDING_TAB',
         target: 'offscreen',
-        payload: { streamId, tabId: tab.id },
+        payload: {
+          streamId,
+          tabId: tab.id,
+          quality: settings.recordingQuality,
+          fps: settings.recordingFps,
+        },
       });
 
-      // Inject recording control overlay if the URL is injectable
+      // Show recording controls
       if (isInjectableUrl(tab.url)) {
-        await browser.scripting.executeScript({
-          target: { tabId: tab.id },
-          files: ['/content-scripts/recording-controls.js'],
-        });
-
-        // Tell the content script to show the controls
-        await new Promise((r) => setTimeout(r, 100));
         await browser.tabs.sendMessage(tab.id, { type: 'SHOW_RECORDING_CONTROLS' });
       }
 
@@ -283,11 +323,15 @@ export default defineBackground(() => {
   ): Promise<{ success: boolean }> {
     try {
       await ensureOffscreenDocument();
+      const settings = await getSettings();
 
-      // Send to offscreen document — it will call getDisplayMedia
       await browser.runtime.sendMessage({
         type: 'START_RECORDING_SCREEN',
         target: 'offscreen',
+        payload: {
+          quality: settings.recordingQuality,
+          fps: settings.recordingFps,
+        },
       });
 
       // Show recording controls on the active tab if injectable
@@ -323,8 +367,6 @@ export default defineBackground(() => {
     }
   }
 
-  }
-
   async function handleRecordingComplete(payload: {
     captureId?: number;
     [key: string]: any;
@@ -343,6 +385,11 @@ export default defineBackground(() => {
     if (tab?.id) {
       browser.tabs.sendMessage(tab.id, { type: 'HIDE_RECORDING_CONTROLS' }).catch(() => {});
     }
+
+    // Notify & cleanup
+    const settings = await getSettings();
+    showNotification(settings, 'Recording saved', 'Screen recording saved successfully.');
+    cleanupCaptures(settings.maxHistoryItems).catch(() => {});
   }
 
   // ── Offscreen Document Management ──
@@ -481,5 +528,40 @@ export default defineBackground(() => {
 
     // Start capture
     scrollAndCapture();
+  }
+
+  // ── Utility Helpers ──
+
+  function showNotification(settings: AppSettings, title: string, message: string) {
+    if (!settings.showNotifications) return;
+    chrome.notifications.create({
+      type: 'basic',
+      iconUrl: browser.runtime.getURL('/icon/128.png'),
+      title,
+      message,
+    });
+  }
+
+  async function autoCopyScreenshot(dataUrl: string) {
+    try {
+      // We need a tab context to use the clipboard API
+      const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+      if (tab?.id) {
+        await browser.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: async (url: string) => {
+            const res = await fetch(url);
+            const blob = await res.blob();
+            const pngBlob = blob.type === 'image/png' ? blob : blob;
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': pngBlob }),
+            ]);
+          },
+          args: [dataUrl],
+        });
+      }
+    } catch {
+      // Clipboard copy is best-effort
+    }
   }
 });

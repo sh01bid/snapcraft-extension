@@ -12,6 +12,7 @@ import {
 } from '../../lib/editor/engine';
 import { downloadBlob, generateFilename, copyImageToClipboard } from '../../utils/download';
 import { blobToDataUrl } from '../../utils/image';
+import { getSettings } from '../../lib/storage';
 import './EditorApp.css';
 
 // Predefined color palette
@@ -453,8 +454,10 @@ export default function EditorApp() {
   // ── Export ──
   async function handleSave() {
     if (!backgroundImage || !canvasRef.current) return;
-    const blob = await exportCanvas(canvasRef.current, backgroundImage, state.shapes, 'png');
-    const filename = generateFilename('SnapCraft_{date}_{time}', 'png');
+    const settings = await getSettings();
+    const format = settings.imageFormat || 'png';
+    const blob = await exportCanvas(canvasRef.current, backgroundImage, state.shapes, format);
+    const filename = generateFilename(settings.filenamePattern, format);
     await downloadBlob(blob, filename);
     await saveToHistory(blob);
     showToast('Saved successfully!');

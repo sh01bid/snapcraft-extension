@@ -21,7 +21,8 @@ export type MessageType =
   | 'FULLPAGE_SCROLL_DONE'
   | 'FULLPAGE_SCROLL_PROGRESS'
   | 'SHOW_RECORDING_CONTROLS'
-  | 'HIDE_RECORDING_CONTROLS';
+  | 'HIDE_RECORDING_CONTROLS'
+  | 'RECORDING_COUNTDOWN';
 
 export interface Message<T = any> {
   type: MessageType;

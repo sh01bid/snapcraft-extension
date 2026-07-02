@@ -1,7 +1,7 @@
 /* SnapCraft — Recording Preview Page */
 
 import { useState, useEffect, useRef } from 'react';
-import { getCapture, deleteCapture } from '../../lib/storage';
+import { getCapture, deleteCapture, getSettings } from '../../lib/storage';
 import { downloadBlob, generateFilename } from '../../utils/download';
 import './PreviewApp.css';
 
@@ -69,15 +69,16 @@ export default function PreviewApp() {
 
   async function handleDownload() {
     if (!videoBlob) return;
+    const settings = await getSettings();
+    const pattern = settings.filenamePattern || 'SnapCraft_{date}_{time}';
 
     if (downloadFormat === 'webm') {
-      const filename = generateFilename('SnapCraft_{date}_{time}', 'webm');
+      const filename = generateFilename(pattern, 'webm');
       await downloadBlob(videoBlob, filename);
       showToast('Downloaded as WebM!');
     } else {
-      // MP4 conversion placeholder
       showToast('MP4 conversion coming soon — downloading as WebM');
-      const filename = generateFilename('SnapCraft_{date}_{time}', 'webm');
+      const filename = generateFilename(pattern, 'webm');
       await downloadBlob(videoBlob, filename);
     }
   }

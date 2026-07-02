@@ -19,7 +19,70 @@ export default defineContentScript({
       if (message.type === 'HIDE_RECORDING_CONTROLS') {
         removeControls();
       }
+      if (message.type === 'RECORDING_COUNTDOWN') {
+        showCountdown(message.payload?.seconds || 3);
+      }
     });
+
+    function showCountdown(seconds: number) {
+      const overlay = document.createElement('div');
+      overlay.id = 'snapcraft-countdown';
+      const shadow = overlay.attachShadow({ mode: 'closed' });
+
+      const style = document.createElement('style');
+      style.textContent = `
+        .sc-countdown {
+          position: fixed;
+          inset: 0;
+          z-index: 2147483647;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(8px);
+        }
+        .sc-countdown-num {
+          font-family: 'Inter', -apple-system, sans-serif;
+          font-size: 120px;
+          font-weight: 800;
+          color: white;
+          text-shadow: 0 0 40px rgba(99, 102, 241, 0.8);
+          animation: countPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes countPop {
+          0% { transform: scale(2); opacity: 0; }
+          50% { transform: scale(0.9); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+      `;
+      shadow.appendChild(style);
+
+      const container = document.createElement('div');
+      container.className = 'sc-countdown';
+      const numEl = document.createElement('div');
+      numEl.className = 'sc-countdown-num';
+      numEl.textContent = String(seconds);
+      container.appendChild(numEl);
+      shadow.appendChild(container);
+      document.body.appendChild(overlay);
+
+      let remaining = seconds;
+      const interval = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(interval);
+          overlay.remove();
+          // Notify background that countdown finished
+          browser.runtime.sendMessage({ type: 'RECORDING_COUNTDOWN', payload: { done: true } });
+        } else {
+          numEl.textContent = String(remaining);
+          numEl.style.animation = 'none';
+          // Trigger reflow
+          void numEl.offsetWidth;
+          numEl.style.animation = 'countPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        }
+      }, 1000);
+    }
 
     function showControls() {
       if (controlBar) return;

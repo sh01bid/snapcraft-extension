@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import HistoryApp from '../../src/components/history/HistoryApp';
+import { applyTheme } from '../../src/lib/theme';
+
+applyTheme();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

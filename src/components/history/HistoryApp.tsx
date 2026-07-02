@@ -1,7 +1,8 @@
 /* SnapCraft — History Page */
 
 import { useState, useEffect } from 'react';
-import { getCaptures, deleteCapture, type CaptureRecord } from '../../lib/storage';
+import { getCaptures, deleteCapture, getSettings } from '../../lib/storage';
+import type { CaptureRecord } from '../../lib/types';
 import { downloadBlob, generateFilename } from '../../utils/download';
 import { blobToDataUrl } from '../../utils/image';
 import './HistoryApp.css';
@@ -40,8 +41,10 @@ export default function HistoryApp() {
   }, [thumbnailUrls]);
 
   async function handleDownload(item: CaptureRecord) {
-    const ext = item.type === 'recording' ? 'webm' : 'png';
-    const filename = generateFilename(`SnapCraft_{date}_{time}`, ext);
+    const settings = await getSettings();
+    const pattern = settings.filenamePattern || 'SnapCraft_{date}_{time}';
+    const ext = item.type === 'recording' ? 'webm' : (settings.imageFormat || 'png');
+    const filename = generateFilename(pattern, ext);
     await downloadBlob(item.data, filename);
   }
 

@@ -6,6 +6,7 @@ let mediaRecorder: MediaRecorder | null = null;
 let recordedChunks: Blob[] = [];
 let mediaStream: MediaStream | null = null;
 let startTimestamp = 0;
+let recordingSettings = { quality: 'high' as string, fps: 30 };
 
 // Only handle messages targeted at offscreen
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
@@ -18,7 +19,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       return true;
 
     case 'START_RECORDING_SCREEN':
-      startScreenRecording().then(sendResponse);
+      startScreenRecording(message.payload).then(sendResponse);
       return true;
 
     case 'STOP_RECORDING':
@@ -36,8 +37,16 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 });
 
-async function startTabRecording(payload: { streamId: string; tabId: number }) {
+async function startTabRecording(payload: {
+  streamId: string;
+  tabId: number;
+  quality?: string;
+  fps?: number;
+}) {
   try {
+    if (payload.quality) recordingSettings.quality = payload.quality;
+    if (payload.fps) recordingSettings.fps = payload.fps;
+
     mediaStream = await navigator.mediaDevices.getUserMedia({
       audio: {
         mandatory: {
@@ -62,8 +71,11 @@ async function startTabRecording(payload: { streamId: string; tabId: number }) {
   }
 }
 
-async function startScreenRecording() {
+async function startScreenRecording(payload?: { quality?: string; fps?: number }) {
   try {
+    if (payload?.quality) recordingSettings.quality = payload.quality;
+    if (payload?.fps) recordingSettings.fps = payload.fps;
+
     mediaStream = await navigator.mediaDevices.getDisplayMedia({
       video: {
         displaySurface: 'monitor',
@@ -71,8 +83,6 @@ async function startScreenRecording() {
       audio: true,
     });
 
-    // When user clicks Chrome's native "Stop sharing" button,
-    // the track will end, which will trigger mediaRecorder.stop()
     mediaStream.getVideoTracks()[0].addEventListener('ended', () => {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
@@ -130,9 +140,16 @@ function startRecording(stream: MediaStream) {
     }
   }
 
+  const bitrateMap: Record<string, number> = {
+    low: 1_000_000,
+    medium: 3_000_000,
+    high: 5_000_000,
+  };
+  const videoBitsPerSecond = bitrateMap[recordingSettings.quality] || 5_000_000;
+
   mediaRecorder = new MediaRecorder(stream, {
     mimeType,
-    videoBitsPerSecond: 5_000_000,
+    videoBitsPerSecond,
   });
 
   mediaRecorder.ondataavailable = (event) => {
