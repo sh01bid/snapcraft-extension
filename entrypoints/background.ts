@@ -250,6 +250,10 @@ export default defineBackground(() => {
         files: ['/content-scripts/recording-controls.js'],
       });
 
+      // Tell the content script to show the controls
+      await new Promise((r) => setTimeout(r, 100));
+      await browser.tabs.sendMessage(tab.id, { type: 'SHOW_RECORDING_CONTROLS' });
+
       return { success: true };
     } catch (e) {
       console.error('[SnapCraft] Tab recording error:', e);
@@ -268,6 +272,17 @@ export default defineBackground(() => {
         type: 'START_RECORDING_SCREEN',
         target: 'offscreen',
       });
+
+      // Show recording controls on the active tab
+      const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+      if (tab?.id) {
+        await browser.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['/content-scripts/recording-controls.js'],
+        });
+        await new Promise((r) => setTimeout(r, 100));
+        await browser.tabs.sendMessage(tab.id, { type: 'SHOW_RECORDING_CONTROLS' });
+      }
 
       return { success: true };
     } catch (e) {
