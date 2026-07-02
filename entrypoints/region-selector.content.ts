@@ -36,8 +36,7 @@ export default defineContentScript({
           inset: 0;
           z-index: 2147483647;
           cursor: crosshair;
-          background: rgba(0, 0, 0, 0.3);
-          backdrop-filter: blur(1px);
+          background: rgba(0, 0, 0, 0.25);
           user-select: none;
           -webkit-user-select: none;
         }
@@ -71,42 +70,47 @@ export default defineContentScript({
         }
         .sc-toolbar {
           position: absolute;
-          bottom: -44px;
-          right: 0;
+          bottom: -56px;
+          left: 50%;
+          transform: translateX(-50%);
           display: flex;
-          gap: 6px;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 12px;
+          background: #1a1a2e;
+          border: 1px solid rgba(108, 99, 255, 0.5);
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
           pointer-events: auto;
+          white-space: nowrap;
         }
         .sc-toolbar button {
           all: unset;
           display: flex;
           align-items: center;
-          justify-content: center;
-          width: 32px;
-          height: 32px;
-          border-radius: 6px;
+          gap: 6px;
+          padding: 8px 18px;
+          border-radius: 8px;
           cursor: pointer;
-          font-size: 14px;
-          transition: transform 0.1s ease;
+          font-family: 'Inter', -apple-system, sans-serif;
+          font-size: 13px;
+          font-weight: 600;
+          transition: opacity 0.15s ease;
+        }
+        .sc-toolbar button:hover {
+          opacity: 0.85;
         }
         .sc-toolbar button:active {
-          transform: scale(0.95);
+          transform: scale(0.97);
         }
         .sc-btn-confirm {
           background: #6c63ff;
           color: white;
         }
-        .sc-btn-confirm:hover {
-          background: #5a4cf0;
-        }
         .sc-btn-cancel {
-          background: rgba(255, 255, 255, 0.1);
-          color: rgba(255, 255, 255, 0.8);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .sc-btn-cancel:hover {
-          background: rgba(255, 255, 255, 0.15);
+          background: rgba(255, 255, 255, 0.08);
+          color: rgba(255, 255, 255, 0.7);
+          border: 1px solid rgba(255, 255, 255, 0.12);
         }
         .sc-crosshair-h, .sc-crosshair-v {
           position: fixed;
@@ -197,13 +201,13 @@ export default defineContentScript({
 
       const confirmBtn = document.createElement('button');
       confirmBtn.className = 'sc-btn-confirm';
-      confirmBtn.innerHTML = '✓';
-      confirmBtn.title = 'Capture';
+      confirmBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Capture';
+      confirmBtn.title = 'Capture selected area';
       toolbar.appendChild(confirmBtn);
 
       const cancelBtn = document.createElement('button');
       cancelBtn.className = 'sc-btn-cancel';
-      cancelBtn.innerHTML = '✕';
+      cancelBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Cancel';
       cancelBtn.title = 'Cancel';
       toolbar.appendChild(cancelBtn);
 
