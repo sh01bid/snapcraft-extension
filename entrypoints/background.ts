@@ -105,13 +105,14 @@ export default defineBackground(() => {
     const dataUrl = await browser.tabs.captureVisibleTab(undefined, {
       format: 'png',
     });
-    openEditor(dataUrl);
 
-    // Auto-copy & notify
+    // Auto-copy BEFORE opening editor (tab must stay focused for clipboard)
     const settings = await getSettings();
     if (settings.autoCopyToClipboard) {
       await autoCopyScreenshot(dataUrl);
     }
+
+    openEditor(dataUrl);
     showNotification(settings, 'Screenshot captured', 'Visible area captured successfully.');
     return { dataUrl };
   }
@@ -233,12 +234,14 @@ export default defineBackground(() => {
     const dataUrl = await browser.tabs.captureVisibleTab(undefined, {
       format: 'png',
     });
-    openEditor(dataUrl, bounds);
 
+    // Auto-copy BEFORE opening editor (tab must stay focused for clipboard)
     const settings = await getSettings();
     if (settings.autoCopyToClipboard) {
       await autoCopyScreenshot(dataUrl, bounds);
     }
+
+    openEditor(dataUrl, bounds);
     showNotification(settings, 'Screenshot captured', 'Region captured successfully.');
   }
 

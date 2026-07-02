@@ -29,6 +29,7 @@ export default defineConfig({
       'desktopCapture',
       'downloads',
       'notifications',
+      'clipboardWrite',
     ],
     host_permissions: ['<all_urls>'],
     commands: {
