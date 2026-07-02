@@ -71,7 +71,7 @@ export default defineBackground(() => {
   // Handle offscreen keep-alive connections
   browser.runtime.onConnect.addListener((port) => {
     if (port.name === 'offscreen-keepalive') {
-      console.log('[SnapCraft] Offscreen keep-alive port connected');
+      // Keep-alive port connected
     }
   });
 
@@ -158,7 +158,7 @@ export default defineBackground(() => {
         format: 'png',
       });
       fullPageCaptures.push(dataUrl);
-      console.log(`[SnapCraft] Full page: captured segment ${fullPageCaptures.length}`);
+
 
       // Tell content script to continue scrolling
       await browser.tabs.sendMessage(tabId, {
@@ -171,7 +171,7 @@ export default defineBackground(() => {
   }
 
   async function handleFullPageScrollDone(payload: { lastCropHeight?: number }) {
-    console.log(`[SnapCraft] Full page done: ${fullPageCaptures.length} segments`);
+
     if (fullPageCaptures.length === 0) return;
 
     // Store captures FIRST, before opening editor

@@ -2,7 +2,6 @@
 
 import { db } from '../../src/lib/storage';
 
-
 let mediaRecorder: MediaRecorder | null = null;
 let recordedChunks: Blob[] = [];
 let mediaStream: MediaStream | null = null;
@@ -26,9 +25,6 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       stopRecording().then(sendResponse);
       return true;
 
-    case 'FINALIZE_RECORDING':
-      finalizeRecording().then(sendResponse);
-      return true;
 
     case 'PAUSE_RECORDING':
       pauseRecording();
@@ -92,10 +88,6 @@ async function startScreenRecording() {
   }
 }
 
-// No longer needed — handled by onstop
-async function finalizeRecording() {
-  return { success: false };
-}
 
 // Keep-alive port to background
 let keepAlivePort: chrome.runtime.Port | null = null;
