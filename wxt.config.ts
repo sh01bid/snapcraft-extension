@@ -23,6 +23,7 @@ export default defineConfig({
       'tabs',
       'scripting',
       'storage',
+      'unlimitedStorage',
       'offscreen',
       'tabCapture',
       'desktopCapture',
