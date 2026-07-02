@@ -237,7 +237,7 @@ export default defineBackground(() => {
 
     const settings = await getSettings();
     if (settings.autoCopyToClipboard) {
-      await autoCopyScreenshot(dataUrl);
+      await autoCopyScreenshot(dataUrl, bounds);
     }
     showNotification(settings, 'Screenshot captured', 'Region captured successfully.');
   }
@@ -542,22 +542,39 @@ export default defineBackground(() => {
     });
   }
 
-  async function autoCopyScreenshot(dataUrl: string) {
+  async function autoCopyScreenshot(dataUrl: string, cropBounds?: RegionBounds) {
     try {
-      // We need a tab context to use the clipboard API
       const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
       if (tab?.id) {
         await browser.scripting.executeScript({
           target: { tabId: tab.id },
-          func: async (url: string) => {
-            const res = await fetch(url);
-            const blob = await res.blob();
-            const pngBlob = blob.type === 'image/png' ? blob : blob;
+          func: async (url: string, bounds: any) => {
+            const img = new Image();
+            img.src = url;
+            await new Promise((r) => (img.onload = r));
+
+            let resultBlob: Blob;
+            if (bounds) {
+              // Crop to selected region
+              const dpr = bounds.devicePixelRatio || window.devicePixelRatio;
+              const sx = bounds.x * dpr;
+              const sy = bounds.y * dpr;
+              const sw = bounds.width * dpr;
+              const sh = bounds.height * dpr;
+              const canvas = new OffscreenCanvas(sw, sh);
+              const ctx = canvas.getContext('2d')!;
+              ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+              resultBlob = await canvas.convertToBlob({ type: 'image/png' });
+            } else {
+              const res = await fetch(url);
+              resultBlob = await res.blob();
+            }
+
             await navigator.clipboard.write([
-              new ClipboardItem({ 'image/png': pngBlob }),
+              new ClipboardItem({ 'image/png': resultBlob }),
             ]);
           },
-          args: [dataUrl],
+          args: [dataUrl, cropBounds || null],
         });
       }
     } catch {
