@@ -38,7 +38,7 @@ export default function OptionsApp() {
             </svg>
           </div>
             <h1 className="options-title">{t('settingsTitle')}</h1>
-          <span className="options-version">v1.0.0</span>
+          <span className="options-version">v{chrome.runtime.getManifest().version}</span>
         </div>
       </header>
 

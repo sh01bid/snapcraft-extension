@@ -5,7 +5,7 @@ export default defineConfig({
   manifest: {
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
-    version: '1.0.0',
+    version: '3.0.1',
     action: {
       default_icon: {
         16: 'icon/16.png',
