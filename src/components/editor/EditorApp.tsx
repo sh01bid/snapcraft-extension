@@ -109,7 +109,51 @@ export default function EditorApp() {
     // Render at 1:1 in the canvas buffer — no zoom transform needed.
     // The browser scales the canvas to CSS display size automatically.
     renderShapes(ctx, shapes, backgroundImage, canvas.width, canvas.height);
-  }, [state.shapes, currentShape, backgroundImage, canvasSize]);
+
+    // Draw crop selection overlay on canvas
+    if (cropSelection) {
+      const nx = cropSelection.width < 0 ? cropSelection.x + cropSelection.width : cropSelection.x;
+      const ny = cropSelection.height < 0 ? cropSelection.y + cropSelection.height : cropSelection.y;
+      const nw = Math.abs(cropSelection.width);
+      const nh = Math.abs(cropSelection.height);
+
+      // Dark overlay outside selection
+      ctx.save();
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      // Top
+      ctx.fillRect(0, 0, canvas.width, ny);
+      // Bottom
+      ctx.fillRect(0, ny + nh, canvas.width, canvas.height - ny - nh);
+      // Left
+      ctx.fillRect(0, ny, nx, nh);
+      // Right
+      ctx.fillRect(nx + nw, ny, canvas.width - nx - nw, nh);
+
+      // Selection border
+      ctx.strokeStyle = '#6366f1';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]);
+      ctx.strokeRect(nx, ny, nw, nh);
+      ctx.setLineDash([]);
+
+      // Size label
+      if (nw > 50 && nh > 30) {
+        const label = `${Math.round(nw)} × ${Math.round(nh)}`;
+        ctx.font = '14px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        const labelW = ctx.measureText(label).width + 16;
+        const labelX = nx + nw / 2;
+        const labelY = ny + nh / 2;
+        ctx.fillStyle = 'rgba(99, 102, 241, 0.85)';
+        ctx.beginPath();
+        ctx.roundRect(labelX - labelW / 2, labelY - 12, labelW, 24, 4);
+        ctx.fill();
+        ctx.fillStyle = 'white';
+        ctx.fillText(label, labelX, labelY + 5);
+      }
+      ctx.restore();
+    }
+  }, [state.shapes, currentShape, backgroundImage, canvasSize, cropSelection]);
 
   // ── Mouse Handlers ──
   // Map mouse CSS coordinates to canvas buffer coordinates.
@@ -643,61 +687,21 @@ export default function EditorApp() {
           />
         )}
 
-        {/* Crop Selection Overlay */}
-        {cropSelection && canvasRef.current && (
-          (() => {
-            const canvas = canvasRef.current!;
-            const rect = canvas.getBoundingClientRect();
-            const cssScaleX = rect.width / canvas.width;
-            const cssScaleY = rect.height / canvas.height;
-            // Normalize (handle negative dimensions)
-            const nx = cropSelection.width < 0 ? cropSelection.x + cropSelection.width : cropSelection.x;
-            const ny = cropSelection.height < 0 ? cropSelection.y + cropSelection.height : cropSelection.y;
-            const nw = Math.abs(cropSelection.width);
-            const nh = Math.abs(cropSelection.height);
-            return (
-              <div
-                className="crop-overlay"
-                style={{
-                  left: canvas.offsetLeft,
-                  top: canvas.offsetTop,
-                  width: rect.width,
-                  height: rect.height,
-                }}
-              >
-                <div
-                  className="crop-selection"
-                  style={{
-                    left: nx * cssScaleX,
-                    top: ny * cssScaleY,
-                    width: nw * cssScaleX,
-                    height: nh * cssScaleY,
-                  }}
-                >
-                  <div className="crop-size-label">
-                    {Math.round(nw)} × {Math.round(nh)}
-                  </div>
-                </div>
-                {!isDrawing && nw > 5 && nh > 5 && (
-                  <div
-                    className="crop-actions"
-                    style={{
-                      left: (nx + nw) * cssScaleX,
-                      top: (ny + nh) * cssScaleY + 8,
-                    }}
-                  >
-                    <button className="crop-action-btn confirm" onClick={confirmCrop}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-                      Crop
-                    </button>
-                    <button className="crop-action-btn cancel" onClick={cancelCrop}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
-                  </div>
-                )}
-              </div>
-            );
-          })()
+        {/* Crop Action Bar — fixed at bottom center */}
+        {cropSelection && !isDrawing && Math.abs(cropSelection.width) > 5 && Math.abs(cropSelection.height) > 5 && (
+          <div className="crop-action-bar">
+            <span className="crop-size-info">
+              {Math.round(Math.abs(cropSelection.width))} × {Math.round(Math.abs(cropSelection.height))}
+            </span>
+            <button className="crop-action-btn confirm" onClick={confirmCrop}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Apply Crop
+            </button>
+            <button className="crop-action-btn cancel" onClick={cancelCrop}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Cancel
+            </button>
+          </div>
         )}
 
         {/* Zoom Controls */}

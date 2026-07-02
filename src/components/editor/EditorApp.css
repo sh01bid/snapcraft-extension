@@ -315,53 +315,42 @@ html, body, #root {
   color: var(--sc-success-500);
 }
 
-/* ── Crop Overlay ── */
-.crop-overlay {
+/* ── Crop Action Bar ── */
+.crop-action-bar {
   position: absolute;
-  pointer-events: none;
-  z-index: 15;
-}
-
-.crop-selection {
-  position: absolute;
-  border: 2px dashed var(--sc-primary-400);
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
-  pointer-events: none;
-}
-
-.crop-size-label {
-  position: absolute;
-  top: -24px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 2px 8px;
-  background: var(--sc-primary-500);
-  color: white;
-  font-size: 11px;
-  font-family: var(--sc-font-mono);
-  border-radius: 3px;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-3);
+  padding: var(--sc-space-2) var(--sc-space-4);
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-lg);
+  box-shadow: var(--sc-shadow-xl);
+  z-index: 30;
+  animation: sc-slide-up var(--sc-transition-spring) both;
 }
 
-.crop-actions {
-  position: absolute;
-  display: flex;
-  gap: 4px;
-  pointer-events: auto;
-  transform: translateX(-100%);
-  z-index: 20;
+.crop-size-info {
+  font-family: var(--sc-font-mono);
+  font-size: var(--sc-text-sm);
+  color: var(--sc-text-tertiary);
+  padding: 0 var(--sc-space-2);
 }
 
 .crop-action-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: var(--sc-radius-sm);
-  font-size: 12px;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--sc-radius-md);
+  font-size: 13px;
   font-weight: var(--sc-font-semibold);
   transition: all var(--sc-transition-fast);
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .crop-action-btn.confirm {
@@ -371,6 +360,7 @@ html, body, #root {
 
 .crop-action-btn.confirm:hover {
   background: var(--sc-primary-600);
+  transform: translateY(-1px);
 }
 
 .crop-action-btn.cancel {
@@ -381,6 +371,7 @@ html, body, #root {
 
 .crop-action-btn.cancel:hover {
   background: var(--sc-bg-hover);
+  color: var(--sc-text-primary);
 }
 
 .editor-canvas.tool-crop {
