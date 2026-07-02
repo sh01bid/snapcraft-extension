@@ -247,3 +247,157 @@ html, body, #root {
   font-size: 11px;
   color: white;
 }
+
+/* ── Header Right ── */
+.history-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-3);
+}
+
+/* ── Select Mode Button ── */
+.select-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-2);
+  padding: var(--sc-space-2) var(--sc-space-4);
+  border-radius: var(--sc-radius-md);
+  font-size: var(--sc-text-sm);
+  font-weight: var(--sc-font-medium);
+  color: var(--sc-text-secondary);
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border);
+  transition: all var(--sc-transition-fast);
+}
+
+.select-mode-btn:hover {
+  background: var(--sc-bg-hover);
+  color: var(--sc-text-primary);
+  border-color: var(--sc-border-hover);
+}
+
+.select-mode-btn.active {
+  background: var(--sc-primary-500);
+  color: white;
+  border-color: var(--sc-primary-500);
+}
+
+/* ── Card Checkbox ── */
+.history-card-checkbox {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+}
+
+.history-card {
+  position: relative;
+}
+
+.checkbox-indicator {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--sc-transition-fast);
+}
+
+.checkbox-indicator.checked {
+  background: var(--sc-primary-500);
+  border-color: var(--sc-primary-500);
+  box-shadow: 0 0 8px rgba(108, 99, 255, 0.5);
+}
+
+/* ── Selected Card State ── */
+.history-card.selected {
+  border-color: var(--sc-primary-500);
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.3), var(--sc-shadow-md);
+}
+
+/* ── Batch Action Bar ── */
+.batch-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--sc-space-4) var(--sc-space-8);
+  background: rgba(12, 12, 20, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--sc-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+  animation: slideUpBar 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="light"] .batch-action-bar {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+@keyframes slideUpBar {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.batch-info {
+  font-size: var(--sc-text-md);
+  color: var(--sc-text-secondary);
+}
+
+.batch-count {
+  font-weight: var(--sc-font-bold);
+  color: var(--sc-primary-400);
+}
+
+.batch-buttons {
+  display: flex;
+  gap: var(--sc-space-2);
+}
+
+.batch-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-2);
+  padding: var(--sc-space-2) var(--sc-space-4);
+  border-radius: var(--sc-radius-md);
+  font-size: var(--sc-text-sm);
+  font-weight: var(--sc-font-medium);
+  transition: all var(--sc-transition-fast);
+}
+
+.batch-btn.select-all {
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-secondary);
+  border: 1px solid var(--sc-border);
+}
+
+.batch-btn.select-all:hover {
+  background: var(--sc-bg-hover);
+  color: var(--sc-text-primary);
+}
+
+.batch-btn.download {
+  background: var(--sc-primary-500);
+  color: white;
+}
+
+.batch-btn.download:hover {
+  background: var(--sc-primary-600);
+}
+
+.batch-btn.delete {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--sc-danger-400);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.batch-btn.delete:hover {
+  background: var(--sc-danger-500);
+  color: white;
+}

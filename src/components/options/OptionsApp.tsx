@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { getSettings, updateSettings } from '../../lib/storage';
 import type { AppSettings } from '../../lib/types';
 import { DEFAULT_SETTINGS } from '../../lib/types';
+import { t } from '../../lib/i18n';
 import './OptionsApp.css';
 
 export default function OptionsApp() {
@@ -36,7 +37,7 @@ export default function OptionsApp() {
               <circle cx="12" cy="13" r="3"/>
             </svg>
           </div>
-          <h1 className="options-title">Settings</h1>
+            <h1 className="options-title">{t('settingsTitle')}</h1>
           <span className="options-version">v1.0.0</span>
         </div>
       </header>
@@ -52,13 +53,13 @@ export default function OptionsApp() {
                 <circle cx="12" cy="13" r="3"/>
               </svg>
             </div>
-            <h2 className="options-section-title">Screenshot</h2>
+            <h2 className="options-section-title">{t('settingsScreenshot')}</h2>
           </div>
           <div className="options-section-body">
             <div className="setting-row">
               <div>
-                <div className="setting-label">Image Format</div>
-                <div className="setting-description">Default format for saved screenshots</div>
+                <div className="setting-label">{t('settingsImageFormat')}</div>
+                <div className="setting-description">{t('settingsImageFormatDesc')}</div>
               </div>
               <select
                 className="setting-select"
@@ -73,8 +74,8 @@ export default function OptionsApp() {
 
             <div className="setting-row">
               <div>
-                <div className="setting-label">Image Quality</div>
-                <div className="setting-description">For JPEG and WebP formats (1-100)</div>
+                <div className="setting-label">{t('settingsImageQuality')}</div>
+                <div className="setting-description">{t('settingsImageQualityDesc')}</div>
               </div>
               <div className="setting-range">
                 <input
@@ -91,8 +92,8 @@ export default function OptionsApp() {
 
             <div className="setting-row">
               <div>
-                <div className="setting-label">Auto Copy to Clipboard</div>
-                <div className="setting-description">Automatically copy screenshots to clipboard</div>
+                <div className="setting-label">{t('settingsAutoCopy')}</div>
+                <div className="setting-description">{t('settingsAutoCopyDesc')}</div>
               </div>
               <label className="setting-toggle">
                 <input
@@ -115,7 +116,7 @@ export default function OptionsApp() {
                 <rect width="14" height="12" x="2" y="6" rx="2"/>
               </svg>
             </div>
-            <h2 className="options-section-title">Recording</h2>
+            <h2 className="options-section-title">{t('settingsRecording')}</h2>
           </div>
           <div className="options-section-body">
             <div className="setting-row">
@@ -135,7 +136,7 @@ export default function OptionsApp() {
 
             <div className="setting-row">
               <div>
-                <div className="setting-label">Recording Quality</div>
+                <div className="setting-label">{t('settingsVideoQuality')}</div>
                 <div className="setting-description">Affects file size and clarity</div>
               </div>
               <select
@@ -151,7 +152,7 @@ export default function OptionsApp() {
 
             <div className="setting-row">
               <div>
-                <div className="setting-label">Frame Rate</div>
+                <div className="setting-label">{t('settingsVideoFps')}</div>
                 <div className="setting-description">Frames per second</div>
               </div>
               <select
@@ -168,8 +169,8 @@ export default function OptionsApp() {
 
             <div className="setting-row">
               <div>
-                <div className="setting-label">Countdown</div>
-                <div className="setting-description">Seconds before recording starts</div>
+                <div className="setting-label">{t('settingsCountdown')}</div>
+                <div className="setting-description">{t('settingsCountdownDesc')}</div>
               </div>
               <select
                 className="setting-select"
@@ -224,12 +225,12 @@ export default function OptionsApp() {
                 <circle cx="12" cy="12" r="3"/>
               </svg>
             </div>
-            <h2 className="options-section-title">General</h2>
+            <h2 className="options-section-title">{t('settingsGeneral')}</h2>
           </div>
           <div className="options-section-body">
             <div className="setting-row">
               <div>
-                <div className="setting-label">Theme</div>
+                <div className="setting-label">{t('settingsTheme')}</div>
                 <div className="setting-description">Visual appearance</div>
               </div>
               <select
@@ -245,8 +246,8 @@ export default function OptionsApp() {
 
             <div className="setting-row">
               <div>
-                <div className="setting-label">Notifications</div>
-                <div className="setting-description">Show desktop notifications after capture</div>
+                <div className="setting-label">{t('settingsNotifications')}</div>
+                <div className="setting-description">{t('settingsNotificationsDesc')}</div>
               </div>
               <label className="setting-toggle">
                 <input
@@ -260,8 +261,8 @@ export default function OptionsApp() {
 
             <div className="setting-row">
               <div>
-                <div className="setting-label">Max History Items</div>
-                <div className="setting-description">Older items are automatically removed</div>
+                <div className="setting-label">{t('settingsMaxHistory')}</div>
+                <div className="setting-description">{t('settingsMaxHistoryDesc')}</div>
               </div>
               <select
                 className="setting-select"
@@ -277,8 +278,8 @@ export default function OptionsApp() {
 
             <div className="setting-row">
               <div>
-                <div className="setting-label">Filename Pattern</div>
-                <div className="setting-description">Use {'{date}'}, {'{time}'}, {'{timestamp}'}</div>
+                <div className="setting-label">{t('settingsFilenamePattern')}</div>
+                <div className="setting-description">{t('settingsFilenamePatternDesc')}</div>
               </div>
               <input
                 type="text"

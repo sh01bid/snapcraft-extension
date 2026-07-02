@@ -3,8 +3,8 @@ import { defineConfig } from 'wxt';
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   manifest: {
-    name: 'SnapCraft — Screenshot & Screen Recorder',
-    description: 'Capture screenshots, record your screen, and annotate with a powerful built-in editor.',
+    name: '__MSG_extName__',
+    description: '__MSG_extDescription__',
     version: '1.0.0',
     action: {
       default_icon: {
@@ -18,6 +18,7 @@ export default defineConfig({
       48: 'icon/48.png',
       128: 'icon/128.png',
     },
+    default_locale: 'en',
     permissions: [
       'activeTab',
       'tabs',
@@ -30,6 +31,7 @@ export default defineConfig({
       'downloads',
       'notifications',
       'clipboardWrite',
+      'contextMenus',
     ],
     host_permissions: ['<all_urls>'],
     commands: {

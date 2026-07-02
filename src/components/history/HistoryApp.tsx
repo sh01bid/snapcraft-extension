@@ -5,6 +5,7 @@ import { getCaptures, deleteCapture, getSettings } from '../../lib/storage';
 import type { CaptureRecord } from '../../lib/types';
 import { downloadBlob, generateFilename } from '../../utils/download';
 import { blobToDataUrl } from '../../utils/image';
+import { t } from '../../lib/i18n';
 import './HistoryApp.css';
 
 type FilterType = 'all' | 'screenshot' | 'recording';
@@ -13,6 +14,8 @@ export default function HistoryApp() {
   const [captures, setCaptures] = useState<CaptureRecord[]>([]);
   const [filter, setFilter] = useState<FilterType>('all');
   const [thumbnailUrls, setThumbnailUrls] = useState<Record<number, string>>({});
+  const [selectMode, setSelectMode] = useState(false);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     loadCaptures();
@@ -23,7 +26,6 @@ export default function HistoryApp() {
     const items = await getCaptures({ type, limit: 100 });
     setCaptures(items);
 
-    // Generate thumbnail URLs
     const urls: Record<number, string> = {};
     for (const item of items) {
       if (item.id && item.thumbnail && item.thumbnail.size > 0) {
@@ -33,7 +35,6 @@ export default function HistoryApp() {
     setThumbnailUrls(urls);
   }
 
-  // Cleanup blob URLs
   useEffect(() => {
     return () => {
       Object.values(thumbnailUrls).forEach(URL.revokeObjectURL);
@@ -54,21 +55,79 @@ export default function HistoryApp() {
     if (thumbnailUrls[id]) {
       URL.revokeObjectURL(thumbnailUrls[id]);
     }
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
   }
 
   async function handleOpen(item: CaptureRecord) {
+    if (selectMode) return; // Don't open in select mode
     if (item.type === 'screenshot') {
-      // Open in editor
       const dataUrl = await blobToDataUrl(item.data);
       await browser.storage.local.set({
         _pendingEdit: { dataUrl, timestamp: Date.now() },
       });
       window.open(browser.runtime.getURL('/editor.html'));
     } else {
-      // Open video in new tab
       const url = URL.createObjectURL(item.data);
       window.open(url);
     }
+  }
+
+  // ── Batch Operations ──
+
+  function toggleSelect(id: number) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    if (selected.size === captures.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(captures.map((c) => c.id!).filter(Boolean)));
+    }
+  }
+
+  async function handleBatchDelete() {
+    const ids = Array.from(selected);
+    for (const id of ids) {
+      await deleteCapture(id);
+      if (thumbnailUrls[id]) {
+        URL.revokeObjectURL(thumbnailUrls[id]);
+      }
+    }
+    setCaptures((prev) => prev.filter((c) => !selected.has(c.id!)));
+    setSelected(new Set());
+    setSelectMode(false);
+  }
+
+  async function handleBatchDownload() {
+    const settings = await getSettings();
+    const pattern = settings.filenamePattern || 'SnapCraft_{date}_{time}';
+    for (const item of captures) {
+      if (item.id && selected.has(item.id)) {
+        const ext = item.type === 'recording' ? 'webm' : (settings.imageFormat || 'png');
+        const filename = generateFilename(pattern, ext);
+        await downloadBlob(item.data, filename);
+        // Small delay between downloads to avoid Chrome throttling
+        await new Promise((r) => setTimeout(r, 300));
+      }
+    }
+  }
+
+  function exitSelectMode() {
+    setSelectMode(false);
+    setSelected(new Set());
   }
 
   function formatDate(timestamp: number): string {
@@ -106,22 +165,38 @@ export default function HistoryApp() {
                 <circle cx="12" cy="13" r="3"/>
               </svg>
             </div>
-            <h1 className="history-title">History</h1>
+            <h1 className="history-title">{t('historyTitle')}</h1>
           </div>
-          <span className="history-subtitle">{captures.length} items</span>
+          <span className="history-subtitle">{captures.length} {t('historyItems', String(captures.length)).replace(`${captures.length} `, '')}</span>
         </div>
 
-        {/* Filters */}
-        <div className="history-filters">
-          {(['all', 'screenshot', 'recording'] as FilterType[]).map((f) => (
+        <div className="history-header-right">
+          {/* Filters */}
+          <div className="history-filters">
+            {(['all', 'screenshot', 'recording'] as FilterType[]).map((f) => (
+              <button
+                key={f}
+                className={`filter-btn ${filter === f ? 'active' : ''}`}
+                onClick={() => setFilter(f)}
+              >
+                {f === 'all' ? t('historyAll') : f === 'screenshot' ? t('historyScreenshots') : t('historyRecordings')}
+              </button>
+            ))}
+          </div>
+
+          {/* Select Mode Toggle */}
+          {captures.length > 0 && (
             <button
-              key={f}
-              className={`filter-btn ${filter === f ? 'active' : ''}`}
-              onClick={() => setFilter(f)}
+              className={`select-mode-btn ${selectMode ? 'active' : ''}`}
+              onClick={() => selectMode ? exitSelectMode() : setSelectMode(true)}
             >
-              {f === 'all' ? 'All' : f === 'screenshot' ? 'Screenshots' : 'Recordings'}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 11 12 14 22 4" />
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+              </svg>
+              {selectMode ? t('historyCancel') : t('historySelect')}
             </button>
-          ))}
+          )}
         </div>
       </header>
 
@@ -135,9 +210,9 @@ export default function HistoryApp() {
                 <circle cx="12" cy="13" r="3"/>
               </svg>
             </div>
-            <h3 className="history-empty-title">No captures yet</h3>
+            <h3 className="history-empty-title">{t('historyEmpty')}</h3>
             <p className="history-empty-text">
-              Take a screenshot or start a recording to see them here.
+              {t('historyEmptyDesc')}
             </p>
           </div>
         ) : (
@@ -145,10 +220,23 @@ export default function HistoryApp() {
             {captures.map((item, i) => (
               <div
                 key={item.id}
-                className="history-card"
+                className={`history-card ${selectMode && selected.has(item.id!) ? 'selected' : ''}`}
                 style={{ animationDelay: `${i * 40}ms` }}
-                onClick={() => handleOpen(item)}
+                onClick={() => selectMode ? toggleSelect(item.id!) : handleOpen(item)}
               >
+                {/* Checkbox overlay in select mode */}
+                {selectMode && (
+                  <div className="history-card-checkbox">
+                    <div className={`checkbox-indicator ${selected.has(item.id!) ? 'checked' : ''}`}>
+                      {selected.has(item.id!) && (
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <div className="history-card-thumb">
                   {thumbnailUrls[item.id!] ? (
                     <img src={thumbnailUrls[item.id!]} alt="" />
@@ -176,36 +264,38 @@ export default function HistoryApp() {
                     <span className="history-card-size">
                       {formatSize(item.fileSize)}
                     </span>
-                    <div style={{ display: 'flex', gap: '4px' }}>
-                      <button
-                        className="history-card-action-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDownload(item);
-                        }}
-                        title="Download"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                          <polyline points="7 10 12 15 17 10" />
-                          <line x1="12" x2="12" y1="15" y2="3" />
-                        </svg>
-                      </button>
-                      <button
-                        className="history-card-action-btn delete"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (item.id) handleDelete(item.id);
-                        }}
-                        title="Delete"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M3 6h18" />
-                          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                        </svg>
-                      </button>
-                    </div>
+                    {!selectMode && (
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        <button
+                          className="history-card-action-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownload(item);
+                          }}
+                          title="Download"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" x2="12" y1="15" y2="3" />
+                          </svg>
+                        </button>
+                        <button
+                          className="history-card-action-btn delete"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (item.id) handleDelete(item.id);
+                          }}
+                          title="Delete"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 6h18" />
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -213,6 +303,40 @@ export default function HistoryApp() {
           </div>
         )}
       </main>
+
+      {/* Batch Actions Bar */}
+      {selectMode && selected.size > 0 && (
+        <div className="batch-action-bar">
+          <div className="batch-info">
+            <span className="batch-count">{selected.size}</span> {t('historySelected', String(selected.size)).replace(`${selected.size} `, '')}
+          </div>
+          <div className="batch-buttons">
+            <button className="batch-btn select-all" onClick={toggleSelectAll}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 11 12 14 22 4" />
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+              </svg>
+              {selected.size === captures.length ? t('historyDeselectAll') : t('historySelectAll')}
+            </button>
+            <button className="batch-btn download" onClick={handleBatchDownload}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" x2="12" y1="15" y2="3" />
+              </svg>
+              {t('historyDownload')}
+            </button>
+            <button className="batch-btn delete" onClick={handleBatchDelete}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 6h18" />
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+              </svg>
+              {t('historyDelete')}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { sendMessage } from '../../src/lib/messaging';
+import { t } from '../../src/lib/i18n';
 import './style.css';
 
 // Inline SVG icons to avoid lucide-react bundle in popup
@@ -206,34 +207,34 @@ function App() {
 
         {/* Screenshot Section */}
         <section className="section">
-          <h2 className="section-title">Screenshot</h2>
+          <h2 className="section-title">{t('popupScreenshot')}</h2>
           <div className="action-grid">
             <button className="action-card" onClick={captureVisible} id="btn-capture-visible">
               <div className="action-card-icon screenshot">
                 {icons.camera}
               </div>
-              <span className="action-card-label">Visible Area</span>
+              <span className="action-card-label">{t('popupVisibleArea')}</span>
             </button>
 
             <button className="action-card" onClick={captureFullPage} id="btn-capture-fullpage">
               <div className="action-card-icon screenshot">
                 {icons.scrollText}
               </div>
-              <span className="action-card-label">Full Page</span>
+              <span className="action-card-label">{t('popupFullPage')}</span>
             </button>
 
             <button className="action-card" onClick={captureRegion} id="btn-capture-region">
               <div className="action-card-icon screenshot">
                 {icons.crop}
               </div>
-              <span className="action-card-label">Select Area</span>
+              <span className="action-card-label">{t('popupSelectArea')}</span>
             </button>
           </div>
         </section>
 
         {/* Recording Section */}
         <section className="section">
-          <h2 className="section-title">Screen Recording</h2>
+          <h2 className="section-title">{t('popupRecording')}</h2>
           <div className="action-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
             <button
               className="action-card"
@@ -244,7 +245,7 @@ function App() {
               <div className="action-card-icon recording">
                 {icons.video}
               </div>
-              <span className="action-card-label">Current Tab</span>
+              <span className="action-card-label">{t('popupCurrentTab')}</span>
             </button>
 
             <button
@@ -256,7 +257,7 @@ function App() {
               <div className="action-card-icon recording">
                 {icons.monitor}
               </div>
-              <span className="action-card-label">Desktop</span>
+              <span className="action-card-label">{t('popupDesktop')}</span>
             </button>
           </div>
         </section>
@@ -266,11 +267,11 @@ function App() {
           <div className="quick-actions">
             <button className="quick-action-btn" onClick={openHistory}>
               {icons.history}
-              <span>History</span>
+              <span>{t('popupHistory')}</span>
             </button>
             <button className="quick-action-btn" onClick={openSettings}>
               {icons.settings}
-              <span>Settings</span>
+              <span>{t('popupSettings')}</span>
             </button>
           </div>
         </section>
@@ -280,7 +281,7 @@ function App() {
           <div className="shortcut-hint">
             <span className="shortcut-hint-icon">{icons.keyboard}</span>
             <span className="shortcut-hint-text">
-              Quick capture: <kbd className="shortcut-kbd">Alt+Shift+S</kbd>
+              {t('popupQuickCapture')} <kbd className="shortcut-kbd">Alt+Shift+S</kbd>
             </span>
           </div>
         </section>

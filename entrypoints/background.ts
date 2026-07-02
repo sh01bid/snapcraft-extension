@@ -7,6 +7,60 @@ import type { Message, RegionBounds, AppSettings } from '../src/lib/types';
 export default defineBackground(() => {
   console.log('[SnapCraft] Background service worker started');
 
+  // ── Context Menu ──
+  browser.runtime.onInstalled.addListener(() => {
+    chrome.contextMenus.create({
+      id: 'snapcraft-visible',
+      title: chrome.i18n.getMessage('contextMenuVisible') || 'Capture Visible Area',
+      contexts: ['page'],
+    });
+    chrome.contextMenus.create({
+      id: 'snapcraft-fullpage',
+      title: chrome.i18n.getMessage('contextMenuFullPage') || 'Capture Full Page',
+      contexts: ['page'],
+    });
+    chrome.contextMenus.create({
+      id: 'snapcraft-region',
+      title: chrome.i18n.getMessage('contextMenuRegion') || 'Select Region',
+      contexts: ['page'],
+    });
+    chrome.contextMenus.create({
+      id: 'snapcraft-separator',
+      type: 'separator',
+      contexts: ['page'],
+    });
+    chrome.contextMenus.create({
+      id: 'snapcraft-record-tab',
+      title: chrome.i18n.getMessage('contextMenuRecordTab') || 'Record Current Tab',
+      contexts: ['page'],
+    });
+    chrome.contextMenus.create({
+      id: 'snapcraft-record-screen',
+      title: chrome.i18n.getMessage('contextMenuRecordScreen') || 'Record Desktop',
+      contexts: ['page'],
+    });
+  });
+
+  chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+    const sender = { tab } as chrome.runtime.MessageSender;
+    switch (info.menuItemId) {
+      case 'snapcraft-visible':
+        handleCaptureVisible(sender);
+        break;
+      case 'snapcraft-fullpage':
+        handleCaptureFullPage(sender);
+        break;
+      case 'snapcraft-region':
+        if (tab?.id) injectRegionSelector(tab.id);
+        break;
+      case 'snapcraft-record-tab':
+        handleStartRecordingTab(sender);
+        break;
+      case 'snapcraft-record-screen':
+        handleStartRecordingScreen(sender);
+        break;
+    }
+  });
   // ── Message Router ──
   onMessage((message: Message, sender, sendResponse) => {
     switch (message.type) {
