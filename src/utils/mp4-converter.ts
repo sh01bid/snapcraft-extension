@@ -55,7 +55,8 @@ function getOutputDimensions(
  */
 export async function convertWebMToMP4(
   webmBlob: Blob,
-  onProgress?: (p: ConversionProgress) => void
+  onProgress?: (p: ConversionProgress) => void,
+  knownDurationMs?: number
 ): Promise<Blob> {
   if (typeof VideoEncoder === 'undefined') {
     throw new Error('WebCodecs API is not supported');
@@ -79,9 +80,48 @@ export async function convertWebMToMP4(
 
   const srcWidth = video.videoWidth;
   const srcHeight = video.videoHeight;
-  const duration = video.duration;
+  let duration = video.duration;
 
-  if (!srcWidth || !srcHeight || !isFinite(duration)) {
+  // WebM from MediaRecorder often has Infinity duration
+  // Use the known duration from IndexedDB, or probe it
+  if (!isFinite(duration) && knownDurationMs && knownDurationMs > 0) {
+    duration = knownDurationMs / 1000;
+    console.log(`[SnapCraft] Using known duration: ${duration}s`);
+  }
+
+  if (!isFinite(duration)) {
+    // Probe duration by seeking to a very large time
+    // The browser will clamp to the actual end
+    video.currentTime = 1e10;
+    await new Promise<void>((resolve) => {
+      const onSeeked = () => {
+        video.removeEventListener('seeked', onSeeked);
+        resolve();
+      };
+      video.addEventListener('seeked', onSeeked);
+      setTimeout(() => {
+        video.removeEventListener('seeked', onSeeked);
+        resolve();
+      }, 3000);
+    });
+    duration = video.currentTime;
+    console.log(`[SnapCraft] Probed duration: ${duration}s`);
+    // Reset to beginning
+    video.currentTime = 0;
+    await new Promise<void>((resolve) => {
+      const onSeeked = () => {
+        video.removeEventListener('seeked', onSeeked);
+        resolve();
+      };
+      video.addEventListener('seeked', onSeeked);
+      setTimeout(() => {
+        video.removeEventListener('seeked', onSeeked);
+        resolve();
+      }, 1000);
+    });
+  }
+
+  if (!srcWidth || !srcHeight || !isFinite(duration) || duration <= 0) {
     URL.revokeObjectURL(videoUrl);
     throw new Error(`Invalid video: ${srcWidth}x${srcHeight}, duration: ${duration}`);
   }

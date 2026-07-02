@@ -104,9 +104,11 @@ export default function PreviewApp() {
         setConverting(true);
         setConversionProgress({ phase: 'preparing', progress: 0 });
 
-        const mp4Blob = await convertWebMToMP4(videoBlob, (p) => {
-          setConversionProgress(p);
-        });
+        const mp4Blob = await convertWebMToMP4(
+          videoBlob,
+          (p) => setConversionProgress(p),
+          meta?.duration
+        );
 
         const filename = generateFilename(pattern, 'mp4');
         await downloadBlob(mp4Blob, filename);
