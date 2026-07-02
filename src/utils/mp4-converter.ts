@@ -3,59 +3,121 @@
 import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
 
 export interface ConversionProgress {
-  phase: 'decoding' | 'encoding' | 'muxing' | 'done';
+  phase: 'preparing' | 'encoding' | 'finalizing' | 'done';
   progress: number; // 0-1
 }
 
 /**
+ * Select the right H.264 codec string based on resolution.
+ * AVC levels have maximum macroblocks-per-second and coded area limits.
+ */
+function getAVCCodec(width: number, height: number): string {
+  const area = width * height;
+  // Level 5.2 - up to 36864 macroblocks (e.g. 4096x2304)
+  if (area > 2097152) return 'avc1.640034';
+  // Level 5.1 - up to 36864 macroblocks (e.g. 4096x2160)
+  if (area > 983040) return 'avc1.640033';
+  // Level 4.1 - up to 8192 macroblocks (e.g. 2048x1024)
+  if (area > 522240) return 'avc1.640029';
+  // Level 4.0 - (e.g. 1920x1080)
+  if (area > 245760) return 'avc1.640028';
+  // Level 3.1 - (e.g. 1280x720)
+  return 'avc1.64001f';
+}
+
+/**
+ * Calculate output dimensions. Scale down if too large for reliable encoding.
+ * Max 1920 wide to keep conversion fast and reliable.
+ */
+function getOutputDimensions(
+  srcWidth: number,
+  srcHeight: number,
+  maxWidth = 1920
+): { width: number; height: number; scaled: boolean } {
+  if (srcWidth <= maxWidth) {
+    // Ensure even dimensions (required by H.264)
+    return {
+      width: srcWidth & ~1,
+      height: srcHeight & ~1,
+      scaled: false,
+    };
+  }
+  const scale = maxWidth / srcWidth;
+  return {
+    width: maxWidth & ~1,
+    height: (Math.round(srcHeight * scale)) & ~1,
+    scaled: true,
+  };
+}
+
+/**
  * Convert a WebM blob to MP4 using WebCodecs API + mp4-muxer.
- * 
- * Limitations:
- * - Best for recordings under 5 minutes
- * - Longer recordings may be slow or cause memory issues
- * - Requires Chrome 94+ (WebCodecs support)
  */
 export async function convertWebMToMP4(
   webmBlob: Blob,
   onProgress?: (p: ConversionProgress) => void
 ): Promise<Blob> {
-  // Check WebCodecs support
-  if (typeof VideoDecoder === 'undefined' || typeof VideoEncoder === 'undefined') {
-    throw new Error('WebCodecs API not supported in this browser');
+  if (typeof VideoEncoder === 'undefined') {
+    throw new Error('WebCodecs API is not supported');
   }
 
-  onProgress?.({ phase: 'decoding', progress: 0 });
+  onProgress?.({ phase: 'preparing', progress: 0 });
 
-  // Step 1: Extract video frames from WebM using a <video> element + canvas
+  // Create video element to read the WebM
   const videoUrl = URL.createObjectURL(webmBlob);
   const video = document.createElement('video');
   video.muted = true;
+  video.playsInline = true;
   video.src = videoUrl;
 
+  // Wait for metadata
   await new Promise<void>((resolve, reject) => {
     video.onloadedmetadata = () => resolve();
-    video.onerror = () => reject(new Error('Failed to load video'));
+    video.onerror = () => reject(new Error('Failed to load WebM video'));
+    setTimeout(() => reject(new Error('Video load timeout')), 10000);
   });
 
-  const width = video.videoWidth;
-  const height = video.videoHeight;
+  const srcWidth = video.videoWidth;
+  const srcHeight = video.videoHeight;
   const duration = video.duration;
-  const fps = 30;
-  const totalFrames = Math.ceil(duration * fps);
 
-  // Step 2: Setup MP4 muxer
+  if (!srcWidth || !srcHeight || !isFinite(duration)) {
+    URL.revokeObjectURL(videoUrl);
+    throw new Error(`Invalid video: ${srcWidth}x${srcHeight}, duration: ${duration}`);
+  }
+
+  // Calculate output dimensions (scale down 4K to 1080p)
+  const out = getOutputDimensions(srcWidth, srcHeight);
+  const codec = getAVCCodec(out.width, out.height);
+
+  console.log(`[SnapCraft] MP4 conversion: ${srcWidth}x${srcHeight} → ${out.width}x${out.height}, codec=${codec}${out.scaled ? ' (scaled)' : ''}`);
+
+  // Check if this codec/resolution is supported
+  const support = await VideoEncoder.isConfigSupported({
+    codec,
+    width: out.width,
+    height: out.height,
+    bitrate: 5_000_000,
+  });
+
+  if (!support.supported) {
+    URL.revokeObjectURL(videoUrl);
+    throw new Error(`H.264 encoding not supported for ${out.width}x${out.height}`);
+  }
+
+  // Setup MP4 muxer
   const muxer = new Muxer({
     target: new ArrayBufferTarget(),
     video: {
       codec: 'avc',
-      width,
-      height,
+      width: out.width,
+      height: out.height,
     },
     fastStart: 'in-memory',
   });
 
-  // Step 3: Setup H.264 encoder
-  const encodedChunks: { chunk: EncodedVideoChunk; meta?: EncodedVideoChunkMetadata }[] = [];
+  // Setup H.264 encoder
+  let encodeError: Error | null = null;
 
   const encoder = new VideoEncoder({
     output: (chunk, meta) => {
@@ -63,39 +125,63 @@ export async function convertWebMToMP4(
     },
     error: (e) => {
       console.error('[SnapCraft] Encoder error:', e);
+      encodeError = new Error(e.message);
     },
   });
 
   encoder.configure({
-    codec: 'avc1.640028', // H.264 High Profile Level 4.0
-    width,
-    height,
+    codec,
+    width: out.width,
+    height: out.height,
     bitrate: 5_000_000,
-    framerate: fps,
+    framerate: 30,
   });
 
-  // Step 4: Extract frames and encode
-  const canvas = new OffscreenCanvas(width, height);
+  onProgress?.({ phase: 'encoding', progress: 0 });
+
+  // Canvas for frame extraction (at output dimensions)
+  const canvas = document.createElement('canvas');
+  canvas.width = out.width;
+  canvas.height = out.height;
   const ctx = canvas.getContext('2d')!;
 
+  const fps = 30;
+  const totalFrames = Math.ceil(duration * fps);
+
+  // Process frames sequentially
   for (let i = 0; i < totalFrames; i++) {
+    if (encodeError) {
+      encoder.close();
+      URL.revokeObjectURL(videoUrl);
+      throw encodeError;
+    }
+
     const targetTime = i / fps;
+    if (targetTime > duration) break;
 
     // Seek to target time
     video.currentTime = targetTime;
     await new Promise<void>((resolve) => {
-      video.onseeked = () => resolve();
+      const onSeeked = () => {
+        video.removeEventListener('seeked', onSeeked);
+        resolve();
+      };
+      video.addEventListener('seeked', onSeeked);
+      setTimeout(() => {
+        video.removeEventListener('seeked', onSeeked);
+        resolve();
+      }, 500);
     });
 
-    // Draw frame to canvas
-    ctx.drawImage(video, 0, 0, width, height);
+    // Draw frame to canvas (this also handles scaling)
+    ctx.drawImage(video, 0, 0, out.width, out.height);
 
-    // Create VideoFrame from canvas
+    // Create VideoFrame
     const frame = new VideoFrame(canvas, {
-      timestamp: targetTime * 1_000_000, // microseconds
+      timestamp: Math.round(targetTime * 1_000_000),
     });
 
-    // Encode frame (keyframe every 2 seconds)
+    // Encode (keyframe every 2 seconds)
     const isKeyframe = i % (fps * 2) === 0;
     encoder.encode(frame, { keyFrame: isKeyframe });
     frame.close();
@@ -106,32 +192,35 @@ export async function convertWebMToMP4(
       progress: (i + 1) / totalFrames,
     });
 
-    // Yield to prevent UI freeze
-    if (i % 5 === 0) {
+    // Yield to UI thread every 3 frames
+    if (i % 3 === 0) {
       await new Promise((r) => setTimeout(r, 0));
     }
   }
 
-  // Step 5: Flush and finalize
-  onProgress?.({ phase: 'muxing', progress: 0.95 });
+  // Finalize
+  onProgress?.({ phase: 'finalizing', progress: 0.95 });
+
   await encoder.flush();
   encoder.close();
   muxer.finalize();
 
-  // Cleanup
   URL.revokeObjectURL(videoUrl);
 
-  // Get result
   const target = muxer.target as ArrayBufferTarget;
   const mp4Blob = new Blob([target.buffer], { type: 'video/mp4' });
 
+  if (mp4Blob.size < 100) {
+    throw new Error('MP4 output is too small — conversion may have failed');
+  }
+
   onProgress?.({ phase: 'done', progress: 1 });
+  console.log(`[SnapCraft] MP4 conversion done: ${(mp4Blob.size / 1048576).toFixed(1)} MB`);
   return mp4Blob;
 }
 
 /**
  * Check if a recording is suitable for MP4 conversion.
- * Returns a warning message if the video is too long, or null if ok.
  */
 export function getConversionWarning(durationMs: number): string | null {
   const minutes = durationMs / 60_000;

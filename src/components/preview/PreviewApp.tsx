@@ -81,9 +81,9 @@ export default function PreviewApp() {
   function getProgressText(p: ConversionProgress): string {
     const pct = Math.round(p.progress * 100);
     switch (p.phase) {
-      case 'decoding': return 'Preparing video...';
+      case 'preparing': return 'Preparing video...';
       case 'encoding': return `Converting: ${pct}%`;
-      case 'muxing': return 'Finalizing MP4...';
+      case 'finalizing': return 'Finalizing MP4...';
       case 'done': return 'Done!';
       default: return 'Processing...';
     }
@@ -102,7 +102,7 @@ export default function PreviewApp() {
       // MP4 conversion
       try {
         setConverting(true);
-        setConversionProgress({ phase: 'decoding', progress: 0 });
+        setConversionProgress({ phase: 'preparing', progress: 0 });
 
         const mp4Blob = await convertWebMToMP4(videoBlob, (p) => {
           setConversionProgress(p);
@@ -113,7 +113,7 @@ export default function PreviewApp() {
         showToast('Downloaded as MP4!');
       } catch (err: any) {
         console.error('[SnapCraft] MP4 conversion error:', err);
-        showToast(`Conversion failed: ${err.message}. Downloading as WebM.`);
+        showToast(`⚠️ ${err.message} — Downloading as WebM instead.`, 5000);
         const filename = generateFilename(pattern, 'webm');
         await downloadBlob(videoBlob, filename);
       } finally {
@@ -142,9 +142,9 @@ export default function PreviewApp() {
     }
   }
 
-  function showToast(msg: string) {
+  function showToast(msg: string, durationMs = 3000) {
     setToast(msg);
-    setTimeout(() => setToast(null), 3000);
+    setTimeout(() => setToast(null), durationMs);
   }
 
   return (
