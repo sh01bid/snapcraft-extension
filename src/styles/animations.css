@@ -1,0 +1,125 @@
+/* SnapCraft Animations */
+
+@keyframes sc-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sc-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes sc-slide-up {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes sc-slide-down {
+  from { transform: translateY(-8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes sc-scale-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes sc-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes sc-recording-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+  }
+}
+
+@keyframes sc-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes sc-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes sc-toast-in {
+  from {
+    transform: translateX(100%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes sc-toast-out {
+  from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes sc-countdown {
+  from {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes sc-glow-pulse {
+  0%, 100% {
+    box-shadow: var(--sc-shadow-glow);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(108, 99, 255, 0.5);
+  }
+}
+
+/* Utility Classes */
+.sc-animate-fade-in {
+  animation: sc-fade-in var(--sc-transition-base) both;
+}
+
+.sc-animate-slide-up {
+  animation: sc-slide-up var(--sc-transition-slow) both;
+}
+
+.sc-animate-scale-in {
+  animation: sc-scale-in var(--sc-transition-spring) both;
+}
+
+.sc-animate-pulse {
+  animation: sc-pulse 2s ease-in-out infinite;
+}
+
+.sc-animate-recording {
+  animation: sc-recording-pulse 1.5s ease-in-out infinite;
+}
+
+.sc-animate-spin {
+  animation: sc-spin 1s linear infinite;
+}

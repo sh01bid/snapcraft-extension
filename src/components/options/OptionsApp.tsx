@@ -1,0 +1,389 @@
+/* SnapCraft — Options / Settings Page */
+
+import { useState, useEffect, useCallback } from 'react';
+import { getSettings, updateSettings } from '../../lib/storage';
+import type { AppSettings } from '../../lib/types';
+import { DEFAULT_SETTINGS } from '../../lib/types';
+import './OptionsApp.css';
+
+export default function OptionsApp() {
+  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  const [toast, setToast] = useState(false);
+
+  useEffect(() => {
+    getSettings().then(setSettings);
+  }, []);
+
+  const save = useCallback(
+    async (partial: Partial<AppSettings>) => {
+      const updated = { ...settings, ...partial };
+      setSettings(updated);
+      await updateSettings(partial);
+      setToast(true);
+      setTimeout(() => setToast(false), 2000);
+    },
+    [settings]
+  );
+
+  return (
+    <div className="options-page">
+      {/* Header */}
+      <header className="options-header">
+        <div className="options-header-inner">
+          <div className="options-logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+              <circle cx="12" cy="13" r="3"/>
+            </svg>
+          </div>
+          <h1 className="options-title">Settings</h1>
+          <span className="options-version">v1.0.0</span>
+        </div>
+      </header>
+
+      {/* Content */}
+      <main className="options-content">
+        {/* Screenshot Settings */}
+        <section className="options-section">
+          <div className="options-section-header">
+            <div className="options-section-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+                <circle cx="12" cy="13" r="3"/>
+              </svg>
+            </div>
+            <h2 className="options-section-title">Screenshot</h2>
+          </div>
+          <div className="options-section-body">
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Image Format</div>
+                <div className="setting-description">Default format for saved screenshots</div>
+              </div>
+              <select
+                className="setting-select"
+                value={settings.imageFormat}
+                onChange={(e) => save({ imageFormat: e.target.value as any })}
+              >
+                <option value="png">PNG</option>
+                <option value="jpeg">JPEG</option>
+                <option value="webp">WebP</option>
+              </select>
+            </div>
+
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Image Quality</div>
+                <div className="setting-description">For JPEG and WebP formats (1-100)</div>
+              </div>
+              <div className="setting-range">
+                <input
+                  type="range"
+                  min="10"
+                  max="100"
+                  step="5"
+                  value={settings.imageQuality}
+                  onChange={(e) => save({ imageQuality: Number(e.target.value) })}
+                />
+                <span className="setting-range-value">{settings.imageQuality}%</span>
+              </div>
+            </div>
+
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Auto Copy to Clipboard</div>
+                <div className="setting-description">Automatically copy screenshots to clipboard</div>
+              </div>
+              <label className="setting-toggle">
+                <input
+                  type="checkbox"
+                  checked={settings.autoCopyToClipboard}
+                  onChange={(e) => save({ autoCopyToClipboard: e.target.checked })}
+                />
+                <span className="setting-toggle-track" />
+              </label>
+            </div>
+          </div>
+        </section>
+
+        {/* Recording Settings */}
+        <section className="options-section">
+          <div className="options-section-header">
+            <div className="options-section-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/>
+                <rect width="14" height="12" x="2" y="6" rx="2"/>
+              </svg>
+            </div>
+            <h2 className="options-section-title">Recording</h2>
+          </div>
+          <div className="options-section-body">
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Video Format</div>
+                <div className="setting-description">WebM (native) or MP4 (converted via WebCodecs)</div>
+              </div>
+              <select
+                className="setting-select"
+                value={settings.videoFormat}
+                onChange={(e) => save({ videoFormat: e.target.value as any })}
+              >
+                <option value="webm">WebM (VP9)</option>
+                <option value="mp4">MP4 (H.264)</option>
+              </select>
+            </div>
+
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Recording Quality</div>
+                <div className="setting-description">Affects file size and clarity</div>
+              </div>
+              <select
+                className="setting-select"
+                value={settings.recordingQuality}
+                onChange={(e) => save({ recordingQuality: e.target.value as any })}
+              >
+                <option value="low">Low (720p)</option>
+                <option value="medium">Medium (1080p)</option>
+                <option value="high">High (Original)</option>
+              </select>
+            </div>
+
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Frame Rate</div>
+                <div className="setting-description">Frames per second</div>
+              </div>
+              <select
+                className="setting-select"
+                value={settings.recordingFps}
+                onChange={(e) => save({ recordingFps: Number(e.target.value) })}
+              >
+                <option value="15">15 FPS</option>
+                <option value="24">24 FPS</option>
+                <option value="30">30 FPS</option>
+                <option value="60">60 FPS</option>
+              </select>
+            </div>
+
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Countdown</div>
+                <div className="setting-description">Seconds before recording starts</div>
+              </div>
+              <select
+                className="setting-select"
+                value={settings.recordingCountdown}
+                onChange={(e) => save({ recordingCountdown: Number(e.target.value) })}
+              >
+                <option value="0">No countdown</option>
+                <option value="3">3 seconds</option>
+                <option value="5">5 seconds</option>
+                <option value="10">10 seconds</option>
+              </select>
+            </div>
+
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">System Audio</div>
+                <div className="setting-description">Record tab or system audio</div>
+              </div>
+              <label className="setting-toggle">
+                <input
+                  type="checkbox"
+                  checked={settings.recordingAudio}
+                  onChange={(e) => save({ recordingAudio: e.target.checked })}
+                />
+                <span className="setting-toggle-track" />
+              </label>
+            </div>
+
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Microphone</div>
+                <div className="setting-description">Record microphone audio</div>
+              </div>
+              <label className="setting-toggle">
+                <input
+                  type="checkbox"
+                  checked={settings.recordingMicrophone}
+                  onChange={(e) => save({ recordingMicrophone: e.target.checked })}
+                />
+                <span className="setting-toggle-track" />
+              </label>
+            </div>
+          </div>
+        </section>
+
+        {/* General Settings */}
+        <section className="options-section">
+          <div className="options-section-header">
+            <div className="options-section-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </div>
+            <h2 className="options-section-title">General</h2>
+          </div>
+          <div className="options-section-body">
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Theme</div>
+                <div className="setting-description">Visual appearance</div>
+              </div>
+              <select
+                className="setting-select"
+                value={settings.theme}
+                onChange={(e) => save({ theme: e.target.value as any })}
+              >
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="system">System</option>
+              </select>
+            </div>
+
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Notifications</div>
+                <div className="setting-description">Show desktop notifications after capture</div>
+              </div>
+              <label className="setting-toggle">
+                <input
+                  type="checkbox"
+                  checked={settings.showNotifications}
+                  onChange={(e) => save({ showNotifications: e.target.checked })}
+                />
+                <span className="setting-toggle-track" />
+              </label>
+            </div>
+
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Max History Items</div>
+                <div className="setting-description">Older items are automatically removed</div>
+              </div>
+              <select
+                className="setting-select"
+                value={settings.maxHistoryItems}
+                onChange={(e) => save({ maxHistoryItems: Number(e.target.value) })}
+              >
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="500">500</option>
+              </select>
+            </div>
+
+            <div className="setting-row">
+              <div>
+                <div className="setting-label">Filename Pattern</div>
+                <div className="setting-description">Use {'{date}'}, {'{time}'}, {'{timestamp}'}</div>
+              </div>
+              <input
+                type="text"
+                className="setting-input"
+                value={settings.filenamePattern}
+                onChange={(e) => save({ filenamePattern: e.target.value })}
+                style={{ width: 200 }}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Shortcuts Section */}
+        <section className="options-section">
+          <div className="options-section-header">
+            <div className="options-section-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="20" height="16" x="2" y="4" rx="2"/>
+                <path d="M6 8h.01"/>
+                <path d="M10 8h.01"/>
+                <path d="M14 8h.01"/>
+                <path d="M18 8h.01"/>
+                <path d="M8 12h.01"/>
+                <path d="M12 12h.01"/>
+                <path d="M16 12h.01"/>
+                <path d="M7 16h10"/>
+              </svg>
+            </div>
+            <h2 className="options-section-title">Keyboard Shortcuts</h2>
+          </div>
+          <div className="options-section-body">
+            <div className="setting-row">
+              <div className="setting-label">Visible Area Screenshot</div>
+              <kbd style={{
+                padding: '2px 8px',
+                background: 'var(--sc-bg-elevated)',
+                border: '1px solid var(--sc-border)',
+                borderRadius: '4px',
+                fontFamily: 'var(--sc-font-mono)',
+                fontSize: 'var(--sc-text-sm)',
+                color: 'var(--sc-text-secondary)',
+              }}>Alt+Shift+V</kbd>
+            </div>
+            <div className="setting-row">
+              <div className="setting-label">Full Page Screenshot</div>
+              <kbd style={{
+                padding: '2px 8px',
+                background: 'var(--sc-bg-elevated)',
+                border: '1px solid var(--sc-border)',
+                borderRadius: '4px',
+                fontFamily: 'var(--sc-font-mono)',
+                fontSize: 'var(--sc-text-sm)',
+                color: 'var(--sc-text-secondary)',
+              }}>Alt+Shift+F</kbd>
+            </div>
+            <div className="setting-row">
+              <div className="setting-label">Select Area Screenshot</div>
+              <kbd style={{
+                padding: '2px 8px',
+                background: 'var(--sc-bg-elevated)',
+                border: '1px solid var(--sc-border)',
+                borderRadius: '4px',
+                fontFamily: 'var(--sc-font-mono)',
+                fontSize: 'var(--sc-text-sm)',
+                color: 'var(--sc-text-secondary)',
+              }}>Alt+Shift+S</kbd>
+            </div>
+            <div className="setting-row">
+              <div className="setting-label">Record Tab</div>
+              <kbd style={{
+                padding: '2px 8px',
+                background: 'var(--sc-bg-elevated)',
+                border: '1px solid var(--sc-border)',
+                borderRadius: '4px',
+                fontFamily: 'var(--sc-font-mono)',
+                fontSize: 'var(--sc-text-sm)',
+                color: 'var(--sc-text-secondary)',
+              }}>Alt+Shift+R</kbd>
+            </div>
+            <div className="setting-row" style={{ justifyContent: 'flex-start' }}>
+              <div className="setting-description" style={{ marginTop: 0 }}>
+                To change shortcuts, visit <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+                  }}
+                  style={{ color: 'var(--sc-primary-400)', textDecoration: 'underline' }}
+                >chrome://extensions/shortcuts</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Toast */}
+      {toast && (
+        <div className="options-toast">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          Settings saved
+        </div>
+      )}
+    </div>
+  );
+}

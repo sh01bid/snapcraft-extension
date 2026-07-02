@@ -1,0 +1,315 @@
+@import '../../styles/design-system.css';
+@import '../../styles/reset.css';
+@import '../../styles/animations.css';
+
+html, body, #root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.editor {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--sc-bg-primary);
+}
+
+/* ── Top Toolbar ── */
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-2);
+  padding: var(--sc-space-2) var(--sc-space-4);
+  background: var(--sc-bg-secondary);
+  border-bottom: 1px solid var(--sc-border);
+  flex-shrink: 0;
+  min-height: 48px;
+}
+
+.editor-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  background: var(--sc-bg-surface);
+  border-radius: var(--sc-radius-md);
+  border: 1px solid var(--sc-border);
+}
+
+.editor-toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--sc-border);
+  margin: 0 var(--sc-space-2);
+}
+
+.tool-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--sc-radius-sm);
+  color: var(--sc-text-secondary);
+  transition: all var(--sc-transition-fast);
+  position: relative;
+}
+
+.tool-btn:hover {
+  background: var(--sc-bg-hover);
+  color: var(--sc-text-primary);
+}
+
+.tool-btn.active {
+  background: var(--sc-primary-500);
+  color: white;
+  box-shadow: var(--sc-shadow-glow);
+}
+
+.tool-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.tool-btn[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 6px;
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border);
+  border-radius: 4px;
+  font-size: 10px;
+  color: var(--sc-text-secondary);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--sc-transition-fast);
+  z-index: 10;
+}
+
+.tool-btn:hover[title]::after {
+  opacity: 1;
+}
+
+/* ── Color Picker ── */
+.color-picker-group {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-2);
+}
+
+.color-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--sc-radius-sm);
+  border: 2px solid var(--sc-border);
+  cursor: pointer;
+  transition: all var(--sc-transition-fast);
+  position: relative;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch.active {
+  border-color: white;
+  box-shadow: 0 0 0 2px var(--sc-primary-500);
+}
+
+.color-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* ── Stroke Width ── */
+.stroke-slider {
+  width: 80px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--sc-border);
+  border-radius: 2px;
+  outline: none;
+}
+
+.stroke-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--sc-primary-500);
+  cursor: pointer;
+  box-shadow: var(--sc-shadow-sm);
+}
+
+/* ── Right Actions ── */
+.editor-toolbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-2);
+}
+
+.editor-action-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-2);
+  padding: var(--sc-space-2) var(--sc-space-3);
+  border-radius: var(--sc-radius-sm);
+  font-size: var(--sc-text-sm);
+  font-weight: var(--sc-font-medium);
+  transition: all var(--sc-transition-fast);
+}
+
+.editor-action-btn.secondary {
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border);
+  color: var(--sc-text-secondary);
+}
+
+.editor-action-btn.secondary:hover {
+  background: var(--sc-bg-hover);
+  color: var(--sc-text-primary);
+}
+
+.editor-action-btn.primary {
+  background: var(--sc-gradient-primary);
+  color: white;
+  border: none;
+}
+
+.editor-action-btn.primary:hover {
+  opacity: 0.9;
+}
+
+.editor-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Canvas Area ── */
+.editor-canvas-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(45deg, var(--sc-bg-tertiary) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--sc-bg-tertiary) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--sc-bg-tertiary) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--sc-bg-tertiary) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+.editor-canvas {
+  box-shadow: var(--sc-shadow-xl);
+  cursor: crosshair;
+}
+
+.editor-canvas.tool-select {
+  cursor: default;
+}
+
+.editor-canvas.tool-text {
+  cursor: text;
+}
+
+.editor-canvas.tool-step {
+  cursor: copy;
+}
+
+/* ── Text Input Overlay ── */
+.text-input-overlay {
+  position: absolute;
+  background: transparent;
+  border: 2px dashed var(--sc-primary-400);
+  color: var(--sc-text-primary);
+  font-family: Inter, sans-serif;
+  padding: 2px 4px;
+  outline: none;
+  min-width: 50px;
+  resize: none;
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* ── Zoom Controls ── */
+.zoom-controls {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-1);
+  padding: var(--sc-space-1);
+  background: var(--sc-glass-bg);
+  backdrop-filter: blur(var(--sc-glass-blur));
+  border: 1px solid var(--sc-glass-border);
+  border-radius: var(--sc-radius-md);
+}
+
+.zoom-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--sc-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sc-text-secondary);
+  transition: all var(--sc-transition-fast);
+}
+
+.zoom-btn:hover {
+  background: var(--sc-bg-hover);
+  color: var(--sc-text-primary);
+}
+
+.zoom-label {
+  font-size: var(--sc-text-xs);
+  font-weight: var(--sc-font-medium);
+  color: var(--sc-text-secondary);
+  min-width: 40px;
+  text-align: center;
+  font-family: var(--sc-font-mono);
+}
+
+/* ── Toast ── */
+.editor-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--sc-space-3) var(--sc-space-5);
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-md);
+  color: var(--sc-text-primary);
+  font-size: var(--sc-text-sm);
+  box-shadow: var(--sc-shadow-lg);
+  animation: sc-slide-up var(--sc-transition-spring) both;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-2);
+}
+
+.editor-toast.success {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.editor-toast svg {
+  width: 16px;
+  height: 16px;
+  color: var(--sc-success-500);
+}

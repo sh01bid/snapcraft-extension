@@ -1,0 +1,258 @@
+@import '../../styles/design-system.css';
+@import '../../styles/reset.css';
+@import '../../styles/animations.css';
+
+html, body, #root {
+  min-height: 100vh;
+}
+
+.options-page {
+  min-height: 100vh;
+  background: var(--sc-bg-primary);
+  background-image: var(--sc-gradient-glow);
+}
+
+/* ── Header ── */
+.options-header {
+  padding: var(--sc-space-6) var(--sc-space-8);
+  border-bottom: 1px solid var(--sc-border);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.options-header-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-3);
+}
+
+.options-logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--sc-gradient-primary);
+  border-radius: var(--sc-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: var(--sc-shadow-glow);
+}
+
+.options-title {
+  font-size: var(--sc-text-xl);
+  font-weight: var(--sc-font-bold);
+}
+
+.options-version {
+  font-size: var(--sc-text-sm);
+  color: var(--sc-text-tertiary);
+  font-family: var(--sc-font-mono);
+  margin-left: auto;
+}
+
+/* ── Content ── */
+.options-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--sc-space-6) var(--sc-space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-6);
+}
+
+/* ── Section ── */
+.options-section {
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-lg);
+  overflow: hidden;
+  animation: sc-slide-up var(--sc-transition-slow) both;
+}
+
+.options-section:nth-child(2) { animation-delay: 60ms; }
+.options-section:nth-child(3) { animation-delay: 120ms; }
+.options-section:nth-child(4) { animation-delay: 180ms; }
+
+.options-section-header {
+  padding: var(--sc-space-4) var(--sc-space-5);
+  border-bottom: 1px solid var(--sc-border);
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-3);
+}
+
+.options-section-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--sc-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sc-primary-400);
+  background: rgba(108, 99, 255, 0.1);
+}
+
+.options-section-title {
+  font-size: var(--sc-text-md);
+  font-weight: var(--sc-font-semibold);
+}
+
+.options-section-body {
+  padding: var(--sc-space-4) var(--sc-space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-space-4);
+}
+
+/* ── Setting Row ── */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-space-4);
+}
+
+.setting-label {
+  font-size: var(--sc-text-sm);
+  color: var(--sc-text-primary);
+}
+
+.setting-description {
+  font-size: var(--sc-text-xs);
+  color: var(--sc-text-tertiary);
+  margin-top: 2px;
+}
+
+/* ── Select ── */
+.setting-select {
+  padding: var(--sc-space-2) var(--sc-space-3);
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-sm);
+  color: var(--sc-text-primary);
+  font-size: var(--sc-text-sm);
+  cursor: pointer;
+  min-width: 120px;
+  transition: border-color var(--sc-transition-fast);
+}
+
+.setting-select:hover {
+  border-color: var(--sc-border-hover);
+}
+
+.setting-select:focus {
+  border-color: var(--sc-primary-500);
+}
+
+/* ── Toggle ── */
+.setting-toggle {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  cursor: pointer;
+}
+
+.setting-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.setting-toggle-track {
+  position: absolute;
+  inset: 0;
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border);
+  border-radius: 11px;
+  transition: all var(--sc-transition-base);
+}
+
+.setting-toggle input:checked + .setting-toggle-track {
+  background: var(--sc-primary-500);
+  border-color: var(--sc-primary-500);
+}
+
+.setting-toggle-track::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  top: 2px;
+  left: 2px;
+  transition: transform var(--sc-transition-base);
+  box-shadow: var(--sc-shadow-sm);
+}
+
+.setting-toggle input:checked + .setting-toggle-track::after {
+  transform: translateX(18px);
+}
+
+/* ── Input ── */
+.setting-input {
+  padding: var(--sc-space-2) var(--sc-space-3);
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-sm);
+  color: var(--sc-text-primary);
+  font-size: var(--sc-text-sm);
+  width: 120px;
+  transition: border-color var(--sc-transition-fast);
+}
+
+.setting-input:focus {
+  border-color: var(--sc-primary-500);
+}
+
+/* ── Range ── */
+.setting-range {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-2);
+}
+
+.setting-range input[type="range"] {
+  width: 120px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--sc-border);
+  border-radius: 2px;
+}
+
+.setting-range input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--sc-primary-500);
+  cursor: pointer;
+}
+
+.setting-range-value {
+  font-size: var(--sc-text-xs);
+  color: var(--sc-text-tertiary);
+  font-family: var(--sc-font-mono);
+  min-width: 30px;
+  text-align: right;
+}
+
+/* ── Saved Toast ── */
+.options-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: var(--sc-space-3) var(--sc-space-5);
+  background: var(--sc-bg-elevated);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: var(--sc-radius-md);
+  color: var(--sc-text-primary);
+  font-size: var(--sc-text-sm);
+  box-shadow: var(--sc-shadow-lg);
+  animation: sc-slide-up var(--sc-transition-spring) both;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-space-2);
+}
