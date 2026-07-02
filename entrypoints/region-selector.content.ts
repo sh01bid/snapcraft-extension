@@ -94,7 +94,9 @@ export default defineContentScript({
           to { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         .sc-toolbar button {
-          all: unset;
+          margin: 0;
+          border: none;
+          outline: none;
           box-sizing: border-box;
           display: flex;
           align-items: center;
@@ -107,6 +109,7 @@ export default defineContentScript({
           font-weight: 600;
           transition: all 0.12s ease;
           line-height: 1;
+          text-decoration: none;
         }
         .sc-toolbar button:active {
           transform: scale(0.96);
@@ -114,21 +117,22 @@ export default defineContentScript({
         .sc-toolbar button svg {
           flex-shrink: 0;
         }
-        .sc-btn-confirm {
+        .sc-toolbar .sc-btn-confirm {
           background: #6c63ff;
-          color: white;
+          color: #ffffff;
         }
-        .sc-btn-confirm:hover {
+        .sc-toolbar .sc-btn-confirm:hover {
           background: #7c74ff;
           box-shadow: 0 0 12px rgba(108, 99, 255, 0.4);
         }
-        .sc-btn-cancel {
-          background: transparent;
-          color: rgba(255, 255, 255, 0.65);
+        .sc-toolbar .sc-btn-cancel {
+          background: rgba(255, 255, 255, 0.06);
+          color: #cbd5e1;
+          border: 1px solid rgba(255, 255, 255, 0.12);
         }
-        .sc-btn-cancel:hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: white;
+        .sc-toolbar .sc-btn-cancel:hover {
+          background: rgba(255, 255, 255, 0.12);
+          color: #ffffff;
         }
         .sc-crosshair-h, .sc-crosshair-v {
           position: fixed;
