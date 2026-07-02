@@ -55,14 +55,6 @@ export default defineBackground(() => {
         );
         return false;
 
-      case 'TRACK_ENDED':
-        // Native stop button clicked — offscreen has stopped recorder
-        // but hasn't stored yet. Send FINALIZE_RECORDING to keep port alive.
-        handleTrackEnded().catch((e) =>
-          console.error('[SnapCraft] Track ended handler error:', e)
-        );
-        return false;
-
       case 'FULLPAGE_SCROLL_NEXT':
         handleFullPageScrollStep(sender, message.payload);
         return false;
@@ -73,6 +65,13 @@ export default defineBackground(() => {
 
       default:
         return false;
+    }
+  });
+
+  // Handle offscreen keep-alive connections
+  browser.runtime.onConnect.addListener((port) => {
+    if (port.name === 'offscreen-keepalive') {
+      console.log('[SnapCraft] Offscreen keep-alive port connected');
     }
   });
 
@@ -314,18 +313,6 @@ export default defineBackground(() => {
     }
   }
 
-  async function handleTrackEnded() {
-    // Wait briefly for onstop to fire and build the blob
-    await new Promise((r) => setTimeout(r, 200));
-
-    try {
-      const result = await sendMessageToOffscreen({ type: 'FINALIZE_RECORDING' });
-      if (result?.captureId) {
-        await handleRecordingComplete(result);
-      }
-    } catch (e) {
-      console.error('[SnapCraft] Finalize recording error:', e);
-    }
   }
 
   async function handleRecordingComplete(payload: {

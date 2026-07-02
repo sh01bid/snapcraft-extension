@@ -54,6 +54,7 @@ async function startTabRecording(payload: { streamId: string; tabId: number }) {
       } as any,
     });
 
+    setupKeepAlive();
     startRecording(mediaStream);
     return { success: true };
   } catch (error: any) {
@@ -72,16 +73,14 @@ async function startScreenRecording() {
     });
 
     // When user clicks Chrome's native "Stop sharing" button,
-    // notify background instead of processing locally.
-    // Background will send FINALIZE_RECORDING back, keeping the
-    // message port open so the offscreen stays alive during storage.
+    // the track will end, which will trigger mediaRecorder.stop()
     mediaStream.getVideoTracks()[0].addEventListener('ended', () => {
       if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
       }
-      chrome.runtime.sendMessage({ type: 'TRACK_ENDED' });
     });
 
+    setupKeepAlive();
     startRecording(mediaStream);
     return { success: true };
   } catch (error: any) {
@@ -90,65 +89,30 @@ async function startScreenRecording() {
   }
 }
 
+// No longer needed — handled by onstop
+async function finalizeRecording() {
+  return { success: false };
+}
+
+// Keep-alive port to background
+let keepAlivePort: chrome.runtime.Port | null = null;
+
+function setupKeepAlive() {
+  if (keepAlivePort) return;
+  keepAlivePort = chrome.runtime.connect({ name: 'offscreen-keepalive' });
+  keepAlivePort.onDisconnect.addListener(() => {
+    keepAlivePort = null;
+  });
+}
+
+function stopKeepAlive() {
+  if (keepAlivePort) {
+    keepAlivePort.disconnect();
+    keepAlivePort = null;
+  }
+}
+
 let stopResolve: ((result: any) => void) | null = null;
-let pendingBlob: Blob | null = null;
-let pendingMeta: { duration: number; mimeType: string; size: number } | null = null;
-
-// Called when stopResolve exists (our stop button) — runs inside stopRecording's Promise
-async function doFinalizeAndResolve() {
-  if (!pendingBlob || !pendingMeta) {
-    if (stopResolve) {
-      stopResolve({ success: false });
-      stopResolve = null;
-    }
-    return;
-  }
-
-  try {
-    const captureId = await storeRecordingBlob(pendingBlob, pendingMeta.duration, pendingMeta.mimeType);
-    const result = { success: true, captureId, ...pendingMeta };
-    chrome.runtime.sendMessage({ type: 'RECORDING_COMPLETE', payload: result });
-    if (stopResolve) {
-      stopResolve(result);
-      stopResolve = null;
-    }
-  } catch (e) {
-    console.error('[SnapCraft Offscreen] Storage failed:', e);
-    if (stopResolve) {
-      stopResolve({ success: false });
-      stopResolve = null;
-    }
-  } finally {
-    if (mediaStream) {
-      mediaStream.getTracks().forEach((t) => t.stop());
-      mediaStream = null;
-    }
-    pendingBlob = null;
-    pendingMeta = null;
-  }
-}
-
-// Called by background via FINALIZE_RECORDING message (keeps offscreen alive via port)
-async function finalizeRecording(): Promise<{ success: boolean; captureId?: number }> {
-  if (!pendingBlob || !pendingMeta) {
-    return { success: false };
-  }
-
-  try {
-    const captureId = await storeRecordingBlob(pendingBlob, pendingMeta.duration, pendingMeta.mimeType);
-    return { success: true, captureId };
-  } catch (e) {
-    console.error('[SnapCraft Offscreen] Finalize storage failed:', e);
-    return { success: false };
-  } finally {
-    if (mediaStream) {
-      mediaStream.getTracks().forEach((t) => t.stop());
-      mediaStream = null;
-    }
-    pendingBlob = null;
-    pendingMeta = null;
-  }
-}
 
 function startRecording(stream: MediaStream) {
   recordedChunks = [];
@@ -182,21 +146,40 @@ function startRecording(stream: MediaStream) {
     }
   };
 
-  mediaRecorder.onstop = () => {
+  mediaRecorder.onstop = async () => {
     // Build blob from recorded chunks immediately (synchronous)
     const duration = Date.now() - startTimestamp;
     const recMimeType = mediaRecorder?.mimeType || mimeType;
-    pendingBlob = new Blob(recordedChunks, { type: recMimeType });
-    pendingMeta = { duration, mimeType: recMimeType, size: pendingBlob.size };
+    const blob = new Blob(recordedChunks, { type: recMimeType });
     recordedChunks = [];
 
-    // If stopResolve exists (user clicked our stop button via background),
-    // finalize storage inline and resolve
-    if (stopResolve) {
-      doFinalizeAndResolve();
+    try {
+      // Start storage immediately
+      const captureId = await storeRecordingBlob(blob, duration, recMimeType);
+      const result = { success: true, captureId, duration, mimeType: recMimeType, size: blob.size };
+
+      if (stopResolve) {
+        // Triggered by our stop button
+        stopResolve(result);
+        stopResolve = null;
+      } else {
+        // Triggered by native stop — notify background to open preview
+        chrome.runtime.sendMessage({ type: 'RECORDING_COMPLETE', payload: result });
+      }
+    } catch (e) {
+      console.error('[SnapCraft Offscreen] Storage failed:', e);
+      if (stopResolve) {
+        stopResolve({ success: false });
+        stopResolve = null;
+      }
+    } finally {
+      stopKeepAlive();
+      // Safe to stop all tracks now
+      if (mediaStream) {
+        mediaStream.getTracks().forEach((t) => t.stop());
+        mediaStream = null;
+      }
     }
-    // Otherwise (track ended / native stop), background will send
-    // FINALIZE_RECORDING to trigger storage with message port alive
   };
 
   mediaRecorder.onerror = (event: any) => {
