@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { getCapture, deleteCapture, getSettings } from '../../lib/storage';
 import { downloadBlob, generateFilename } from '../../utils/download';
 import { convertWebMToMP4, getConversionWarning, type ConversionProgress } from '../../utils/mp4-converter';
+import { t } from '../../lib/i18n';
 import './PreviewApp.css';
 
 export default function PreviewApp() {
@@ -32,7 +33,14 @@ export default function PreviewApp() {
   // Update warning when format or duration changes
   useEffect(() => {
     if (downloadFormat === 'mp4' && meta?.duration) {
-      setWarning(getConversionWarning(meta.duration));
+      const minutes = meta.duration / 60_000;
+      if (minutes > 15) {
+        setWarning(t('previewWarnTooLong'));
+      } else if (minutes > 5) {
+        setWarning(t('previewWarnLong'));
+      } else {
+        setWarning(null);
+      }
     } else {
       setWarning(null);
     }
@@ -81,11 +89,11 @@ export default function PreviewApp() {
   function getProgressText(p: ConversionProgress): string {
     const pct = Math.round(p.progress * 100);
     switch (p.phase) {
-      case 'preparing': return 'Preparing video...';
-      case 'encoding': return `Converting: ${pct}%`;
-      case 'finalizing': return 'Finalizing MP4...';
-      case 'done': return 'Done!';
-      default: return 'Processing...';
+      case 'preparing': return t('previewPreparing');
+      case 'encoding': return t('previewConverting', String(pct));
+      case 'finalizing': return t('previewFinalizing');
+      case 'done': return t('previewConvertDone');
+      default: return t('previewProcessing');
     }
   }
 
@@ -97,7 +105,7 @@ export default function PreviewApp() {
     if (downloadFormat === 'webm') {
       const filename = generateFilename(pattern, 'webm');
       await downloadBlob(videoBlob, filename);
-      showToast('Downloaded as WebM!');
+      showToast(t('previewDownloadedWebm'));
     } else {
       // MP4 conversion
       try {
@@ -112,10 +120,10 @@ export default function PreviewApp() {
 
         const filename = generateFilename(pattern, 'mp4');
         await downloadBlob(mp4Blob, filename);
-        showToast('Downloaded as MP4!');
+        showToast(t('previewDownloadedMp4'));
       } catch (err: any) {
         console.error('[SnapCraft] MP4 conversion error:', err);
-        showToast(`⚠️ ${err.message} — Downloading as WebM instead.`, 5000);
+        showToast(`⚠️ ${t('previewConvertFallback', err.message)}`, 5000);
         const filename = generateFilename(pattern, 'webm');
         await downloadBlob(videoBlob, filename);
       } finally {
@@ -137,10 +145,10 @@ export default function PreviewApp() {
       if (videoUrl) URL.revokeObjectURL(videoUrl);
       setVideoUrl(null);
       setVideoBlob(null);
-      showToast('Recording deleted');
+      showToast(t('previewDeleted'));
       setTimeout(() => window.close(), 1000);
     } catch {
-      showToast('Could not delete recording');
+      showToast(t('previewDeleteFailed'));
     }
   }
 
@@ -160,7 +168,7 @@ export default function PreviewApp() {
               <rect width="14" height="12" x="2" y="6" rx="2"/>
             </svg>
           </div>
-          <h1 className="preview-title">Recording Preview</h1>
+          <h1 className="preview-title">{t('previewTitle')}</h1>
 
           {meta && (
             <div className="preview-meta">
@@ -195,7 +203,7 @@ export default function PreviewApp() {
             {converting ? (
               <>
                 <div className="btn-spinner" />
-                {conversionProgress ? getProgressText(conversionProgress) : 'Converting...'}
+                {conversionProgress ? getProgressText(conversionProgress) : t('previewProcessing')}
               </>
             ) : (
               <>
@@ -204,7 +212,7 @@ export default function PreviewApp() {
                   <polyline points="7 10 12 15 17 10"/>
                   <line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
-                Download
+                {t('previewDownload')}
               </>
             )}
           </button>
@@ -213,7 +221,7 @@ export default function PreviewApp() {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
             </svg>
-            Delete
+            {t('previewDelete')}
           </button>
         </div>
       </header>
@@ -245,7 +253,7 @@ export default function PreviewApp() {
         {loading ? (
           <div className="preview-loading">
             <div className="preview-loading-spinner" />
-            <span className="preview-loading-text">Loading recording...</span>
+            <span className="preview-loading-text">{t('previewLoading')}</span>
           </div>
         ) : videoUrl ? (
           <div className="preview-video-container">
@@ -264,7 +272,7 @@ export default function PreviewApp() {
               <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/>
               <rect width="14" height="12" x="2" y="6" rx="2"/>
             </svg>
-            <span className="preview-loading-text">No recording found</span>
+            <span className="preview-loading-text">{t('previewNoRecording')}</span>
           </div>
         )}
       </main>
