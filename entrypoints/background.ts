@@ -106,6 +106,10 @@ export default defineBackground(() => {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     if (!tab?.id) return { success: false };
 
+    // Store tab ID for the scroll capture flow
+    fullPageTabId = tab.id;
+    fullPageCaptures = [];
+
     // Inject and execute full-page capture content script
     try {
       await browser.scripting.executeScript({
@@ -113,11 +117,11 @@ export default defineBackground(() => {
         func: fullPageCaptureScript,
       });
 
-      // The content script will send FULLPAGE_SCROLL_NEXT messages
-      // We capture screenshots at each step
+      // The injected script will send FULLPAGE_SCROLL_NEXT messages
       return { success: true };
     } catch (e) {
       console.error('[SnapCraft] Full page capture error:', e);
+      fullPageTabId = null;
       return { success: false };
     }
   }
@@ -126,31 +130,39 @@ export default defineBackground(() => {
   let fullPageCaptures: string[] = [];
   let fullPageTabId: number | null = null;
 
-  // Full-page scroll state handled in main message router above
-
   async function handleFullPageScrollStep(
     sender: chrome.runtime.MessageSender,
     payload: any
   ) {
-    if (!sender.tab?.id) return;
-    fullPageTabId = sender.tab.id;
+    // Use stored tabId (more reliable than sender.tab for injected scripts)
+    const tabId = sender.tab?.id ?? fullPageTabId;
+    if (!tabId) {
+      console.error('[SnapCraft] Full page scroll: no tab ID');
+      return;
+    }
 
-    // Wait a bit for scroll to settle
-    await new Promise((r) => setTimeout(r, 150));
+    try {
+      // Wait a bit for scroll to settle
+      await new Promise((r) => setTimeout(r, 200));
 
-    const dataUrl = await browser.tabs.captureVisibleTab(undefined, {
-      format: 'png',
-    });
-    fullPageCaptures.push(dataUrl);
+      const dataUrl = await browser.tabs.captureVisibleTab(undefined, {
+        format: 'png',
+      });
+      fullPageCaptures.push(dataUrl);
+      console.log(`[SnapCraft] Full page: captured segment ${fullPageCaptures.length}`);
 
-    // Tell content script to continue scrolling
-    browser.tabs.sendMessage(sender.tab.id, {
-      type: 'FULLPAGE_SCROLL_PROGRESS',
-      payload: { captured: fullPageCaptures.length },
-    });
+      // Tell content script to continue scrolling
+      await browser.tabs.sendMessage(tabId, {
+        type: 'FULLPAGE_SCROLL_PROGRESS',
+        payload: { captured: fullPageCaptures.length },
+      });
+    } catch (e) {
+      console.error('[SnapCraft] Full page scroll step error:', e);
+    }
   }
 
   async function handleFullPageScrollDone(payload: { lastCropHeight?: number }) {
+    console.log(`[SnapCraft] Full page done: ${fullPageCaptures.length} segments`);
     if (fullPageCaptures.length === 0) return;
 
     // Store captures FIRST, before opening editor

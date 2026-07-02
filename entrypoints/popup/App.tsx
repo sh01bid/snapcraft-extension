@@ -103,30 +103,30 @@ function App() {
   // ── Actions ──
 
   const captureVisible = useCallback(async () => {
-    window.close();
     await sendMessage('CAPTURE_VISIBLE');
+    window.close();
   }, []);
 
   const captureFullPage = useCallback(async () => {
-    window.close();
     await sendMessage('CAPTURE_FULLPAGE');
+    window.close();
   }, []);
 
   const captureRegion = useCallback(async () => {
-    window.close();
     await sendMessage('CAPTURE_REGION');
+    window.close();
   }, []);
 
   const recordTab = useCallback(async () => {
-    window.close();
     await sendMessage('START_RECORDING_TAB');
     setRecording({ isRecording: true, duration: 0, mode: 'tab' });
+    window.close();
   }, []);
 
   const recordScreen = useCallback(async () => {
-    window.close();
     await sendMessage('START_RECORDING_SCREEN');
     setRecording({ isRecording: true, duration: 0, mode: 'screen' });
+    window.close();
   }, []);
 
   const stopRecording = useCallback(async () => {
