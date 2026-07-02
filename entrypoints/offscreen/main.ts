@@ -5,6 +5,15 @@ let recordedChunks: Blob[] = [];
 let mediaStream: MediaStream | null = null;
 let startTimestamp = 0;
 
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
+
 // Only handle messages targeted at offscreen
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   // Strictly only process messages routed through background
@@ -121,18 +130,30 @@ function startRecording(stream: MediaStream) {
     const blob = new Blob(recordedChunks, { type: recMimeType });
     recordedChunks = [];
 
-    if (mediaStream) {
-      mediaStream.getTracks().forEach((t) => t.stop());
-      mediaStream = null;
-    }
+    // IMPORTANT: Do NOT stop media tracks until after storage is complete!
+    // Chrome may destroy the offscreen document when tracks stop,
+    // killing any pending async operations (IndexedDB, etc.)
 
     try {
-      const captureId = await storeRecordingBlob(blob, duration, recMimeType);
-      console.log('[SnapCraft Offscreen] Recording stored, captureId:', captureId);
-      const result = { success: true, captureId, duration, mimeType: recMimeType, size: blob.size };
+      // Convert blob to base64 data URL for chrome.storage.local
+      const dataUrl = await blobToDataUrl(blob);
+      console.log('[SnapCraft Offscreen] Blob converted to data URL, length:', dataUrl.length);
 
-      // Always send RECORDING_COMPLETE — belt and suspenders
-      // (the sendResponse from stopRecording may fail if Chrome closed the port)
+      // Store directly in chrome.storage.local (we have unlimitedStorage)
+      await chrome.storage.local.set({
+        _pendingRecording: {
+          dataUrl,
+          duration,
+          mimeType: recMimeType,
+          size: blob.size,
+          createdAt: Date.now(),
+        },
+      });
+      console.log('[SnapCraft Offscreen] Recording stored in chrome.storage.local');
+
+      const result = { success: true, duration, mimeType: recMimeType, size: blob.size };
+
+      // Send RECORDING_COMPLETE to background
       chrome.runtime.sendMessage({
         type: 'RECORDING_COMPLETE',
         payload: result,
@@ -148,6 +169,12 @@ function startRecording(stream: MediaStream) {
       if (stopResolve) {
         stopResolve({ success: false });
         stopResolve = null;
+      }
+    } finally {
+      // NOW it's safe to stop tracks
+      if (mediaStream) {
+        mediaStream.getTracks().forEach((t) => t.stop());
+        mediaStream = null;
       }
     }
   };

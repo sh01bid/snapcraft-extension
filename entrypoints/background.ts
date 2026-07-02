@@ -320,17 +320,12 @@ export default defineBackground(() => {
   }
 
   async function handleRecordingComplete(payload: {
-    duration: number;
-    mimeType: string;
-    size: number;
-    captureId?: number;
+    duration?: number;
+    mimeType?: string;
+    size?: number;
   }) {
-    // Store the capture ID so the preview page can find it
-    if (payload.captureId) {
-      await browser.storage.local.set({
-        _pendingPreview: { captureId: payload.captureId },
-      });
-    }
+    console.log('[SnapCraft] handleRecordingComplete called:', payload);
+    // Data is already stored in chrome.storage.local as _pendingRecording by offscreen
 
     // Open the preview page
     const previewUrl = browser.runtime.getURL('/preview.html');

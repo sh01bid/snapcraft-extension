@@ -1,7 +1,6 @@
 /* SnapCraft — Recording Preview Page */
 
 import { useState, useEffect, useRef } from 'react';
-import { getCapture } from '../../lib/storage';
 import { downloadBlob, generateFilename } from '../../utils/download';
 import './PreviewApp.css';
 
@@ -27,42 +26,24 @@ export default function PreviewApp() {
 
   async function loadRecording() {
     try {
-      // Get the latest recording from IndexedDB
-      const result = await browser.storage.local.get('_pendingPreview');
-      const pending = result._pendingPreview;
+      // Get the recording from chrome.storage.local
+      const result = await browser.storage.local.get('_pendingRecording');
+      const pending = result._pendingRecording;
 
-      if (pending?.captureId) {
-        const capture = await getCapture(pending.captureId);
-        if (capture && capture.data) {
-          const url = URL.createObjectURL(capture.data);
-          setVideoUrl(url);
-          setVideoBlob(capture.data);
-          setMeta({
-            duration: capture.duration || 0,
-            size: capture.fileSize,
-            mimeType: capture.mimeType || 'video/webm',
-          });
-        }
-        browser.storage.local.remove('_pendingPreview');
-      } else {
-        // Fallback: Try to get the most recent recording from DB
-        const { db } = await import('../../lib/storage');
-        const latest = await db.captures
-          .where('type')
-          .equals('recording')
-          .reverse()
-          .first();
-
-        if (latest?.data) {
-          const url = URL.createObjectURL(latest.data);
-          setVideoUrl(url);
-          setVideoBlob(latest.data);
-          setMeta({
-            duration: latest.duration || 0,
-            size: latest.fileSize,
-            mimeType: latest.mimeType || 'video/webm',
-          });
-        }
+      if (pending?.dataUrl) {
+        // Convert data URL back to Blob
+        const response = await fetch(pending.dataUrl);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        setVideoUrl(url);
+        setVideoBlob(blob);
+        setMeta({
+          duration: pending.duration || 0,
+          size: pending.size || blob.size,
+          mimeType: pending.mimeType || 'video/webm',
+        });
+        // Clean up storage (don't await, let it happen in background)
+        browser.storage.local.remove('_pendingRecording');
       }
     } catch (err) {
       console.error('[SnapCraft Preview] Load error:', err);
@@ -102,11 +83,10 @@ export default function PreviewApp() {
 
   async function handleDelete() {
     try {
-      const result = await browser.storage.local.get('_pendingPreview');
-      if (result._pendingPreview?.captureId) {
-        const { deleteCapture } = await import('../../lib/storage');
-        await deleteCapture(result._pendingPreview.captureId);
-      }
+      await browser.storage.local.remove('_pendingRecording');
+      if (videoUrl) URL.revokeObjectURL(videoUrl);
+      setVideoUrl(null);
+      setVideoBlob(null);
       showToast('Recording deleted');
       setTimeout(() => window.close(), 1000);
     } catch {
