@@ -7,8 +7,8 @@ let startTimestamp = 0;
 
 // Only handle messages targeted at offscreen
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  // Only process messages meant for offscreen
-  if (message.target && message.target !== 'offscreen') return;
+  // Strictly only process messages routed through background
+  if (message.target !== 'offscreen') return;
 
   switch (message.type) {
     case 'START_RECORDING_TAB':
@@ -112,23 +112,9 @@ function startRecording(stream: MediaStream) {
     }
   };
 
-  mediaRecorder.onstop = async () => {
-    const duration = Date.now() - startTimestamp;
-    const blob = new Blob(recordedChunks, { type: mimeType });
-    recordedChunks = [];
-
-    if (mediaStream) {
-      mediaStream.getTracks().forEach((t) => t.stop());
-      mediaStream = null;
-    }
-
-    // Store first, then notify (so preview can find it)
-    const captureId = await storeRecordingBlob(blob, duration, mimeType);
-
-    chrome.runtime.sendMessage({
-      type: 'RECORDING_COMPLETE',
-      payload: { duration, mimeType, size: blob.size, captureId },
-    });
+  // onstop is set by stopRecording() — this is just a fallback
+  mediaRecorder.onstop = () => {
+    console.log('[SnapCraft Offscreen] MediaRecorder stopped (fallback handler)');
   };
 
   mediaRecorder.onerror = (event: any) => {
@@ -163,11 +149,35 @@ function resumeRecording() {
   }
 }
 
-async function stopRecording() {
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-    mediaRecorder.stop();
+async function stopRecording(): Promise<{ success: boolean; captureId?: number; duration?: number; mimeType?: string; size?: number }> {
+  if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+    return { success: false };
   }
-  return { success: true };
+
+  return new Promise((resolve) => {
+    mediaRecorder!.onstop = async () => {
+      const duration = Date.now() - startTimestamp;
+      const mimeType = mediaRecorder!.mimeType || 'video/webm';
+      const blob = new Blob(recordedChunks, { type: mimeType });
+      recordedChunks = [];
+
+      if (mediaStream) {
+        mediaStream.getTracks().forEach((t) => t.stop());
+        mediaStream = null;
+      }
+
+      try {
+        const captureId = await storeRecordingBlob(blob, duration, mimeType);
+        console.log('[SnapCraft Offscreen] Recording stored, captureId:', captureId);
+        resolve({ success: true, captureId, duration, mimeType, size: blob.size });
+      } catch (e) {
+        console.error('[SnapCraft Offscreen] Failed to store recording:', e);
+        resolve({ success: false });
+      }
+    };
+
+    mediaRecorder!.stop();
+  });
 }
 
 async function storeRecordingBlob(blob: Blob, duration: number, mimeType: string): Promise<number> {

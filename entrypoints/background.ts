@@ -50,7 +50,9 @@ export default defineBackground(() => {
         return false;
 
       case 'RECORDING_COMPLETE':
-        handleRecordingComplete(message.payload);
+        handleRecordingComplete(message.payload).catch((e) =>
+          console.error('[SnapCraft] Recording complete handler error:', e)
+        );
         return false;
 
       case 'FULLPAGE_SCROLL_NEXT':
@@ -293,9 +295,22 @@ export default defineBackground(() => {
 
   async function handleStopRecording(): Promise<{ success: boolean }> {
     try {
-      await sendMessageToOffscreen({ type: 'STOP_RECORDING' });
+      const result = await sendMessageToOffscreen({ type: 'STOP_RECORDING' });
+      console.log('[SnapCraft] Stop recording result:', result);
+
+      // The offscreen now waits for full store + returns captureId
+      if (result?.captureId) {
+        await handleRecordingComplete({
+          duration: result.duration,
+          mimeType: result.mimeType,
+          size: result.size,
+          captureId: result.captureId,
+        });
+      }
+
       return { success: true };
     } catch (e) {
+      console.error('[SnapCraft] Stop recording error:', e);
       return { success: false };
     }
   }
@@ -340,8 +355,8 @@ export default defineBackground(() => {
     });
   }
 
-  async function sendMessageToOffscreen(message: Message) {
-    await browser.runtime.sendMessage({ ...message, target: 'offscreen' });
+  async function sendMessageToOffscreen(message: Message): Promise<any> {
+    return browser.runtime.sendMessage({ ...message, target: 'offscreen' });
   }
 
   // ── Editor ──
