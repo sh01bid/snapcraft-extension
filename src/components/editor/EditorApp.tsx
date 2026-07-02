@@ -272,6 +272,7 @@ export default function EditorApp() {
     const blob = await exportCanvas(canvasRef.current, backgroundImage, state.shapes, 'png');
     const filename = generateFilename('SnapCraft_{date}_{time}', 'png');
     await downloadBlob(blob, filename);
+    await saveToHistory(blob);
     showToast('Saved successfully!');
   }
 
@@ -280,7 +281,52 @@ export default function EditorApp() {
     const blob = await exportCanvas(canvasRef.current, backgroundImage, state.shapes, 'png');
     const dataUrl = await blobToDataUrl(blob);
     await copyImageToClipboard(dataUrl);
+    await saveToHistory(blob);
     showToast('Copied to clipboard!');
+  }
+
+  async function saveToHistory(blob: Blob) {
+    try {
+      const { saveCapture } = await import('../../lib/storage');
+      // Create thumbnail
+      const thumbBlob = await createThumbnail(blob);
+      await saveCapture({
+        type: 'screenshot',
+        mode: 'visible',
+        thumbnail: thumbBlob,
+        data: blob,
+        fileSize: blob.size,
+        mimeType: blob.type || 'image/png',
+        createdAt: Date.now(),
+      });
+    } catch (e) {
+      console.error('[SnapCraft Editor] Save to history error:', e);
+    }
+  }
+
+  function createThumbnail(blob: Blob): Promise<Blob> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxW = 240;
+        const ratio = maxW / img.naturalWidth;
+        canvas.width = maxW;
+        canvas.height = Math.round(img.naturalHeight * ratio);
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(
+          (thumbBlob) => {
+            URL.revokeObjectURL(img.src);
+            resolve(thumbBlob || new Blob());
+          },
+          'image/jpeg',
+          0.7
+        );
+      };
+      img.onerror = () => resolve(new Blob());
+      img.src = URL.createObjectURL(blob);
+    });
   }
 
   function showToast(message: string) {

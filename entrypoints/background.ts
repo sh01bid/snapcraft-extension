@@ -49,6 +49,14 @@ export default defineBackground(() => {
         openEditor(message.payload);
         return false;
 
+      case 'RECORDING_COMPLETE':
+        handleRecordingComplete(message.payload);
+        return false;
+
+      case 'CAPTURE_REGION_RESULT':
+        handleCaptureRegionResult(message.payload, sender);
+        return false;
+
       default:
         return false;
     }
@@ -266,6 +274,24 @@ export default defineBackground(() => {
       return { success: true };
     } catch (e) {
       return { success: false };
+    }
+  }
+
+  async function handleRecordingComplete(payload: {
+    duration: number;
+    mimeType: string;
+    size: number;
+  }) {
+    // Open the preview page
+    const previewUrl = browser.runtime.getURL('/preview.html');
+    // The offscreen doc already saved the recording to IndexedDB
+    // Just open the preview — it will load the latest recording
+    browser.tabs.create({ url: previewUrl });
+
+    // Hide recording controls on the recorded tab
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    if (tab?.id) {
+      browser.tabs.sendMessage(tab.id, { type: 'HIDE_RECORDING_CONTROLS' }).catch(() => {});
     }
   }
 
