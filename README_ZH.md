@@ -1,7 +1,7 @@
-# SnapCraft — 截图与录屏工具
+# 截图王 — 网页截图与录屏工具
 
 <p align="center">
-  <img src="public/icon/128.png" width="80" alt="SnapCraft Logo" />
+  <img src="public/icon/128.png" width="80" alt="Screenshot King Logo" />
 </p>
 
 <p align="center">

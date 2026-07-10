@@ -1,5 +1,5 @@
 {
-  "extName": { "message": "SnapCraft", "description": "Extension name" },
+  "extName": { "message": "Screenshot King - Web Capture & Screen Recorder", "description": "Extension name" },
   "extDescription": { "message": "Screenshot & screen recording tool with editor", "description": "Extension description" },
 
   "popupScreenshot": { "message": "Screenshot" },

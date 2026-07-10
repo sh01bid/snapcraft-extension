@@ -1,5 +1,5 @@
 {
-  "extName": { "message": "SnapCraft", "description": "扩展名称" },
+  "extName": { "message": "截图王 - 网页截图与录屏工具", "description": "扩展名称" },
   "extDescription": { "message": "截图与录屏工具，内置编辑器", "description": "扩展描述" },
 
   "popupScreenshot": { "message": "截图" },

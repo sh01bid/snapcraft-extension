@@ -1,7 +1,7 @@
-# SnapCraft — Screenshot & Screen Recorder
+# Screenshot King — Web Capture & Screen Recorder
 
 <p align="center">
-  <img src="public/icon/128.png" width="80" alt="SnapCraft Logo" />
+  <img src="public/icon/128.png" width="80" alt="Screenshot King Logo" />
 </p>
 
 <p align="center">

@@ -1,5 +1,5 @@
 {
-  "name": "snapcraft-extension",
+  "name": "screenking-extension",
   "description": "Capture screenshots, record your screen, and annotate with a powerful built-in editor.",
   "private": true,
   "version": "1.0.0",

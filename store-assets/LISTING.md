@@ -1,14 +1,14 @@
 # Chrome Web Store Listing
 
 ## Extension Name
-SnapCraft — Screenshot & Screen Recorder
+Screenshot King - Web Capture & Screen Recorder
 
 ## Short Description (132 chars max)
 Capture screenshots, record your screen, and annotate with a powerful built-in editor. Export as PNG, JPEG, WebP, or MP4.
 
 ## Detailed Description
 
-SnapCraft is your all-in-one screenshot and screen recording tool for Chrome. Capture, annotate, and share — all without leaving your browser.
+Screenshot King is your all-in-one screenshot and screen recording tool for Chrome. Capture, annotate, and share — all without leaving your browser.
 
 🎯 SCREENSHOT MODES
 • Capture Visible Area — Instantly grab what's on screen
@@ -84,14 +84,14 @@ English, Chinese (Simplified)
 # Chrome Web Store 商店信息（中文）
 
 ## 扩展名称
-SnapCraft — 截图与录屏工具
+截图王 - 网页截图与录屏工具
 
 ## 简短描述（132字符以内）
 截图、录屏、标注一站式工具。支持全页截图、区域选取、屏幕录制，内置标注编辑器，导出 PNG/JPEG/WebP/MP4。
 
 ## 详细描述
 
-SnapCraft 是一款功能强大的 Chrome 截图与录屏扩展。截图、标注、分享，全部在浏览器内完成。
+截图王 是一款功能强大的 Chrome 截图与录屏扩展。截图、标注、分享，全部在浏览器内完成。
 
 🎯 截图模式
 • 截取可见区域 — 一键截取当前屏幕内容
