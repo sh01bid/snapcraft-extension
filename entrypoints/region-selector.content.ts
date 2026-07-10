@@ -42,7 +42,7 @@ export default defineContentScript({
         }
         .sc-selection {
           position: absolute;
-          border: 2px solid #6c63ff;
+          border: 2px solid #f8b500;
           background: transparent;
           box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
           pointer-events: none;
@@ -59,7 +59,7 @@ export default defineContentScript({
           left: 50%;
           transform: translateX(-50%);
           padding: 2px 8px;
-          background: #6c63ff;
+          background: #f8b500;
           color: white;
           font-family: 'Inter', -apple-system, sans-serif;
           font-size: 11px;
@@ -78,9 +78,9 @@ export default defineContentScript({
           gap: 4px;
           padding: 6px;
           background: #0f0f1a;
-          border: 2px solid #6c63ff;
+          border: 2px solid #f8b500;
           border-radius: 14px;
-          box-shadow: 0 4px 24px rgba(108, 99, 255, 0.35), 0 12px 40px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 4px 24px rgba(248, 181, 0, 0.35), 0 12px 40px rgba(0, 0, 0, 0.5);
           pointer-events: auto;
           white-space: nowrap;
           animation: sc-toolbar-in 0.15s ease-out;
@@ -118,12 +118,12 @@ export default defineContentScript({
           flex-shrink: 0;
         }
         .sc-toolbar .sc-btn-confirm {
-          background: #6c63ff;
+          background: #f8b500;
           color: #ffffff;
         }
         .sc-toolbar .sc-btn-confirm:hover {
           background: #7c74ff;
-          box-shadow: 0 0 12px rgba(108, 99, 255, 0.4);
+          box-shadow: 0 0 12px rgba(248, 181, 0, 0.4);
         }
         .sc-toolbar .sc-btn-cancel {
           background: rgba(255, 255, 255, 0.06);
@@ -143,13 +143,13 @@ export default defineContentScript({
           left: 0;
           right: 0;
           height: 1px;
-          background: rgba(108, 99, 255, 0.5);
+          background: rgba(248, 181, 0, 0.5);
         }
         .sc-crosshair-v {
           top: 0;
           bottom: 0;
           width: 1px;
-          background: rgba(108, 99, 255, 0.5);
+          background: rgba(248, 181, 0, 0.5);
         }
         .sc-hint {
           position: fixed;

@@ -18,7 +18,7 @@ import './EditorApp.css';
 // Predefined color palette
 const COLORS = [
   '#ef4444', '#f97316', '#eab308', '#22c55e',
-  '#3b82f6', '#6c63ff', '#a855f7', '#ec4899',
+  '#3b82f6', '#f8b500', '#a855f7', '#ec4899',
   '#ffffff', '#000000',
 ];
 
@@ -165,7 +165,7 @@ export default function EditorApp() {
         const labelW = ctx.measureText(label).width + 16;
         const labelX = nx + nw / 2;
         const labelY = ny + nh / 2;
-        ctx.fillStyle = 'rgba(99, 102, 241, 0.85)';
+        ctx.fillStyle = 'rgba(248, 181, 0, 0.85)';
         ctx.beginPath();
         ctx.roundRect(labelX - labelW / 2, labelY - 12, labelW, 24, 4);
         ctx.fill();
@@ -744,7 +744,7 @@ export default function EditorApp() {
           background: '#1a1a2e',
           border: '1px solid #6366f1',
           borderRadius: '14px',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(99,102,241,0.2)',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(248, 181, 0,0.2)',
           zIndex: 9999,
         }}>
           <span style={{
@@ -756,7 +756,7 @@ export default function EditorApp() {
             {Math.round(Math.abs(cropSelection.width))} × {Math.round(Math.abs(cropSelection.height))} px
           </span>
 
-          <div style={{ width: '1px', height: '24px', background: 'rgba(99,102,241,0.3)' }} />
+          <div style={{ width: '1px', height: '24px', background: 'rgba(248, 181, 0,0.3)' }} />
 
           <button
             onClick={confirmCrop}

@@ -95,7 +95,7 @@
     box-shadow: var(--sc-shadow-glow);
   }
   50% {
-    box-shadow: 0 0 30px rgba(108, 99, 255, 0.5);
+    box-shadow: 0 0 30px rgba(248, 181, 0, 0.5);
   }
 }
 

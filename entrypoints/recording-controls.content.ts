@@ -46,7 +46,7 @@ export default defineContentScript({
           font-size: 120px;
           font-weight: 800;
           color: white;
-          text-shadow: 0 0 40px rgba(99, 102, 241, 0.8);
+          text-shadow: 0 0 40px rgba(248, 181, 0, 0.8);
           animation: countPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         @keyframes countPop {

@@ -89,7 +89,7 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   color: var(--sc-primary-400);
-  background: rgba(108, 99, 255, 0.1);
+  background: rgba(248, 181, 0, 0.1);
 }
 
 .options-section-title {
@@ -170,7 +170,7 @@ html, body, #root {
 .setting-toggle input:checked + .setting-toggle-track {
   background: var(--sc-primary-500);
   border-color: var(--sc-primary-500);
-  box-shadow: 0 0 12px rgba(108, 99, 255, 0.4);
+  box-shadow: 0 0 12px rgba(248, 181, 0, 0.4);
 }
 
 .setting-toggle-track::after {
