@@ -125,16 +125,16 @@ export default function OptionsApp() {
           <div className="options-section-body">
             <div className="setting-row">
               <div>
-                <div className="setting-label">Video Format</div>
-                <div className="setting-description">WebM (native) or MP4 (converted via WebCodecs)</div>
+                <div className="setting-label">{t('settingsVideoFormat')}</div>
+                <div className="setting-description">{t('settingsVideoFormatDesc')}</div>
               </div>
               <select
                 className="setting-select"
                 value={settings.videoFormat}
                 onChange={(e) => save({ videoFormat: e.target.value as any })}
               >
-                <option value="webm">WebM (VP9)</option>
-                <option value="mp4">MP4 (H.264)</option>
+                <option value="webm">{t('settingsVideoFormatWebm')}</option>
+                <option value="mp4">{t('settingsVideoFormatMp4')}</option>
               </select>
             </div>
 
@@ -148,9 +148,9 @@ export default function OptionsApp() {
                 value={settings.recordingQuality}
                 onChange={(e) => save({ recordingQuality: e.target.value as any })}
               >
-                <option value="low">Low (720p)</option>
-                <option value="medium">Medium (1080p)</option>
-                <option value="high">High (Original)</option>
+                <option value="low">{t('settingsQualityLow')}</option>
+                <option value="medium">{t('settingsQualityMedium')}</option>
+                <option value="high">{t('settingsQualityHigh')}</option>
               </select>
             </div>
 
@@ -164,10 +164,10 @@ export default function OptionsApp() {
                 value={settings.recordingFps}
                 onChange={(e) => save({ recordingFps: Number(e.target.value) })}
               >
-                <option value="15">15 FPS</option>
-                <option value="24">24 FPS</option>
-                <option value="30">30 FPS</option>
-                <option value="60">60 FPS</option>
+                <option value="15">{t('settingsFpsValue', '15')}</option>
+                <option value="24">{t('settingsFpsValue', '24')}</option>
+                <option value="30">{t('settingsFpsValue', '30')}</option>
+                <option value="60">{t('settingsFpsValue', '60')}</option>
               </select>
             </div>
 
@@ -181,17 +181,17 @@ export default function OptionsApp() {
                 value={settings.recordingCountdown}
                 onChange={(e) => save({ recordingCountdown: Number(e.target.value) })}
               >
-                <option value="0">No countdown</option>
-                <option value="3">3 seconds</option>
-                <option value="5">5 seconds</option>
-                <option value="10">10 seconds</option>
+                <option value="0">{t('settingsCountdownNone')}</option>
+                <option value="3">{t('settingsCountdownSecs', '3')}</option>
+                <option value="5">{t('settingsCountdownSecs', '5')}</option>
+                <option value="10">{t('settingsCountdownSecs', '10')}</option>
               </select>
             </div>
 
             <div className="setting-row">
               <div>
-                <div className="setting-label">System Audio</div>
-                <div className="setting-description">Record tab or system audio</div>
+                <div className="setting-label">{t('settingsSystemAudio')}</div>
+                <div className="setting-description">{t('settingsSystemAudioDesc')}</div>
               </div>
               <label className="setting-toggle">
                 <input
@@ -205,8 +205,8 @@ export default function OptionsApp() {
 
             <div className="setting-row">
               <div>
-                <div className="setting-label">Microphone</div>
-                <div className="setting-description">Record microphone audio</div>
+                <div className="setting-label">{t('settingsMicrophone')}</div>
+                <div className="setting-description">{t('settingsMicrophoneDesc')}</div>
               </div>
               <label className="setting-toggle">
                 <input
@@ -242,9 +242,9 @@ export default function OptionsApp() {
                 value={settings.theme}
                 onChange={(e) => save({ theme: e.target.value as any })}
               >
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
-                <option value="system">System</option>
+                <option value="dark">{t('settingsThemeDark')}</option>
+                <option value="light">{t('settingsThemeLight')}</option>
+                <option value="system">{t('settingsThemeSystem')}</option>
               </select>
             </div>
 
@@ -312,11 +312,11 @@ export default function OptionsApp() {
                 <path d="M7 16h10"/>
               </svg>
             </div>
-            <h2 className="options-section-title">Keyboard Shortcuts</h2>
+            <h2 className="options-section-title">{t('settingsKeyboardShortcuts')}</h2>
           </div>
           <div className="options-section-body">
             <div className="setting-row">
-              <div className="setting-label">Visible Area Screenshot</div>
+              <div className="setting-label">{t('settingsShortcutVisible')}</div>
               <kbd style={{
                 padding: '2px 8px',
                 background: 'var(--sc-bg-elevated)',
@@ -328,7 +328,7 @@ export default function OptionsApp() {
               }}>Alt+Shift+V</kbd>
             </div>
             <div className="setting-row">
-              <div className="setting-label">Full Page Screenshot</div>
+              <div className="setting-label">{t('settingsShortcutFull')}</div>
               <kbd style={{
                 padding: '2px 8px',
                 background: 'var(--sc-bg-elevated)',
@@ -340,7 +340,7 @@ export default function OptionsApp() {
               }}>Alt+Shift+F</kbd>
             </div>
             <div className="setting-row">
-              <div className="setting-label">Select Area Screenshot</div>
+              <div className="setting-label">{t('settingsShortcutSelect')}</div>
               <kbd style={{
                 padding: '2px 8px',
                 background: 'var(--sc-bg-elevated)',
@@ -352,7 +352,7 @@ export default function OptionsApp() {
               }}>Alt+Shift+S</kbd>
             </div>
             <div className="setting-row">
-              <div className="setting-label">Record Tab</div>
+              <div className="setting-label">{t('settingsShortcutRecord')}</div>
               <kbd style={{
                 padding: '2px 8px',
                 background: 'var(--sc-bg-elevated)',
@@ -365,7 +365,7 @@ export default function OptionsApp() {
             </div>
             <div className="setting-row" style={{ justifyContent: 'flex-start' }}>
               <div className="setting-description" style={{ marginTop: 0 }}>
-                To change shortcuts, visit <a
+                {t('settingsShortcutChange')} <a
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();

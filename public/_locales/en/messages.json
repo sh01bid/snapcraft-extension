@@ -1,94 +1,358 @@
 {
-  "extName": { "message": "Screenshot King - Web Capture & Screen Recorder", "description": "Extension name" },
-  "extDescription": { "message": "Screenshot & screen recording tool with editor", "description": "Extension description" },
-
-  "popupScreenshot": { "message": "Screenshot" },
-  "popupRecording": { "message": "Screen Recording" },
-  "popupVisibleArea": { "message": "Visible Area" },
-  "popupFullPage": { "message": "Full Page" },
-  "popupSelectArea": { "message": "Select Area" },
-  "popupCurrentTab": { "message": "Current Tab" },
-  "popupDesktop": { "message": "Desktop" },
-  "popupHistory": { "message": "History" },
-  "popupSettings": { "message": "Settings" },
-  "popupQuickCapture": { "message": "Quick capture:" },
-  "popupStop": { "message": "Stop" },
-
-  "settingsTitle": { "message": "Settings" },
-  "settingsScreenshot": { "message": "Screenshot" },
-  "settingsImageFormat": { "message": "Image Format" },
-  "settingsImageFormatDesc": { "message": "Default format for saved screenshots" },
-  "settingsImageQuality": { "message": "Image Quality" },
-  "settingsImageQualityDesc": { "message": "For JPEG and WebP formats (1-100)" },
-  "settingsFilenamePattern": { "message": "Filename Pattern" },
-  "settingsFilenamePatternDesc": { "message": "Available: {date}, {time}, {timestamp}" },
-  "settingsRecording": { "message": "Recording" },
-  "settingsVideoQuality": { "message": "Video Quality" },
-  "settingsVideoFps": { "message": "Frame Rate" },
-  "settingsCountdown": { "message": "Countdown" },
-  "settingsCountdownDesc": { "message": "Seconds before recording starts (0 = none)" },
-  "settingsTabAudio": { "message": "Tab Audio" },
-  "settingsTabAudioDesc": { "message": "Capture audio from the browser tab" },
-  "settingsGeneral": { "message": "General" },
-  "settingsTheme": { "message": "Theme" },
-  "settingsNotifications": { "message": "Notifications" },
-  "settingsNotificationsDesc": { "message": "Show notifications after captures" },
-  "settingsAutoCopy": { "message": "Auto Copy to Clipboard" },
-  "settingsAutoCopyDesc": { "message": "Automatically copy screenshots to clipboard" },
-  "settingsMaxHistory": { "message": "Max History Items" },
-  "settingsMaxHistoryDesc": { "message": "Older items will be automatically removed" },
-  "settingsSaved": { "message": "Settings saved!" },
-
-  "historyTitle": { "message": "History" },
-  "historyItems": { "message": "$COUNT$ items", "placeholders": { "COUNT": { "content": "$1" } } },
-  "historyAll": { "message": "All" },
-  "historyScreenshots": { "message": "Screenshots" },
-  "historyRecordings": { "message": "Recordings" },
-  "historySelect": { "message": "Select" },
-  "historyCancel": { "message": "Cancel" },
-  "historySelectAll": { "message": "Select All" },
-  "historyDeselectAll": { "message": "Deselect All" },
-  "historySelected": { "message": "$COUNT$ selected", "placeholders": { "COUNT": { "content": "$1" } } },
-  "historyDownload": { "message": "Download" },
-  "historyDelete": { "message": "Delete" },
-  "historyEmpty": { "message": "No captures yet" },
-  "historyEmptyDesc": { "message": "Take a screenshot or start a recording to see them here." },
-
-  "editorSave": { "message": "Save" },
-  "editorCopy": { "message": "Copy" },
-  "editorUndo": { "message": "Undo" },
-  "editorRedo": { "message": "Redo" },
-  "editorZoomIn": { "message": "Zoom In" },
-  "editorZoomOut": { "message": "Zoom Out" },
-  "editorResetZoom": { "message": "Reset Zoom" },
-
-  "previewTitle": { "message": "Recording Preview" },
-  "previewDownload": { "message": "Download" },
-  "previewDelete": { "message": "Delete" },
-  "previewLoading": { "message": "Loading recording..." },
-  "previewNoRecording": { "message": "No recording found" },
-  "previewDownloadedWebm": { "message": "Downloaded as WebM!" },
-  "previewDownloadedMp4": { "message": "Downloaded as MP4!" },
-  "previewDeleted": { "message": "Recording deleted" },
-  "previewDeleteFailed": { "message": "Could not delete recording" },
-  "previewPreparing": { "message": "Preparing video..." },
-  "previewConverting": { "message": "Converting: $PCT$%", "placeholders": { "PCT": { "content": "$1" } } },
-  "previewFinalizing": { "message": "Finalizing MP4..." },
-  "previewConvertDone": { "message": "Done!" },
-  "previewProcessing": { "message": "Processing..." },
-  "previewConvertFallback": { "message": "$ERR$ — Downloading as WebM instead.", "placeholders": { "ERR": { "content": "$1" } } },
-  "previewWarnLong": { "message": "This recording is over 5 minutes. MP4 conversion may take a while." },
-  "previewWarnTooLong": { "message": "This recording is over 15 minutes. MP4 conversion may fail due to memory limits." },
-
-  "contextMenuVisible": { "message": "Capture Visible Area" },
-  "contextMenuFullPage": { "message": "Capture Full Page" },
-  "contextMenuRegion": { "message": "Select Region" },
-  "contextMenuRecordTab": { "message": "Record Current Tab" },
-  "contextMenuRecordScreen": { "message": "Record Desktop" },
-
-  "notifScreenshotTitle": { "message": "Screenshot captured" },
-  "notifScreenshotVisible": { "message": "Visible area captured successfully." },
-  "notifScreenshotRegion": { "message": "Region captured successfully." },
-  "notifRecordingTitle": { "message": "Recording saved" },
-  "notifRecordingDesc": { "message": "Screen recording saved successfully." }
+  "extName": {
+    "message": "Screenshot King - Web Capture & Screen Recorder",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Screenshot & screen recording tool with editor",
+    "description": "Extension description"
+  },
+  "popupScreenshot": {
+    "message": "Screenshot"
+  },
+  "popupRecording": {
+    "message": "Screen Recording"
+  },
+  "popupVisibleArea": {
+    "message": "Visible Area"
+  },
+  "popupFullPage": {
+    "message": "Full Page"
+  },
+  "popupSelectArea": {
+    "message": "Select Area"
+  },
+  "popupCurrentTab": {
+    "message": "Current Tab"
+  },
+  "popupDesktop": {
+    "message": "Desktop"
+  },
+  "popupHistory": {
+    "message": "History"
+  },
+  "popupSettings": {
+    "message": "Settings"
+  },
+  "popupQuickCapture": {
+    "message": "Quick capture:"
+  },
+  "popupStop": {
+    "message": "Stop"
+  },
+  "settingsTitle": {
+    "message": "Settings"
+  },
+  "settingsScreenshot": {
+    "message": "Screenshot"
+  },
+  "settingsImageFormat": {
+    "message": "Image Format"
+  },
+  "settingsImageFormatDesc": {
+    "message": "Default format for saved screenshots"
+  },
+  "settingsImageQuality": {
+    "message": "Image Quality"
+  },
+  "settingsImageQualityDesc": {
+    "message": "For JPEG and WebP formats (1-100)"
+  },
+  "settingsFilenamePattern": {
+    "message": "Filename Pattern"
+  },
+  "settingsFilenamePatternDesc": {
+    "message": "Available: {date}, {time}, {timestamp}"
+  },
+  "settingsRecording": {
+    "message": "Recording"
+  },
+  "settingsVideoQuality": {
+    "message": "Video Quality"
+  },
+  "settingsVideoFps": {
+    "message": "Frame Rate"
+  },
+  "settingsCountdown": {
+    "message": "Countdown"
+  },
+  "settingsCountdownDesc": {
+    "message": "Seconds before recording starts (0 = none)"
+  },
+  "settingsTabAudio": {
+    "message": "Tab Audio"
+  },
+  "settingsTabAudioDesc": {
+    "message": "Capture audio from the browser tab"
+  },
+  "settingsGeneral": {
+    "message": "General"
+  },
+  "settingsTheme": {
+    "message": "Theme"
+  },
+  "settingsNotifications": {
+    "message": "Notifications"
+  },
+  "settingsNotificationsDesc": {
+    "message": "Show notifications after captures"
+  },
+  "settingsAutoCopy": {
+    "message": "Auto Copy to Clipboard"
+  },
+  "settingsAutoCopyDesc": {
+    "message": "Automatically copy screenshots to clipboard"
+  },
+  "settingsMaxHistory": {
+    "message": "Max History Items"
+  },
+  "settingsMaxHistoryDesc": {
+    "message": "Older items will be automatically removed"
+  },
+  "settingsSaved": {
+    "message": "Settings saved!"
+  },
+  "historyTitle": {
+    "message": "History"
+  },
+  "historyItems": {
+    "message": "$COUNT$ items",
+    "placeholders": {
+      "COUNT": {
+        "content": "$1"
+      }
+    }
+  },
+  "historyAll": {
+    "message": "All"
+  },
+  "historyScreenshots": {
+    "message": "Screenshots"
+  },
+  "historyRecordings": {
+    "message": "Recordings"
+  },
+  "historySelect": {
+    "message": "Select"
+  },
+  "historyCancel": {
+    "message": "Cancel"
+  },
+  "historySelectAll": {
+    "message": "Select All"
+  },
+  "historyDeselectAll": {
+    "message": "Deselect All"
+  },
+  "historySelected": {
+    "message": "$COUNT$ selected",
+    "placeholders": {
+      "COUNT": {
+        "content": "$1"
+      }
+    }
+  },
+  "historyDownload": {
+    "message": "Download"
+  },
+  "historyDelete": {
+    "message": "Delete"
+  },
+  "historyEmpty": {
+    "message": "No captures yet"
+  },
+  "historyEmptyDesc": {
+    "message": "Take a screenshot or start a recording to see them here."
+  },
+  "editorSave": {
+    "message": "Save"
+  },
+  "editorCopy": {
+    "message": "Copy"
+  },
+  "editorUndo": {
+    "message": "Undo"
+  },
+  "editorRedo": {
+    "message": "Redo"
+  },
+  "editorZoomIn": {
+    "message": "Zoom In"
+  },
+  "editorZoomOut": {
+    "message": "Zoom Out"
+  },
+  "editorResetZoom": {
+    "message": "Reset Zoom"
+  },
+  "previewTitle": {
+    "message": "Recording Preview"
+  },
+  "previewDownload": {
+    "message": "Download"
+  },
+  "previewDelete": {
+    "message": "Delete"
+  },
+  "previewLoading": {
+    "message": "Loading recording..."
+  },
+  "previewNoRecording": {
+    "message": "No recording found"
+  },
+  "previewDownloadedWebm": {
+    "message": "Downloaded as WebM!"
+  },
+  "previewDownloadedMp4": {
+    "message": "Downloaded as MP4!"
+  },
+  "previewDeleted": {
+    "message": "Recording deleted"
+  },
+  "previewDeleteFailed": {
+    "message": "Could not delete recording"
+  },
+  "previewPreparing": {
+    "message": "Preparing video..."
+  },
+  "previewConverting": {
+    "message": "Converting: $PCT$%",
+    "placeholders": {
+      "PCT": {
+        "content": "$1"
+      }
+    }
+  },
+  "previewFinalizing": {
+    "message": "Finalizing MP4..."
+  },
+  "previewConvertDone": {
+    "message": "Done!"
+  },
+  "previewProcessing": {
+    "message": "Processing..."
+  },
+  "previewConvertFallback": {
+    "message": "$ERR$ — Downloading as WebM instead.",
+    "placeholders": {
+      "ERR": {
+        "content": "$1"
+      }
+    }
+  },
+  "previewWarnLong": {
+    "message": "This recording is over 5 minutes. MP4 conversion may take a while."
+  },
+  "previewWarnTooLong": {
+    "message": "This recording is over 15 minutes. MP4 conversion may fail due to memory limits."
+  },
+  "contextMenuVisible": {
+    "message": "Capture Visible Area"
+  },
+  "contextMenuFullPage": {
+    "message": "Capture Full Page"
+  },
+  "contextMenuRegion": {
+    "message": "Select Region"
+  },
+  "contextMenuRecordTab": {
+    "message": "Record Current Tab"
+  },
+  "contextMenuRecordScreen": {
+    "message": "Record Desktop"
+  },
+  "notifScreenshotTitle": {
+    "message": "Screenshot captured"
+  },
+  "notifScreenshotVisible": {
+    "message": "Visible area captured successfully."
+  },
+  "notifScreenshotRegion": {
+    "message": "Region captured successfully."
+  },
+  "notifRecordingTitle": {
+    "message": "Recording saved"
+  },
+  "notifRecordingDesc": {
+    "message": "Screen recording saved successfully."
+  },
+  "settingsVideoFormat": {
+    "message": "Video Format"
+  },
+  "settingsVideoFormatDesc": {
+    "message": "WebM (native) or MP4 (converted via WebCodecs)"
+  },
+  "settingsVideoFormatWebm": {
+    "message": "WebM (VP9)"
+  },
+  "settingsVideoFormatMp4": {
+    "message": "MP4 (H.264)"
+  },
+  "settingsQualityLow": {
+    "message": "Low (720p)"
+  },
+  "settingsQualityMedium": {
+    "message": "Medium (1080p)"
+  },
+  "settingsQualityHigh": {
+    "message": "High (Original)"
+  },
+  "settingsFpsValue": {
+    "message": "$FPS$ FPS",
+    "placeholders": {
+      "FPS": {
+        "content": "$1"
+      }
+    }
+  },
+  "settingsCountdownNone": {
+    "message": "No countdown"
+  },
+  "settingsCountdownSecs": {
+    "message": "$SEC$ seconds",
+    "placeholders": {
+      "SEC": {
+        "content": "$1"
+      }
+    }
+  },
+  "settingsSystemAudio": {
+    "message": "System Audio"
+  },
+  "settingsSystemAudioDesc": {
+    "message": "Record tab or system audio"
+  },
+  "settingsMicrophone": {
+    "message": "Microphone"
+  },
+  "settingsMicrophoneDesc": {
+    "message": "Record microphone audio"
+  },
+  "settingsThemeDark": {
+    "message": "Dark"
+  },
+  "settingsThemeLight": {
+    "message": "Light"
+  },
+  "settingsThemeSystem": {
+    "message": "System"
+  },
+  "settingsKeyboardShortcuts": {
+    "message": "Keyboard Shortcuts"
+  },
+  "settingsShortcutVisible": {
+    "message": "Visible Area Screenshot"
+  },
+  "settingsShortcutFull": {
+    "message": "Full Page Screenshot"
+  },
+  "settingsShortcutSelect": {
+    "message": "Select Area Screenshot"
+  },
+  "settingsShortcutRecord": {
+    "message": "Record Tab"
+  },
+  "settingsShortcutChange": {
+    "message": "To change shortcuts, visit "
+  }
 }
