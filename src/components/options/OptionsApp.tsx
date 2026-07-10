@@ -5,6 +5,7 @@ import { getSettings, updateSettings } from '../../lib/storage';
 import type { AppSettings } from '../../lib/types';
 import { DEFAULT_SETTINGS } from '../../lib/types';
 import { t } from '../../lib/i18n';
+import { setTheme } from '../../lib/theme';
 import './OptionsApp.css';
 
 export default function OptionsApp() {
@@ -20,6 +21,9 @@ export default function OptionsApp() {
       const updated = { ...settings, ...partial };
       setSettings(updated);
       await updateSettings(partial);
+      if (partial.theme) {
+        setTheme(partial.theme);
+      }
       setToast(true);
       setTimeout(() => setToast(false), 2000);
     },
