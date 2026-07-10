@@ -21,13 +21,28 @@
   
   <!-- Icon -->
   
-    <rect x="30" y="50" width="80" height="80" rx="16" fill="#0C0C14"/>
-    <circle cx="70" cy="90" r="18.400000000000002" fill="none" stroke="url(#iconGrad)" stroke-width="4.4"/>
-    <circle cx="70" cy="90" r="8" fill="url(#iconGrad)" opacity="0.8"/>
-    <line x1="44.4" y1="64.4" x2="54" y2="64.4" stroke="url(#iconGrad)" stroke-width="3.2" stroke-linecap="round"/>
-    <line x1="44.4" y1="64.4" x2="44.4" y2="74" stroke="url(#iconGrad)" stroke-width="3.2" stroke-linecap="round"/>
-    <line x1="95.6" y1="64.4" x2="86" y2="64.4" stroke="url(#iconGrad)" stroke-width="3.2" stroke-linecap="round"/>
-    <line x1="95.6" y1="64.4" x2="95.6" y2="74" stroke="url(#iconGrad)" stroke-width="3.2" stroke-linecap="round"/>
+    <rect x="30" y="50" width="80" height="80" rx="17.6" fill="#0C0C14"/>
+    <circle cx="70" cy="94" r="17.6" fill="none" stroke="url(#iconGrad)" stroke-width="4.4"/>
+    <circle cx="70" cy="94" r="7.199999999999999" fill="url(#iconGrad)" opacity="0.9"/>
+    <path d="
+      M 52.4 81.2
+      L 49.2 65.2
+      L 61.2 73.2
+      L 70 60.4
+      L 78.8 73.2
+      L 90.8 65.2
+      L 87.6 81.2
+    " fill="none" stroke="url(#iconGrad)" stroke-width="4.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="
+      M 58 116.4
+      L 47.599999999999994 116.4
+      L 47.599999999999994 106
+    " fill="none" stroke="url(#iconGrad)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="
+      M 82 116.4
+      L 92.4 116.4
+      L 92.4 106
+    " fill="none" stroke="url(#iconGrad)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
   
   
   <!-- Title - LARGE -->

@@ -76,9 +76,12 @@ const icons = {
     </svg>
   ),
   logo: (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
-      <circle cx="12" cy="13" r="3"/>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="15" r="4.5" />
+      <circle cx="12" cy="15" r="1.5" fill="currentColor"/>
+      <path d="M 6.5 11.5 L 4.5 4.5 L 9.5 8.5 L 12 3 L 14.5 8.5 L 19.5 4.5 L 17.5 11.5" />
+      <path d="M 7 20 L 4 20 L 4 17" />
+      <path d="M 17 20 L 20 20 L 20 17" />
     </svg>
   ),
   squareStop: (

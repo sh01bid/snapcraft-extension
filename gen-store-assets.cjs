@@ -18,14 +18,33 @@ const BORDER = '#2A2A40';
 
 // ── Shared SVG Components ──
 function iconSvg(x, y, size = 40) {
+  const cx = x + size / 2;
+  const cy = y + size * 0.55;
+  const strokeW = size * 0.055;
+  
   return `
-    <rect x="${x}" y="${y}" width="${size}" height="${size}" rx="${size * 0.2}" fill="${BG}"/>
-    <circle cx="${x + size/2}" cy="${y + size/2}" r="${size * 0.23}" fill="none" stroke="url(#iconGrad)" stroke-width="${size * 0.055}"/>
-    <circle cx="${x + size/2}" cy="${y + size/2}" r="${size * 0.1}" fill="url(#iconGrad)" opacity="0.8"/>
-    <line x1="${x + size*0.18}" y1="${y + size*0.18}" x2="${x + size*0.3}" y2="${y + size*0.18}" stroke="url(#iconGrad)" stroke-width="${size*0.04}" stroke-linecap="round"/>
-    <line x1="${x + size*0.18}" y1="${y + size*0.18}" x2="${x + size*0.18}" y2="${y + size*0.3}" stroke="url(#iconGrad)" stroke-width="${size*0.04}" stroke-linecap="round"/>
-    <line x1="${x + size*0.82}" y1="${y + size*0.18}" x2="${x + size*0.7}" y2="${y + size*0.18}" stroke="url(#iconGrad)" stroke-width="${size*0.04}" stroke-linecap="round"/>
-    <line x1="${x + size*0.82}" y1="${y + size*0.18}" x2="${x + size*0.82}" y2="${y + size*0.3}" stroke="url(#iconGrad)" stroke-width="${size*0.04}" stroke-linecap="round"/>
+    <rect x="${x}" y="${y}" width="${size}" height="${size}" rx="${size * 0.22}" fill="${BG}"/>
+    <circle cx="${cx}" cy="${cy}" r="${size * 0.22}" fill="none" stroke="url(#iconGrad)" stroke-width="${strokeW}"/>
+    <circle cx="${cx}" cy="${cy}" r="${size * 0.09}" fill="url(#iconGrad)" opacity="0.9"/>
+    <path d="
+      M ${cx - size*0.22} ${cy - size*0.16}
+      L ${cx - size*0.26} ${cy - size*0.36}
+      L ${cx - size*0.11} ${cy - size*0.26}
+      L ${cx} ${cy - size*0.42}
+      L ${cx + size*0.11} ${cy - size*0.26}
+      L ${cx + size*0.26} ${cy - size*0.36}
+      L ${cx + size*0.22} ${cy - size*0.16}
+    " fill="none" stroke="url(#iconGrad)" stroke-width="${strokeW}" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="
+      M ${cx - size*0.15} ${cy + size*0.28}
+      L ${cx - size*0.28} ${cy + size*0.28}
+      L ${cx - size*0.28} ${cy + size*0.15}
+    " fill="none" stroke="url(#iconGrad)" stroke-width="${size*0.04}" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="
+      M ${cx + size*0.15} ${cy + size*0.28}
+      L ${cx + size*0.28} ${cy + size*0.28}
+      L ${cx + size*0.28} ${cy + size*0.15}
+    " fill="none" stroke="url(#iconGrad)" stroke-width="${size*0.04}" stroke-linecap="round" stroke-linejoin="round"/>
   `;
 }
 
