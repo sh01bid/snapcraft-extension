@@ -1,41 +1,41 @@
-/* SnapCraft — Background Service Worker */
+/* ScreenKing — Background Service Worker */
 
 import { onMessage } from '../src/lib/messaging';
 import { getSettings, cleanupCaptures } from '../src/lib/storage';
 import type { Message, RegionBounds, AppSettings } from '../src/lib/types';
 
 export default defineBackground(() => {
-  console.log('[SnapCraft] Background service worker started');
+  console.log('[ScreenKing] Background service worker started');
 
   // ── Context Menu ──
   browser.runtime.onInstalled.addListener(() => {
     chrome.contextMenus.create({
-      id: 'snapcraft-visible',
+      id: 'screenking-visible',
       title: chrome.i18n.getMessage('contextMenuVisible') || 'Capture Visible Area',
       contexts: ['page'],
     });
     chrome.contextMenus.create({
-      id: 'snapcraft-fullpage',
+      id: 'screenking-fullpage',
       title: chrome.i18n.getMessage('contextMenuFullPage') || 'Capture Full Page',
       contexts: ['page'],
     });
     chrome.contextMenus.create({
-      id: 'snapcraft-region',
+      id: 'screenking-region',
       title: chrome.i18n.getMessage('contextMenuRegion') || 'Select Region',
       contexts: ['page'],
     });
     chrome.contextMenus.create({
-      id: 'snapcraft-separator',
+      id: 'screenking-separator',
       type: 'separator',
       contexts: ['page'],
     });
     chrome.contextMenus.create({
-      id: 'snapcraft-record-tab',
+      id: 'screenking-record-tab',
       title: chrome.i18n.getMessage('contextMenuRecordTab') || 'Record Current Tab',
       contexts: ['page'],
     });
     chrome.contextMenus.create({
-      id: 'snapcraft-record-screen',
+      id: 'screenking-record-screen',
       title: chrome.i18n.getMessage('contextMenuRecordScreen') || 'Record Desktop',
       contexts: ['page'],
     });
@@ -44,19 +44,19 @@ export default defineBackground(() => {
   chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     const sender = { tab } as chrome.runtime.MessageSender;
     switch (info.menuItemId) {
-      case 'snapcraft-visible':
+      case 'screenking-visible':
         handleCaptureVisible(sender);
         break;
-      case 'snapcraft-fullpage':
+      case 'screenking-fullpage':
         handleCaptureFullPage(sender);
         break;
-      case 'snapcraft-region':
+      case 'screenking-region':
         if (tab?.id) injectRegionSelector(tab.id);
         break;
-      case 'snapcraft-record-tab':
+      case 'screenking-record-tab':
         handleStartRecordingTab(sender);
         break;
-      case 'snapcraft-record-screen':
+      case 'screenking-record-screen':
         handleStartRecordingScreen(sender);
         break;
     }
@@ -106,7 +106,7 @@ export default defineBackground(() => {
 
       case 'RECORDING_COMPLETE':
         handleRecordingComplete(message.payload).catch((e) =>
-          console.error('[SnapCraft] Recording complete handler error:', e)
+          console.error('[ScreenKing] Recording complete handler error:', e)
         );
         return false;
 
@@ -191,7 +191,7 @@ export default defineBackground(() => {
       // The injected script will send FULLPAGE_SCROLL_NEXT messages
       return { success: true };
     } catch (e) {
-      console.error('[SnapCraft] Full page capture error:', e);
+      console.error('[ScreenKing] Full page capture error:', e);
       fullPageTabId = null;
       return { success: false };
     }
@@ -208,7 +208,7 @@ export default defineBackground(() => {
     // Use stored tabId (more reliable than sender.tab for injected scripts)
     const tabId = sender.tab?.id ?? fullPageTabId;
     if (!tabId) {
-      console.error('[SnapCraft] Full page scroll: no tab ID');
+      console.error('[ScreenKing] Full page scroll: no tab ID');
       return;
     }
 
@@ -228,7 +228,7 @@ export default defineBackground(() => {
         payload: { captured: fullPageCaptures.length },
       });
     } catch (e) {
-      console.error('[SnapCraft] Full page scroll step error:', e);
+      console.error('[ScreenKing] Full page scroll step error:', e);
     }
   }
 
@@ -370,7 +370,7 @@ export default defineBackground(() => {
 
       return { success: true };
     } catch (e) {
-      console.error('[SnapCraft] Tab recording error:', e);
+      console.error('[ScreenKing] Tab recording error:', e);
       return { success: false };
     }
   }
@@ -404,7 +404,7 @@ export default defineBackground(() => {
 
       return { success: true };
     } catch (e) {
-      console.error('[SnapCraft] Screen recording error:', e);
+      console.error('[ScreenKing] Screen recording error:', e);
       return { success: false };
     }
   }
@@ -419,7 +419,7 @@ export default defineBackground(() => {
 
       return { success: true };
     } catch (e) {
-      console.error('[SnapCraft] Stop recording error:', e);
+      console.error('[ScreenKing] Stop recording error:', e);
       return { success: false };
     }
   }

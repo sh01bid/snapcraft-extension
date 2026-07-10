@@ -1,4 +1,4 @@
-/* SnapCraft — Message Communication Layer */
+/* ScreenKing — Message Communication Layer */
 
 import type { Message, MessageType } from './types';
 
@@ -28,7 +28,7 @@ export function onMessage(
       // Return true if handler returns true (async response) or a Promise
       if (result instanceof Promise) {
         result.then(sendResponse).catch((err) => {
-          console.error('[SnapCraft] Message handler error:', err);
+          console.error('[ScreenKing] Message handler error:', err);
           sendResponse({ error: err.message });
         });
         return true;

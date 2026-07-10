@@ -1,4 +1,4 @@
-/* SnapCraft — Recording Controls Content Script */
+/* ScreenKing — Recording Controls Content Script */
 
 export default defineContentScript({
   matches: ['<all_urls>'],
@@ -26,7 +26,7 @@ export default defineContentScript({
 
     function showCountdown(seconds: number) {
       const overlay = document.createElement('div');
-      overlay.id = 'snapcraft-countdown';
+      overlay.id = 'screenking-countdown';
       const shadow = overlay.attachShadow({ mode: 'closed' });
 
       const style = document.createElement('style');
@@ -88,7 +88,7 @@ export default defineContentScript({
       if (controlBar) return;
 
       controlBar = document.createElement('div');
-      controlBar.id = 'snapcraft-recording-controls';
+      controlBar.id = 'screenking-recording-controls';
       shadowRoot = controlBar.attachShadow({ mode: 'closed' });
 
       const style = document.createElement('style');

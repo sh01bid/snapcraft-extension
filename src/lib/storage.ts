@@ -1,4 +1,4 @@
-/* SnapCraft — Storage Layer (IndexedDB via Dexie + Chrome Storage) */
+/* ScreenKing — Storage Layer (IndexedDB via Dexie + Chrome Storage) */
 
 import Dexie, { type EntityTable } from 'dexie';
 import type { AppSettings, CaptureRecord } from './types';
@@ -6,18 +6,18 @@ import { DEFAULT_SETTINGS } from './types';
 
 // ── IndexedDB for large binary data (screenshots, recordings) ──
 
-class SnapCraftDB extends Dexie {
+class ScreenKingDB extends Dexie {
   captures!: EntityTable<CaptureRecord, 'id'>;
 
   constructor() {
-    super('SnapCraftDB');
+    super('ScreenKingDB');
     this.version(1).stores({
       captures: '++id, type, mode, createdAt',
     });
   }
 }
 
-export const db = new SnapCraftDB();
+export const db = new ScreenKingDB();
 
 /**
  * Save a capture record (screenshot or recording)
@@ -101,7 +101,7 @@ export async function cleanupCaptures(maxItems: number): Promise<void> {
 
 // ── Chrome Storage for settings (synced, small data) ──
 
-const SETTINGS_KEY = 'snapcraft_settings';
+const SETTINGS_KEY = 'screenking_settings';
 
 /**
  * Get app settings

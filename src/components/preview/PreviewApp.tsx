@@ -1,4 +1,4 @@
-/* SnapCraft — Recording Preview Page */
+/* ScreenKing — Recording Preview Page */
 
 import { useState, useEffect, useRef } from 'react';
 import { getCapture, deleteCapture, getSettings } from '../../lib/storage';
@@ -66,7 +66,7 @@ export default function PreviewApp() {
         browser.storage.local.remove('_pendingPreview');
       }
     } catch (err) {
-      console.error('[SnapCraft Preview] Load error:', err);
+      console.error('[ScreenKing Preview] Load error:', err);
     } finally {
       setLoading(false);
     }
@@ -100,7 +100,7 @@ export default function PreviewApp() {
   async function handleDownload() {
     if (!videoBlob) return;
     const settings = await getSettings();
-    const pattern = settings.filenamePattern || 'SnapCraft_{date}_{time}';
+    const pattern = settings.filenamePattern || 'ScreenKing_{date}_{time}';
 
     if (downloadFormat === 'webm') {
       const filename = generateFilename(pattern, 'webm');
@@ -122,7 +122,7 @@ export default function PreviewApp() {
         await downloadBlob(mp4Blob, filename);
         showToast(t('previewDownloadedMp4'));
       } catch (err: any) {
-        console.error('[SnapCraft] MP4 conversion error:', err);
+        console.error('[ScreenKing] MP4 conversion error:', err);
         showToast(`⚠️ ${t('previewConvertFallback', err.message)}`, 5000);
         const filename = generateFilename(pattern, 'webm');
         await downloadBlob(videoBlob, filename);

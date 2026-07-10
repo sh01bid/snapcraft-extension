@@ -25,7 +25,7 @@
     <line x1="95.6" y1="64.4" x2="86" y2="64.4" stroke="url(#iconGrad)" stroke-width="3.2" stroke-linecap="round"/>
     <line x1="95.6" y1="64.4" x2="95.6" y2="74" stroke="url(#iconGrad)" stroke-width="3.2" stroke-linecap="round"/>
   
-  <text x="130" y="100" fill="#E8E8F0" font-family="Arial, sans-serif" font-size="52" font-weight="800">SnapCraft</text>
+  <text x="130" y="100" fill="#E8E8F0" font-family="Arial, sans-serif" font-size="52" font-weight="800">截图王</text>
   <text x="130" y="140" fill="#8888AA" font-family="sans-serif" font-size="22">截图与录屏工具</text>
   <rect x="30" y="180" width="120" height="40" rx="20" fill="#6C63FF" opacity="0.2" stroke="#6C63FF" stroke-width="2"/>
   <text x="90" y="206" fill="#6C63FF" font-family="sans-serif" font-size="18" text-anchor="middle" font-weight="700">截图</text>

@@ -1,4 +1,4 @@
-/* SnapCraft — WebM to MP4 Converter using WebCodecs + mp4-muxer */
+/* ScreenKing — WebM to MP4 Converter using WebCodecs + mp4-muxer */
 
 import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
 
@@ -86,7 +86,7 @@ export async function convertWebMToMP4(
   // Use the known duration from IndexedDB, or probe it
   if (!isFinite(duration) && knownDurationMs && knownDurationMs > 0) {
     duration = knownDurationMs / 1000;
-    console.log(`[SnapCraft] Using known duration: ${duration}s`);
+    console.log(`[ScreenKing] Using known duration: ${duration}s`);
   }
 
   if (!isFinite(duration)) {
@@ -105,7 +105,7 @@ export async function convertWebMToMP4(
       }, 3000);
     });
     duration = video.currentTime;
-    console.log(`[SnapCraft] Probed duration: ${duration}s`);
+    console.log(`[ScreenKing] Probed duration: ${duration}s`);
     // Reset to beginning
     video.currentTime = 0;
     await new Promise<void>((resolve) => {
@@ -130,7 +130,7 @@ export async function convertWebMToMP4(
   const out = getOutputDimensions(srcWidth, srcHeight);
   const codec = getAVCCodec(out.width, out.height);
 
-  console.log(`[SnapCraft] MP4 conversion: ${srcWidth}x${srcHeight} → ${out.width}x${out.height}, codec=${codec}${out.scaled ? ' (scaled)' : ''}`);
+  console.log(`[ScreenKing] MP4 conversion: ${srcWidth}x${srcHeight} → ${out.width}x${out.height}, codec=${codec}${out.scaled ? ' (scaled)' : ''}`);
 
   // Check if this codec/resolution is supported
   const support = await VideoEncoder.isConfigSupported({
@@ -164,7 +164,7 @@ export async function convertWebMToMP4(
       muxer.addVideoChunk(chunk, meta);
     },
     error: (e) => {
-      console.error('[SnapCraft] Encoder error:', e);
+      console.error('[ScreenKing] Encoder error:', e);
       encodeError = new Error(e.message);
     },
   });
@@ -255,7 +255,7 @@ export async function convertWebMToMP4(
   }
 
   onProgress?.({ phase: 'done', progress: 1 });
-  console.log(`[SnapCraft] MP4 conversion done: ${(mp4Blob.size / 1048576).toFixed(1)} MB`);
+  console.log(`[ScreenKing] MP4 conversion done: ${(mp4Blob.size / 1048576).toFixed(1)} MB`);
   return mp4Blob;
 }
 

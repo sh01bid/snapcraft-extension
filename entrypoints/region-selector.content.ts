@@ -1,4 +1,4 @@
-/* SnapCraft — Region Selector Content Script */
+/* ScreenKing — Region Selector Content Script */
 
 export default defineContentScript({
   matches: ['<all_urls>'],
@@ -22,7 +22,7 @@ export default defineContentScript({
       if (overlay) return;
 
       overlay = document.createElement('div');
-      overlay.id = 'snapcraft-region-overlay';
+      overlay.id = 'screenking-region-overlay';
       shadowRoot = overlay.attachShadow({ mode: 'closed' });
 
       // Inject styles

@@ -1,4 +1,4 @@
-/* SnapCraft — i18n Utility */
+/* ScreenKing — i18n Utility */
 
 /**
  * Get localized message with fallback

@@ -1,4 +1,4 @@
-/* SnapCraft — Shared Types */
+/* ScreenKing — Shared Types */
 
 // ── Message Types ──
 export type MessageType =
@@ -140,7 +140,7 @@ export interface AppSettings {
 export const DEFAULT_SETTINGS: AppSettings = {
   imageFormat: 'png',
   imageQuality: 92,
-  filenamePattern: 'SnapCraft_{date}_{time}',
+  filenamePattern: 'ScreenKing_{date}_{time}',
 
   recordingQuality: 'high',
   recordingFps: 30,

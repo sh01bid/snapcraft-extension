@@ -1,4 +1,4 @@
-/* SnapCraft — Utility: Image Processing */
+/* ScreenKing — Utility: Image Processing */
 
 /**
  * Convert a data URL to a Blob

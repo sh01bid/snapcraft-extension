@@ -1,4 +1,4 @@
-/* SnapCraft — Utility: Download */
+/* ScreenKing — Utility: Download */
 
 /**
  * Generate a filename based on pattern

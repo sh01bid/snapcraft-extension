@@ -1,4 +1,4 @@
-/* SnapCraft — Theme Manager */
+/* ScreenKing — Theme Manager */
 
 import { getSettings } from './storage';
 

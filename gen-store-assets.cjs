@@ -65,7 +65,7 @@ function screenshot1_popup() {
     <rect x="0" y="0" width="500" height="70" rx="16" fill="${BG3}"/>
     <rect x="0" y="50" width="500" height="20" fill="${BG3}"/>
     ${iconSvg(20, 15, 40)}
-    <text x="72" y="42" fill="${TEXT}" font-family="Inter, sans-serif" font-size="18" font-weight="700">SnapCraft</text>
+    <text x="72" y="42" fill="${TEXT}" font-family="Inter, sans-serif" font-size="18" font-weight="700">ScreenKing</text>
     <text x="178" y="42" fill="${TEXT2}" font-family="Inter, sans-serif" font-size="12">v3.0.1</text>
     
     <!-- Settings gear -->
@@ -525,7 +525,7 @@ function promoSmall() {
   ${iconSvg(30, 50, 80)}
   
   <!-- Title - LARGE -->
-  <text x="130" y="100" fill="${TEXT}" font-family="Inter, Arial, sans-serif" font-size="52" font-weight="800">SnapCraft</text>
+  <text x="130" y="100" fill="${TEXT}" font-family="Inter, Arial, sans-serif" font-size="52" font-weight="800">ScreenKing</text>
   
   <!-- Subtitle -->
   <text x="130" y="140" fill="${TEXT2}" font-family="Inter, Arial, sans-serif" font-size="22">Screenshot &amp; Recorder</text>
@@ -559,7 +559,7 @@ function promoLarge() {
   <g transform="translate(80, 60)">
     ${iconSvg(0, 10, 100)}
     
-    <text x="120" y="80" fill="${TEXT}" font-family="Inter, Arial, sans-serif" font-size="72" font-weight="800">SnapCraft</text>
+    <text x="120" y="80" fill="${TEXT}" font-family="Inter, Arial, sans-serif" font-size="72" font-weight="800">ScreenKing</text>
     
     <text x="0" y="150" fill="${TEXT2}" font-family="Inter, Arial, sans-serif" font-size="32">Screenshot &amp; Screen Recorder</text>
     <text x="0" y="195" fill="${TEXT2}" font-family="Inter, Arial, sans-serif" font-size="32">with Built-in Editor</text>
@@ -589,7 +589,7 @@ function promoLarge() {
     <rect x="0" y="0" width="440" height="64" rx="20" fill="${BG3}"/>
     <rect x="0" y="44" width="440" height="20" fill="${BG3}"/>
     ${iconSvg(16, 12, 40)}
-    <text x="68" y="42" fill="${TEXT}" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">SnapCraft</text>
+    <text x="68" y="42" fill="${TEXT}" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">ScreenKing</text>
     
     <!-- Menu items - bigger -->
     <rect x="16" y="80" width="408" height="54" rx="10" fill="${BG3}" stroke="${BORDER}" stroke-width="1"/>
@@ -633,7 +633,7 @@ function screenshot1_popup_zh() {
     <rect x="0" y="0" width="500" height="70" rx="16" fill="${BG3}"/>
     <rect x="0" y="50" width="500" height="20" fill="${BG3}"/>
     ${iconSvg(20, 15, 40)}
-    <text x="72" y="42" fill="${TEXT}" font-family="sans-serif" font-size="18" font-weight="700">SnapCraft</text>
+    <text x="72" y="42" fill="${TEXT}" font-family="sans-serif" font-size="18" font-weight="700">ScreenKing</text>
     <text x="24" y="104" fill="${TEXT}" font-family="sans-serif" font-size="14" font-weight="600">📷 截图</text>
     <rect x="16" y="118" width="468" height="52" rx="10" fill="${BG3}" stroke="${BORDER}" stroke-width="1"/>
     <text x="52" y="150" fill="${TEXT}" font-family="sans-serif" font-size="13">截取可见区域</text>
@@ -916,7 +916,7 @@ function promoSmall_zh() {
   <circle cx="220" cy="140" r="250" fill="${PURPLE}" opacity="0.06"/>
   <circle cx="380" cy="220" r="180" fill="${CYAN}" opacity="0.05"/>
   ${iconSvg(30, 50, 80)}
-  <text x="130" y="100" fill="${TEXT}" font-family="Arial, sans-serif" font-size="52" font-weight="800">SnapCraft</text>
+  <text x="130" y="100" fill="${TEXT}" font-family="Arial, sans-serif" font-size="52" font-weight="800">ScreenKing</text>
   <text x="130" y="140" fill="${TEXT2}" font-family="sans-serif" font-size="22">截图与录屏工具</text>
   <rect x="30" y="180" width="120" height="40" rx="20" fill="${PURPLE}" opacity="0.2" stroke="${PURPLE}" stroke-width="2"/>
   <text x="90" y="206" fill="${PURPLE}" font-family="sans-serif" font-size="18" text-anchor="middle" font-weight="700">截图</text>

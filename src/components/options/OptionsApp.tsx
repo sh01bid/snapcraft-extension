@@ -1,4 +1,4 @@
-/* SnapCraft — Options / Settings Page */
+/* ScreenKing — Options / Settings Page */
 
 import { useState, useEffect, useCallback } from 'react';
 import { getSettings, updateSettings } from '../../lib/storage';

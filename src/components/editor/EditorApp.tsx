@@ -1,4 +1,4 @@
-/* SnapCraft — Screenshot Editor Application */
+/* ScreenKing — Screenshot Editor Application */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { EditorTool, EditorShape } from '../../lib/types';
@@ -487,7 +487,7 @@ export default function EditorApp() {
         createdAt: Date.now(),
       });
     } catch (e) {
-      console.error('[SnapCraft Editor] Save to history error:', e);
+      console.error('[ScreenKing Editor] Save to history error:', e);
     }
   }
 

@@ -1,4 +1,4 @@
-/* SnapCraft — Canvas Editor Engine */
+/* ScreenKing — Canvas Editor Engine */
 
 import type { EditorShape, EditorTool } from '../types';
 

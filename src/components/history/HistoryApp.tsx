@@ -1,4 +1,4 @@
-/* SnapCraft — History Page */
+/* ScreenKing — History Page */
 
 import { useState, useEffect } from 'react';
 import { getCaptures, deleteCapture, getSettings } from '../../lib/storage';
@@ -43,7 +43,7 @@ export default function HistoryApp() {
 
   async function handleDownload(item: CaptureRecord) {
     const settings = await getSettings();
-    const pattern = settings.filenamePattern || 'SnapCraft_{date}_{time}';
+    const pattern = settings.filenamePattern || 'ScreenKing_{date}_{time}';
     const ext = item.type === 'recording' ? 'webm' : (settings.imageFormat || 'png');
     const filename = generateFilename(pattern, ext);
     await downloadBlob(item.data, filename);
@@ -113,7 +113,7 @@ export default function HistoryApp() {
 
   async function handleBatchDownload() {
     const settings = await getSettings();
-    const pattern = settings.filenamePattern || 'SnapCraft_{date}_{time}';
+    const pattern = settings.filenamePattern || 'ScreenKing_{date}_{time}';
     for (const item of captures) {
       if (item.id && selected.has(item.id)) {
         const ext = item.type === 'recording' ? 'webm' : (settings.imageFormat || 'png');

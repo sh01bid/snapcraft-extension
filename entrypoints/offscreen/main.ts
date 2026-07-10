@@ -1,4 +1,4 @@
-/* SnapCraft — Offscreen Document: Recording Engine */
+/* ScreenKing — Offscreen Document: Recording Engine */
 
 import { db } from '../../src/lib/storage';
 
@@ -66,7 +66,7 @@ async function startTabRecording(payload: {
     startRecording(mediaStream);
     return { success: true };
   } catch (error: any) {
-    console.error('[SnapCraft Offscreen] Tab recording error:', error);
+    console.error('[ScreenKing Offscreen] Tab recording error:', error);
     return { success: false, error: error.message };
   }
 }
@@ -93,7 +93,7 @@ async function startScreenRecording(payload?: { quality?: string; fps?: number }
     startRecording(mediaStream);
     return { success: true };
   } catch (error: any) {
-    console.error('[SnapCraft Offscreen] Screen recording error:', error);
+    console.error('[ScreenKing Offscreen] Screen recording error:', error);
     return { success: false, error: error.message };
   }
 }
@@ -179,7 +179,7 @@ function startRecording(stream: MediaStream) {
         chrome.runtime.sendMessage({ type: 'RECORDING_COMPLETE', payload: result });
       }
     } catch (e) {
-      console.error('[SnapCraft Offscreen] Storage failed:', e);
+      console.error('[ScreenKing Offscreen] Storage failed:', e);
       if (stopResolve) {
         stopResolve({ success: false });
         stopResolve = null;
@@ -195,7 +195,7 @@ function startRecording(stream: MediaStream) {
   };
 
   mediaRecorder.onerror = (event: any) => {
-    console.error('[SnapCraft Offscreen] MediaRecorder error:', event.error);
+    console.error('[ScreenKing Offscreen] MediaRecorder error:', event.error);
   };
 
   mediaRecorder.start(1000);
