@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800">
+  <defs>
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E6A800"/>
+      <stop offset="100%" style="stop-color:#B38200"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F8F9FA"/>
+      <stop offset="100%" style="stop-color:#E9ECEF"/>
+    </linearGradient>
+    <linearGradient id="btnGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#E6A800"/>
+      <stop offset="100%" style="stop-color:#B38200"/>
+    </linearGradient>
+  
+    <filter id="blurFilter"><feGaussianBlur in="SourceGraphic" stdDeviation="6"/></filter>
+  </defs>
+  <rect width="1280" height="800" fill="url(#bgGrad)"/>
+  
+  <g transform="translate(60, 30)">
+    <!-- Window frame -->
+    <rect x="0" y="0" width="1160" height="740" rx="12" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="1"/>
+    
+    <!-- Toolbar -->
+    <rect x="0" y="0" width="1160" height="56" rx="12" fill="#F1F3F5" stroke="#E5E5E5" stroke-width="1"/>
+    <rect x="0" y="40" width="1160" height="16" fill="#F1F3F5"/>
+    
+    <!-- Tool buttons - Draw is active -->
+    <rect x="16" y="10" width="36" height="36" rx="8" fill="#E6A800" opacity="0.25" stroke="#E6A800" stroke-width="1.5"/>
+    <text x="26" y="34" fill="#E6A800" font-size="16">✏️</text>
+    <rect x="60" y="10" width="36" height="36" rx="8" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="0.5"/>
+    <text x="70" y="34" fill="#666666" font-size="16">📝</text>
+    <rect x="104" y="10" width="36" height="36" rx="8" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="0.5"/>
+    <text x="114" y="34" fill="#666666" font-size="16">⬜</text>
+    <rect x="148" y="10" width="36" height="36" rx="8" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="0.5"/>
+    <text x="158" y="34" fill="#666666" font-size="16">⭕</text>
+    <rect x="192" y="10" width="36" height="36" rx="8" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="0.5"/>
+    <text x="202" y="34" fill="#666666" font-size="16">➡️</text>
+    <rect x="236" y="10" width="36" height="36" rx="8" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="0.5"/>
+    <text x="246" y="34" fill="#666666" font-size="16">🔤</text>
+    <rect x="280" y="10" width="36" height="36" rx="8" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="0.5"/>
+    <text x="290" y="34" fill="#666666" font-size="16">🌫️</text>
+    <rect x="324" y="10" width="36" height="36" rx="8" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="0.5"/>
+    <text x="334" y="34" fill="#666666" font-size="16">✂️</text>
+    
+    <!-- Divider -->
+    <line x1="380" y1="12" x2="380" y2="44" stroke="#E5E5E5" stroke-width="1"/>
+    
+    <!-- Color palette -->
+    <circle cx="408" cy="28" r="12" fill="#EF4444" stroke="white" stroke-width="2"/>
+    <circle cx="438" cy="28" r="12" fill="#F59E0B"/>
+    <circle cx="468" cy="28" r="12" fill="#22C55E"/>
+    <circle cx="498" cy="28" r="12" fill="#3B82F6"/>
+    <circle cx="528" cy="28" r="12" fill="#8B5CF6"/>
+    <circle cx="558" cy="28" r="12" fill="white"/>
+    
+    <!-- Divider -->
+    <line x1="590" y1="12" x2="590" y2="44" stroke="#E5E5E5" stroke-width="1"/>
+    
+    <!-- Stroke width -->
+    <text x="610" y="32" fill="#666666" font-family="Inter, sans-serif" font-size="11">Size</text>
+    <rect x="646" y="22" width="80" height="6" rx="3" fill="#F8F9FA"/>
+    <rect x="646" y="22" width="50" height="6" rx="3" fill="#EF4444"/>
+    <circle cx="696" cy="25" r="6" fill="white"/>
+    
+    <!-- Undo / Redo -->
+    <rect x="790" y="10" width="36" height="36" rx="8" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="0.5"/>
+    <text x="800" y="34" fill="#666666" font-size="14">↩️</text>
+    <rect x="832" y="10" width="36" height="36" rx="8" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="0.5"/>
+    <text x="842" y="34" fill="#666666" font-size="14" opacity="0.4">↪️</text>
+
+    <!-- Right side buttons -->
+    <rect x="920" y="10" width="100" height="36" rx="8" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="1"/>
+    <text x="940" y="34" fill="#111111" font-family="Inter, sans-serif" font-size="12">💾 Save</text>
+    <rect x="1030" y="10" width="115" height="36" rx="8" fill="url(#btnGrad)"/>
+    <text x="1050" y="34" fill="white" font-family="Inter, sans-serif" font-size="12" font-weight="600">📋 Copy</text>
+    
+    <!-- ═══ Canvas: Simulated webpage screenshot ═══ -->
+    <rect x="20" y="66" width="1120" height="660" rx="8" fill="#f8f9fa"/>
+    
+    <!-- Browser-like nav bar -->
+    <rect x="20" y="66" width="1120" height="40" rx="8" fill="#e9ecef"/>
+    <rect x="20" y="98" width="1120" height="8" fill="#e9ecef"/>
+    <circle cx="44" cy="86" r="6" fill="#ff5f57"/>
+    <circle cx="64" cy="86" r="6" fill="#ffbd2e"/>
+    <circle cx="84" cy="86" r="6" fill="#28c840"/>
+    <rect x="120" y="78" width="350" height="18" rx="9" fill="white" stroke="#d1d5db" stroke-width="0.5"/>
+    <text x="140" y="91" fill="#6b7280" font-family="Inter, sans-serif" font-size="10">example.com/dashboard</text>
+    
+    <!-- Page: header area -->
+    <rect x="20" y="106" width="1120" height="60" fill="#1e293b"/>
+    <text x="60" y="142" fill="white" font-family="Inter, sans-serif" font-size="18" font-weight="700">Dashboard</text>
+    <rect x="900" y="124" width="80" height="30" rx="6" fill="#3b82f6"/>
+    <text x="918" y="144" fill="white" font-family="Inter, sans-serif" font-size="11">Settings</text>
+    <rect x="990" y="124" width="110" height="30" rx="6" fill="#8b5cf6"/>
+    <text x="1010" y="144" fill="white" font-family="Inter, sans-serif" font-size="11">+ New Item</text>
+    
+    <!-- Content area - left column -->
+    <rect x="40" y="186" width="520" height="200" rx="8" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+    <text x="60" y="216" fill="#1e293b" font-family="Inter, sans-serif" font-size="14" font-weight="600">Monthly Revenue</text>
+    <text x="60" y="240" fill="#6b7280" font-family="Inter, sans-serif" font-size="11">Last 30 days performance</text>
+    <!-- Chart bars -->
+    <rect x="60" y="340" width="40" height="30" rx="3" fill="#c7d2fe"/>
+    <rect x="110" y="320" width="40" height="50" rx="3" fill="#c7d2fe"/>
+    <rect x="160" y="300" width="40" height="70" rx="3" fill="#c7d2fe"/>
+    <rect x="210" y="290" width="40" height="80" rx="3" fill="#a5b4fc"/>
+    <rect x="260" y="270" width="40" height="100" rx="3" fill="#818cf8"/>
+    <rect x="310" y="280" width="40" height="90" rx="3" fill="#818cf8"/>
+    <rect x="360" y="260" width="40" height="110" rx="3" fill="#6366f1"/>
+    <rect x="410" y="290" width="40" height="80" rx="3" fill="#818cf8"/>
+    <rect x="460" y="310" width="40" height="60" rx="3" fill="#a5b4fc"/>
+    
+    <!-- Content area - right column cards -->
+    <rect x="580" y="186" width="540" height="90" rx="8" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+    <text x="600" y="216" fill="#1e293b" font-family="Inter, sans-serif" font-size="13" font-weight="600">Total Users</text>
+    <text x="600" y="240" fill="#6366f1" font-family="Inter, sans-serif" font-size="22" font-weight="700">12,847</text>
+    <text x="600" y="260" fill="#22c55e" font-family="Inter, sans-serif" font-size="11">▲ 12.5% from last month</text>
+    
+    <rect x="580" y="286" width="540" height="90" rx="8" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+    <text x="600" y="316" fill="#1e293b" font-family="Inter, sans-serif" font-size="13" font-weight="600">Active Sessions</text>
+    <text x="600" y="340" fill="#6366f1" font-family="Inter, sans-serif" font-size="22" font-weight="700">3,291</text>
+    <text x="600" y="360" fill="#22c55e" font-family="Inter, sans-serif" font-size="11">▲ 8.3% from last month</text>
+
+    <!-- Bottom area: table -->
+    <rect x="40" y="406" width="1080" height="300" rx="8" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+    <text x="60" y="436" fill="#1e293b" font-family="Inter, sans-serif" font-size="14" font-weight="600">Recent Orders</text>
+    <!-- Table header -->
+    <rect x="40" y="450" width="1080" height="30" fill="#f9fafb"/>
+    <text x="60" y="470" fill="#6b7280" font-family="Inter, sans-serif" font-size="11" font-weight="600">Order ID</text>
+    <text x="240" y="470" fill="#6b7280" font-family="Inter, sans-serif" font-size="11" font-weight="600">Customer</text>
+    <text x="500" y="470" fill="#6b7280" font-family="Inter, sans-serif" font-size="11" font-weight="600">Email</text>
+    <text x="780" y="470" fill="#6b7280" font-family="Inter, sans-serif" font-size="11" font-weight="600">Amount</text>
+    <text x="960" y="470" fill="#6b7280" font-family="Inter, sans-serif" font-size="11" font-weight="600">Status</text>
+    <!-- Row 1 -->
+    <text x="60" y="505" fill="#374151" font-family="Inter, sans-serif" font-size="11">#ORD-7291</text>
+    <text x="240" y="505" fill="#374151" font-family="Inter, sans-serif" font-size="11">Sarah Johnson</text>
+    <text x="500" y="505" fill="#6b7280" font-family="Inter, sans-serif" font-size="11">sarah@example.com</text>
+    <text x="780" y="505" fill="#374151" font-family="Inter, sans-serif" font-size="11" font-weight="600">$299.00</text>
+    <rect x="960" y="492" width="70" height="20" rx="10" fill="#dcfce7"/>
+    <text x="978" y="506" fill="#16a34a" font-family="Inter, sans-serif" font-size="10" font-weight="600">Completed</text>
+    <line x1="40" y1="518" x2="1120" y2="518" stroke="#f3f4f6" stroke-width="1"/>
+    <!-- Row 2 -->
+    <text x="60" y="540" fill="#374151" font-family="Inter, sans-serif" font-size="11">#ORD-7290</text>
+    <text x="240" y="540" fill="#374151" font-family="Inter, sans-serif" font-size="11">Mike Chen</text>
+    <text x="500" y="540" fill="#6b7280" font-family="Inter, sans-serif" font-size="11">mike@example.com</text>
+    <text x="780" y="540" fill="#374151" font-family="Inter, sans-serif" font-size="11" font-weight="600">$149.50</text>
+    <rect x="960" y="527" width="60" height="20" rx="10" fill="#fef9c3"/>
+    <text x="973" y="541" fill="#a16207" font-family="Inter, sans-serif" font-size="10" font-weight="600">Pending</text>
+    <line x1="40" y1="553" x2="1120" y2="553" stroke="#f3f4f6" stroke-width="1"/>
+    <!-- Row 3 -->
+    <text x="60" y="575" fill="#374151" font-family="Inter, sans-serif" font-size="11">#ORD-7289</text>
+    <text x="240" y="575" fill="#374151" font-family="Inter, sans-serif" font-size="11">Emily Davis</text>
+    <text x="500" y="575" fill="#6b7280" font-family="Inter, sans-serif" font-size="11">emily@example.com</text>
+    <text x="780" y="575" fill="#374151" font-family="Inter, sans-serif" font-size="11" font-weight="600">$89.99</text>
+    <rect x="960" y="562" width="70" height="20" rx="10" fill="#dcfce7"/>
+    <text x="978" y="576" fill="#16a34a" font-family="Inter, sans-serif" font-size="10" font-weight="600">Completed</text>
+
+    <!-- ═══ ANNOTATIONS overlaid on the screenshot ═══ -->
+    
+    <!-- 1. Big red arrow pointing to the chart peak -->
+    <line x1="480" y1="210" x2="400" y2="260" stroke="#EF4444" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="400,260 415,248 408,264" fill="#EF4444"/>
+    
+    <!-- 2. Red circle around Total Users number -->
+    <ellipse cx="660" cy="238" rx="80" ry="20" fill="none" stroke="#EF4444" stroke-width="3"/>
+    
+    <!-- 3. Text annotation callout -->
+    <rect x="740" y="208" width="200" height="36" rx="6" fill="#EF4444" opacity="0.9"/>
+    <text x="760" y="232" fill="white" font-family="Inter, sans-serif" font-size="14" font-weight="700">Key Metric Here!</text>
+    <line x1="740" y1="230" x2="720" y2="238" stroke="#EF4444" stroke-width="2"/>
+    
+    <!-- 4. Freehand-style underline on chart title -->
+    <path d="M58,218 Q100,225 180,218 Q220,215 260,220 Q300,224 340,218" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+    
+    <!-- 5. Rectangle highlight around "+ New Item" button -->
+    <rect x="985" y="118" width="122" height="42" rx="4" fill="none" stroke="#22C55E" stroke-width="3" stroke-dasharray="8,4"/>
+    <text x="990" y="112" fill="#22C55E" font-family="Inter, sans-serif" font-size="11" font-weight="700">Click here →</text>
+    
+    <!-- 6. Blur overlay on email column -->
+    <rect x="494" y="490" width="260" height="100" rx="4" fill="#F1F3F5" opacity="0.85" filter="url(#blurFilter)"/>
+    <rect x="494" y="490" width="260" height="100" rx="4" fill="none" stroke="#666666" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="570" y="545" fill="#111111" font-family="Inter, sans-serif" font-size="13" font-weight="600" text-anchor="middle" opacity="0.7">🔒 Blurred</text>
+  </g>
+  
+  <text x="640" y="790" fill="#666666" font-family="Inter, sans-serif" font-size="14" text-anchor="middle">Powerful annotation editor with drawing, text, arrows, blur, and more</text>
+</svg>

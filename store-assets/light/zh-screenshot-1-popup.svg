@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800">
+  <defs>
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E6A800"/>
+      <stop offset="100%" style="stop-color:#B38200"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F8F9FA"/>
+      <stop offset="100%" style="stop-color:#E9ECEF"/>
+    </linearGradient>
+    <linearGradient id="btnGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#E6A800"/>
+      <stop offset="100%" style="stop-color:#B38200"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="800" fill="url(#bgGrad)"/>
+  <circle cx="200" cy="600" r="300" fill="#E6A800" opacity="0.03"/>
+  <circle cx="1100" cy="200" r="250" fill="#B38200" opacity="0.03"/>
+  <g transform="translate(390, 60)">
+    <rect x="0" y="0" width="500" height="680" rx="16" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="1"/>
+    <rect x="0" y="0" width="500" height="70" rx="16" fill="#F1F3F5"/>
+    <rect x="0" y="50" width="500" height="20" fill="#F1F3F5"/>
+    
+    <rect x="20" y="15" width="40" height="40" rx="8.8" fill="#F8F9FA"/>
+    <g transform="translate(40, 35)">
+      <!-- Left Screen -->
+      <g transform="translate(-8.8, 3.2) rotate(-25)">
+        <rect x="-6" y="-10" width="12" height="20" rx="2.4" fill="none" stroke="url(#iconGrad)" stroke-width="1.6"/>
+      </g>
+      <!-- Right Screen -->
+      <g transform="translate(8.8, 3.2) rotate(25)">
+        <rect x="-6" y="-10" width="12" height="20" rx="2.4" fill="none" stroke="url(#iconGrad)" stroke-width="1.6"/>
+      </g>
+      <!-- Center Screen (Top peak) -->
+      <g transform="translate(0, -2)">
+        <rect x="-7.199999999999999" y="-12" width="14.399999999999999" height="24" rx="3.2" fill="url(#iconGrad)" opacity="0.9"/>
+      </g>
+    </g>
+  
+    <text x="72" y="42" fill="#111111" font-family="sans-serif" font-size="18" font-weight="700">ScreenKing</text>
+    <text x="24" y="104" fill="#111111" font-family="sans-serif" font-size="14" font-weight="600">📷 截图</text>
+    <rect x="16" y="118" width="468" height="52" rx="10" fill="#F1F3F5" stroke="#E5E5E5" stroke-width="1"/>
+    <text x="52" y="150" fill="#111111" font-family="sans-serif" font-size="13">截取可见区域</text>
+    <rect x="350" y="132" width="120" height="24" rx="6" fill="#F8F9FA" stroke="#E5E5E5" stroke-width="1"/>
+    <text x="368" y="149" fill="#666666" font-family="monospace" font-size="11">Alt+Shift+V</text>
+    <rect x="16" y="178" width="468" height="52" rx="10" fill="#F1F3F5" stroke="#E5E5E5" stroke-width="1"/>
+    <text x="52" y="210" fill="#111111" font-family="sans-serif" font-size="13">截取整页</text>
+    <rect x="16" y="238" width="468" height="52" rx="10" fill="#F1F3F5" stroke="#E5E5E5" stroke-width="1"/>
+    <text x="52" y="270" fill="#111111" font-family="sans-serif" font-size="13">选取区域</text>
+    <text x="24" y="326" fill="#111111" font-family="sans-serif" font-size="14" font-weight="600">🎬 录制</text>
+    <rect x="16" y="340" width="468" height="52" rx="10" fill="#F1F3F5" stroke="#E5E5E5" stroke-width="1"/>
+    <text x="52" y="372" fill="#111111" font-family="sans-serif" font-size="13">录制当前标签页</text>
+    <rect x="16" y="400" width="468" height="52" rx="10" fill="#F1F3F5" stroke="#E5E5E5" stroke-width="1"/>
+    <text x="52" y="432" fill="#111111" font-family="sans-serif" font-size="13">录制桌面</text>
+    <text x="24" y="490" fill="#111111" font-family="sans-serif" font-size="14" font-weight="600">🔗 分享</text>
+    <rect x="16" y="504" width="468" height="52" rx="10" fill="#F1F3F5" stroke="#E5E5E5" stroke-width="1"/>
+    <text x="52" y="536" fill="#111111" font-family="sans-serif" font-size="13">分享到网络</text>
+    <rect x="16" y="570" width="468" height="52" rx="10" fill="#F1F3F5" stroke="#E5E5E5" stroke-width="1"/>
+    <text x="52" y="602" fill="#111111" font-family="sans-serif" font-size="13">自动复制到剪贴板</text>
+    <rect x="424" y="586" width="44" height="24" rx="12" fill="#E6A800"/>
+    <circle cx="454" cy="598" r="9" fill="white"/>
+  </g>
+  <text x="640" y="775" fill="#666666" font-family="sans-serif" font-size="14" text-anchor="middle">简洁直观的弹窗界面，快速访问所有截图和录制模式</text>
+</svg>
