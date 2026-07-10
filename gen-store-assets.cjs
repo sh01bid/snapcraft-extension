@@ -915,8 +915,8 @@ function promoSmall_zh() {
   <rect width="440" height="280" fill="url(#bgGrad)"/>
   <circle cx="220" cy="140" r="250" fill="${PURPLE}" opacity="0.06"/>
   <circle cx="380" cy="220" r="180" fill="${CYAN}" opacity="0.05"/>
-  ${iconSvg(30, 50, 80)}
-  <text x="130" y="100" fill="${TEXT}" font-family="Arial, sans-serif" font-size="52" font-weight="800">ScreenKing</text>
+  ${iconSvg(15, 50, 80)}
+  <text x="105" y="100" fill="${TEXT}" font-family="Arial, sans-serif" font-size="48" font-weight="800">ScreenKing</text>
   <text x="130" y="140" fill="${TEXT2}" font-family="sans-serif" font-size="22">截图与录屏工具</text>
   <rect x="30" y="180" width="120" height="40" rx="20" fill="${PURPLE}" opacity="0.2" stroke="${PURPLE}" stroke-width="2"/>
   <text x="90" y="206" fill="${PURPLE}" font-family="sans-serif" font-size="18" text-anchor="middle" font-weight="700">截图</text>
