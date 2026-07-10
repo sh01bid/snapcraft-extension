@@ -1,78 +1,71 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800">
   <defs>
     <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#6C63FF"/>
-      <stop offset="100%" style="stop-color:#00D4FF"/>
+      <stop offset="0%" style="stop-color:#FCEABB"/>
+      <stop offset="100%" style="stop-color:#F8B500"/>
     </linearGradient>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0C0C14"/>
-      <stop offset="100%" style="stop-color:#141428"/>
+      <stop offset="0%" style="stop-color:#0A0A0A"/>
+      <stop offset="100%" style="stop-color:#141414"/>
     </linearGradient>
     <linearGradient id="btnGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#6C63FF"/>
-      <stop offset="100%" style="stop-color:#00D4FF"/>
+      <stop offset="0%" style="stop-color:#FCEABB"/>
+      <stop offset="100%" style="stop-color:#F8B500"/>
     </linearGradient>
   </defs>
   <rect width="1280" height="800" fill="url(#bgGrad)"/>
   <g transform="translate(240, 30)">
-    <rect x="0" y="0" width="800" height="740" rx="12" fill="#141420" stroke="#2A2A40" stroke-width="1"/>
-    <rect x="0" y="0" width="800" height="64" rx="12" fill="#1C1C2E"/>
-    <rect x="0" y="48" width="800" height="16" fill="#1C1C2E"/>
+    <rect x="0" y="0" width="800" height="740" rx="12" fill="#141414" stroke="#2A2A2A" stroke-width="1"/>
+    <rect x="0" y="0" width="800" height="64" rx="12" fill="#1C1C1C"/>
+    <rect x="0" y="48" width="800" height="16" fill="#1C1C1C"/>
     
-    <rect x="20" y="12" width="40" height="40" rx="8.8" fill="#0C0C14"/>
-    <circle cx="40" cy="34" r="8.8" fill="none" stroke="url(#iconGrad)" stroke-width="2.2"/>
-    <circle cx="40" cy="34" r="3.5999999999999996" fill="url(#iconGrad)" opacity="0.9"/>
-    <path d="
-      M 31.2 27.6
-      L 29.6 19.6
-      L 35.6 23.6
-      L 40 17.2
-      L 44.4 23.6
-      L 50.4 19.6
-      L 48.8 27.6
-    " fill="none" stroke="url(#iconGrad)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
-    <path d="
-      M 34 45.2
-      L 28.799999999999997 45.2
-      L 28.799999999999997 40
-    " fill="none" stroke="url(#iconGrad)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="
-      M 46 45.2
-      L 51.2 45.2
-      L 51.2 40
-    " fill="none" stroke="url(#iconGrad)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="20" y="12" width="40" height="40" rx="8.8" fill="#0A0A0A"/>
+    <g transform="translate(40, 32)">
+      <!-- Left Screen -->
+      <g transform="translate(-8.8, 3.2) rotate(-25)">
+        <rect x="-6" y="-10" width="12" height="20" rx="2.4" fill="none" stroke="url(#iconGrad)" stroke-width="1.6"/>
+      </g>
+      <!-- Right Screen -->
+      <g transform="translate(8.8, 3.2) rotate(25)">
+        <rect x="-6" y="-10" width="12" height="20" rx="2.4" fill="none" stroke="url(#iconGrad)" stroke-width="1.6"/>
+      </g>
+      <!-- Center Screen (Top peak) -->
+      <g transform="translate(0, -2)">
+        <rect x="-7.199999999999999" y="-12" width="14.399999999999999" height="24" rx="3.2" fill="url(#iconGrad)" opacity="0.9"/>
+      </g>
+    </g>
   
-    <text x="72" y="40" fill="#E8E8F0" font-family="sans-serif" font-size="18" font-weight="700">设置</text>
-    <text x="110" y="40" fill="#8888AA" font-family="sans-serif" font-size="12">v3.0.1</text>
-    <rect x="20" y="80" width="760" height="40" rx="8" fill="#1C1C2E"/>
-    <text x="56" y="106" fill="#E8E8F0" font-family="sans-serif" font-size="14" font-weight="600">📷 截图</text>
-    <text x="40" y="154" fill="#E8E8F0" font-family="sans-serif" font-size="13">图片格式</text>
-    <text x="40" y="172" fill="#8888AA" font-family="sans-serif" font-size="11">保存截图的默认格式</text>
-    <rect x="620" y="138" width="140" height="32" rx="6" fill="#1C1C2E" stroke="#2A2A40" stroke-width="1"/>
-    <text x="660" y="159" fill="#E8E8F0" font-family="sans-serif" font-size="12">PNG ▾</text>
-    <text x="40" y="218" fill="#E8E8F0" font-family="sans-serif" font-size="13">图片质量</text>
-    <rect x="580" y="210" width="160" height="8" rx="4" fill="#1C1C2E"/>
+    <text x="72" y="40" fill="#F5F5F5" font-family="sans-serif" font-size="18" font-weight="700">设置</text>
+    <text x="110" y="40" fill="#A0A0A0" font-family="sans-serif" font-size="12">v3.0.1</text>
+    <rect x="20" y="80" width="760" height="40" rx="8" fill="#1C1C1C"/>
+    <text x="56" y="106" fill="#F5F5F5" font-family="sans-serif" font-size="14" font-weight="600">📷 截图</text>
+    <text x="40" y="154" fill="#F5F5F5" font-family="sans-serif" font-size="13">图片格式</text>
+    <text x="40" y="172" fill="#A0A0A0" font-family="sans-serif" font-size="11">保存截图的默认格式</text>
+    <rect x="620" y="138" width="140" height="32" rx="6" fill="#1C1C1C" stroke="#2A2A2A" stroke-width="1"/>
+    <text x="660" y="159" fill="#F5F5F5" font-family="sans-serif" font-size="12">PNG ▾</text>
+    <text x="40" y="218" fill="#F5F5F5" font-family="sans-serif" font-size="13">图片质量</text>
+    <rect x="580" y="210" width="160" height="8" rx="4" fill="#1C1C1C"/>
     <rect x="580" y="210" width="128" height="8" rx="4" fill="url(#btnGrad)"/>
     <circle cx="708" cy="214" r="8" fill="white"/>
-    <text x="40" y="282" fill="#E8E8F0" font-family="sans-serif" font-size="13">自动复制到剪贴板</text>
-    <rect x="716" y="274" width="44" height="24" rx="12" fill="#6C63FF"/>
+    <text x="40" y="282" fill="#F5F5F5" font-family="sans-serif" font-size="13">自动复制到剪贴板</text>
+    <rect x="716" y="274" width="44" height="24" rx="12" fill="#FCEABB"/>
     <circle cx="746" cy="286" r="9" fill="white"/>
-    <rect x="20" y="328" width="760" height="40" rx="8" fill="#1C1C2E"/>
-    <text x="56" y="354" fill="#E8E8F0" font-family="sans-serif" font-size="14" font-weight="600">🎬 录制</text>
-    <text x="40" y="402" fill="#E8E8F0" font-family="sans-serif" font-size="13">视频格式</text>
-    <rect x="620" y="386" width="140" height="32" rx="6" fill="#1C1C2E" stroke="#2A2A40" stroke-width="1"/>
-    <text x="640" y="407" fill="#E8E8F0" font-family="sans-serif" font-size="12">WebM (VP9) ▾</text>
-    <text x="40" y="466" fill="#E8E8F0" font-family="sans-serif" font-size="13">帧率</text>
-    <rect x="620" y="450" width="140" height="32" rx="6" fill="#1C1C2E" stroke="#2A2A40" stroke-width="1"/>
-    <text x="670" y="471" fill="#E8E8F0" font-family="sans-serif" font-size="12">30 FPS ▾</text>
-    <rect x="20" y="520" width="760" height="40" rx="8" fill="#1C1C2E"/>
-    <text x="56" y="546" fill="#E8E8F0" font-family="sans-serif" font-size="14" font-weight="600">⚙ 通用</text>
-    <text x="40" y="594" fill="#E8E8F0" font-family="sans-serif" font-size="13">主题</text>
-    <rect x="620" y="578" width="140" height="32" rx="6" fill="#1C1C2E" stroke="#2A2A40" stroke-width="1"/>
-    <text x="660" y="599" fill="#E8E8F0" font-family="sans-serif" font-size="12">深色 ▾</text>
-    <text x="40" y="658" fill="#E8E8F0" font-family="sans-serif" font-size="13">通知</text>
-    <rect x="716" y="650" width="44" height="24" rx="12" fill="#6C63FF"/>
+    <rect x="20" y="328" width="760" height="40" rx="8" fill="#1C1C1C"/>
+    <text x="56" y="354" fill="#F5F5F5" font-family="sans-serif" font-size="14" font-weight="600">🎬 录制</text>
+    <text x="40" y="402" fill="#F5F5F5" font-family="sans-serif" font-size="13">视频格式</text>
+    <rect x="620" y="386" width="140" height="32" rx="6" fill="#1C1C1C" stroke="#2A2A2A" stroke-width="1"/>
+    <text x="640" y="407" fill="#F5F5F5" font-family="sans-serif" font-size="12">WebM (VP9) ▾</text>
+    <text x="40" y="466" fill="#F5F5F5" font-family="sans-serif" font-size="13">帧率</text>
+    <rect x="620" y="450" width="140" height="32" rx="6" fill="#1C1C1C" stroke="#2A2A2A" stroke-width="1"/>
+    <text x="670" y="471" fill="#F5F5F5" font-family="sans-serif" font-size="12">30 FPS ▾</text>
+    <rect x="20" y="520" width="760" height="40" rx="8" fill="#1C1C1C"/>
+    <text x="56" y="546" fill="#F5F5F5" font-family="sans-serif" font-size="14" font-weight="600">⚙ 通用</text>
+    <text x="40" y="594" fill="#F5F5F5" font-family="sans-serif" font-size="13">主题</text>
+    <rect x="620" y="578" width="140" height="32" rx="6" fill="#1C1C1C" stroke="#2A2A2A" stroke-width="1"/>
+    <text x="660" y="599" fill="#F5F5F5" font-family="sans-serif" font-size="12">深色 ▾</text>
+    <text x="40" y="658" fill="#F5F5F5" font-family="sans-serif" font-size="13">通知</text>
+    <rect x="716" y="650" width="44" height="24" rx="12" fill="#FCEABB"/>
     <circle cx="746" cy="662" r="9" fill="white"/>
   </g>
-  <text x="640" y="790" fill="#8888AA" font-family="sans-serif" font-size="14" text-anchor="middle">丰富的自定义设置：截图、录制、通用选项一应俱全</text>
+  <text x="640" y="790" fill="#A0A0A0" font-family="sans-serif" font-size="14" text-anchor="middle">丰富的自定义设置：截图、录制、通用选项一应俱全</text>
 </svg>

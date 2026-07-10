@@ -6,45 +6,34 @@ const outDir = 'store-assets';
 if (!fs.existsSync(outDir)) fs.mkdirSync(outDir);
 
 // ── Color palette ──
-const BG = '#0C0C14';
-const BG2 = '#141420';
-const BG3 = '#1C1C2E';
-const PURPLE = '#6C63FF';
-const CYAN = '#00D4FF';
-const TEXT = '#E8E8F0';
-const TEXT2 = '#8888AA';
-const ACCENT = '#22C55E';
-const BORDER = '#2A2A40';
+const BG = '#0A0A0A';
+const BG2 = '#141414';
+const BG3 = '#1C1C1C';
+const PURPLE = '#FCEABB'; // Gold light
+const CYAN = '#F8B500';   // Gold dark
+const TEXT = '#F5F5F5';
+const TEXT2 = '#A0A0A0';
+const ACCENT = '#F8B500';
+const BORDER = '#2A2A2A';
 
 // ── Shared SVG Components ──
 function iconSvg(x, y, size = 40) {
-  const cx = x + size / 2;
-  const cy = y + size * 0.55;
-  const strokeW = size * 0.055;
-  
   return `
     <rect x="${x}" y="${y}" width="${size}" height="${size}" rx="${size * 0.22}" fill="${BG}"/>
-    <circle cx="${cx}" cy="${cy}" r="${size * 0.22}" fill="none" stroke="url(#iconGrad)" stroke-width="${strokeW}"/>
-    <circle cx="${cx}" cy="${cy}" r="${size * 0.09}" fill="url(#iconGrad)" opacity="0.9"/>
-    <path d="
-      M ${cx - size*0.22} ${cy - size*0.16}
-      L ${cx - size*0.26} ${cy - size*0.36}
-      L ${cx - size*0.11} ${cy - size*0.26}
-      L ${cx} ${cy - size*0.42}
-      L ${cx + size*0.11} ${cy - size*0.26}
-      L ${cx + size*0.26} ${cy - size*0.36}
-      L ${cx + size*0.22} ${cy - size*0.16}
-    " fill="none" stroke="url(#iconGrad)" stroke-width="${strokeW}" stroke-linejoin="round" stroke-linecap="round"/>
-    <path d="
-      M ${cx - size*0.15} ${cy + size*0.28}
-      L ${cx - size*0.28} ${cy + size*0.28}
-      L ${cx - size*0.28} ${cy + size*0.15}
-    " fill="none" stroke="url(#iconGrad)" stroke-width="${size*0.04}" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="
-      M ${cx + size*0.15} ${cy + size*0.28}
-      L ${cx + size*0.28} ${cy + size*0.28}
-      L ${cx + size*0.28} ${cy + size*0.15}
-    " fill="none" stroke="url(#iconGrad)" stroke-width="${size*0.04}" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(${x + size*0.5}, ${y + size*0.5})">
+      <!-- Left Screen -->
+      <g transform="translate(${-size*0.22}, ${size*0.08}) rotate(-25)">
+        <rect x="${-size*0.15}" y="${-size*0.25}" width="${size*0.3}" height="${size*0.5}" rx="${size*0.06}" fill="none" stroke="url(#iconGrad)" stroke-width="${size*0.04}"/>
+      </g>
+      <!-- Right Screen -->
+      <g transform="translate(${size*0.22}, ${size*0.08}) rotate(25)">
+        <rect x="${-size*0.15}" y="${-size*0.25}" width="${size*0.3}" height="${size*0.5}" rx="${size*0.06}" fill="none" stroke="url(#iconGrad)" stroke-width="${size*0.04}"/>
+      </g>
+      <!-- Center Screen (Top peak) -->
+      <g transform="translate(0, ${-size*0.05})">
+        <rect x="${-size*0.18}" y="${-size*0.3}" width="${size*0.36}" height="${size*0.6}" rx="${size*0.08}" fill="url(#iconGrad)" opacity="0.9"/>
+      </g>
+    </g>
   `;
 }
 
@@ -55,8 +44,8 @@ function gradientDef() {
       <stop offset="100%" style="stop-color:${CYAN}"/>
     </linearGradient>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0C0C14"/>
-      <stop offset="100%" style="stop-color:#141428"/>
+      <stop offset="0%" style="stop-color:#0A0A0A"/>
+      <stop offset="100%" style="stop-color:#141414"/>
     </linearGradient>
     <linearGradient id="btnGrad" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" style="stop-color:${PURPLE}"/>

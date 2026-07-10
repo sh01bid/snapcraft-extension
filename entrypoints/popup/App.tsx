@@ -77,11 +77,17 @@ const icons = {
   ),
   logo: (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="15" r="4.5" />
-      <circle cx="12" cy="15" r="1.5" fill="currentColor"/>
-      <path d="M 6.5 11.5 L 4.5 4.5 L 9.5 8.5 L 12 3 L 14.5 8.5 L 19.5 4.5 L 17.5 11.5" />
-      <path d="M 7 20 L 4 20 L 4 17" />
-      <path d="M 17 20 L 20 20 L 20 17" />
+      <g transform="translate(12, 12)">
+        <g transform="translate(-5, 2) rotate(-25)">
+          <rect x="-3.5" y="-5" width="7" height="10" rx="1" />
+        </g>
+        <g transform="translate(5, 2) rotate(25)">
+          <rect x="-3.5" y="-5" width="7" height="10" rx="1" />
+        </g>
+        <g transform="translate(0, -1)">
+          <rect x="-4" y="-6" width="8" height="12" rx="1.5" fill="currentColor" stroke="none" opacity="0.9" />
+        </g>
+      </g>
     </svg>
   ),
   squareStop: (

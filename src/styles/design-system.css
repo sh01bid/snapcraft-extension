@@ -2,17 +2,17 @@
 
 :root {
   /* ── Color Palette ── */
-  /* Primary: Vibrant purple-blue gradient spectrum */
-  --sc-primary-50: #f0f0ff;
-  --sc-primary-100: #e0e1ff;
-  --sc-primary-200: #c7c8fe;
-  --sc-primary-300: #a5a5fc;
-  --sc-primary-400: #8482f8;
-  --sc-primary-500: #6c63ff;
-  --sc-primary-600: #5a4cf0;
-  --sc-primary-700: #4c3dd4;
-  --sc-primary-800: #3e33ab;
-  --sc-primary-900: #352f87;
+  /* Primary: Royal Gold spectrum */
+  --sc-primary-50: #fff9e6;
+  --sc-primary-100: #ffefcc;
+  --sc-primary-200: #ffe099;
+  --sc-primary-300: #ffd066;
+  --sc-primary-400: #ffc133;
+  --sc-primary-500: #f8b500;
+  --sc-primary-600: #cc9500;
+  --sc-primary-700: #997000;
+  --sc-primary-800: #664a00;
+  --sc-primary-900: #332500;
 
   /* Accent: Cyan/teal */
   --sc-accent-400: #22d3ee;
@@ -33,10 +33,10 @@
   --sc-danger-600: #dc2626;
 
   /* ── Dark Theme (default) ── */
-  --sc-bg-primary: #0c0c14;
-  --sc-bg-secondary: #13131f;
-  --sc-bg-tertiary: #1a1a2e;
-  --sc-bg-elevated: #22223a;
+  --sc-bg-primary: #0a0a0a;
+  --sc-bg-secondary: #141414;
+  --sc-bg-tertiary: #1c1c1c;
+  --sc-bg-elevated: #242424;
   --sc-bg-surface: rgba(255, 255, 255, 0.04);
   --sc-bg-hover: rgba(255, 255, 255, 0.08);
   --sc-bg-active: rgba(255, 255, 255, 0.12);
@@ -51,22 +51,22 @@
   --sc-text-inverse: #0c0c14;
 
   /* ── Glass / Frosted Effect ── */
-  --sc-glass-bg: rgba(19, 19, 31, 0.85);
+  --sc-glass-bg: rgba(20, 20, 20, 0.85);
   --sc-glass-border: rgba(255, 255, 255, 0.1);
   --sc-glass-blur: 20px;
 
   /* ── Gradients ── */
-  --sc-gradient-primary: linear-gradient(135deg, #6c63ff 0%, #3b82f6 50%, #06b6d4 100%);
+  --sc-gradient-primary: linear-gradient(135deg, #FCEABB 0%, #f8b500 100%);
   --sc-gradient-recording: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
   --sc-gradient-surface: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
-  --sc-gradient-glow: radial-gradient(circle at 50% 0%, rgba(108, 99, 255, 0.15) 0%, transparent 70%);
+  --sc-gradient-glow: radial-gradient(circle at 50% 0%, rgba(248, 181, 0, 0.15) 0%, transparent 70%);
 
   /* ── Shadows ── */
   --sc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --sc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --sc-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
   --sc-shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
-  --sc-shadow-glow: 0 0 20px rgba(108, 99, 255, 0.3);
+  --sc-shadow-glow: 0 0 20px rgba(248, 181, 0, 0.3);
   --sc-shadow-glow-danger: 0 0 20px rgba(239, 68, 68, 0.3);
 
   /* ── Typography ── */

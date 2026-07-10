@@ -2,38 +2,27 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const PURPLE = '#6C63FF';
-const CYAN = '#00D4FF';
-const BG = '#0C0C14';
+const PURPLE = '#FCEABB';
+const CYAN = '#F8B500';
+const BG = '#0A0A0A';
 
 function iconSvg(x, y, size = 40) {
-  const cx = x + size / 2;
-  const cy = y + size * 0.55;
-  const strokeW = size * 0.055;
-  
   return `
     <rect x="${x}" y="${y}" width="${size}" height="${size}" rx="${size * 0.22}" fill="${BG}"/>
-    <circle cx="${cx}" cy="${cy}" r="${size * 0.22}" fill="none" stroke="url(#iconGrad)" stroke-width="${strokeW}"/>
-    <circle cx="${cx}" cy="${cy}" r="${size * 0.09}" fill="url(#iconGrad)" opacity="0.9"/>
-    <path d="
-      M ${cx - size*0.22} ${cy - size*0.16}
-      L ${cx - size*0.26} ${cy - size*0.36}
-      L ${cx - size*0.11} ${cy - size*0.26}
-      L ${cx} ${cy - size*0.42}
-      L ${cx + size*0.11} ${cy - size*0.26}
-      L ${cx + size*0.26} ${cy - size*0.36}
-      L ${cx + size*0.22} ${cy - size*0.16}
-    " fill="none" stroke="url(#iconGrad)" stroke-width="${strokeW}" stroke-linejoin="round" stroke-linecap="round"/>
-    <path d="
-      M ${cx - size*0.15} ${cy + size*0.28}
-      L ${cx - size*0.28} ${cy + size*0.28}
-      L ${cx - size*0.28} ${cy + size*0.15}
-    " fill="none" stroke="url(#iconGrad)" stroke-width="${size*0.04}" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="
-      M ${cx + size*0.15} ${cy + size*0.28}
-      L ${cx + size*0.28} ${cy + size*0.28}
-      L ${cx + size*0.28} ${cy + size*0.15}
-    " fill="none" stroke="url(#iconGrad)" stroke-width="${size*0.04}" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(${x + size*0.5}, ${y + size*0.5})">
+      <!-- Left Screen -->
+      <g transform="translate(${-size*0.22}, ${size*0.08}) rotate(-25)">
+        <rect x="${-size*0.15}" y="${-size*0.25}" width="${size*0.3}" height="${size*0.5}" rx="${size*0.06}" fill="none" stroke="url(#iconGrad)" stroke-width="${size*0.04}"/>
+      </g>
+      <!-- Right Screen -->
+      <g transform="translate(${size*0.22}, ${size*0.08}) rotate(25)">
+        <rect x="${-size*0.15}" y="${-size*0.25}" width="${size*0.3}" height="${size*0.5}" rx="${size*0.06}" fill="none" stroke="url(#iconGrad)" stroke-width="${size*0.04}"/>
+      </g>
+      <!-- Center Screen (Top peak) -->
+      <g transform="translate(0, ${-size*0.05})">
+        <rect x="${-size*0.18}" y="${-size*0.3}" width="${size*0.36}" height="${size*0.6}" rx="${size*0.08}" fill="url(#iconGrad)" opacity="0.9"/>
+      </g>
+    </g>
   `;
 }
 
