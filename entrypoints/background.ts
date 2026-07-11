@@ -244,20 +244,26 @@ export default defineBackground(() => {
 
     if (fullPageCaptures.length === 0) return;
 
+    // Grab captures and clear synchronously to prevent race conditions
+    const capturesToStitch = fullPageCaptures;
+    fullPageCaptures = [];
+    fullPageTabId = null;
+
     // Store captures FIRST, before opening editor
     await browser.storage.local.set({
       _pendingStitch: {
-        captures: fullPageCaptures,
+        captures: capturesToStitch,
         lastCropHeight: payload.lastCropHeight,
       },
     });
 
-    fullPageCaptures = [];
-    fullPageTabId = null;
-
     // Then open editor
     const editorUrl = browser.runtime.getURL('/editor.html');
-    await browser.tabs.create({ url: editorUrl });
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    await browser.tabs.create({ 
+      url: editorUrl,
+      ...(tab ? { index: tab.index + 1, openerTabId: tab.id } : {})
+    });
   }
 
   async function handleCaptureRegion(
@@ -443,7 +449,11 @@ export default defineBackground(() => {
     }
 
     const previewUrl = browser.runtime.getURL('/preview.html');
-    await browser.tabs.create({ url: previewUrl });
+    const [activeTab] = await browser.tabs.query({ active: true, currentWindow: true });
+    await browser.tabs.create({ 
+      url: previewUrl,
+      ...(activeTab ? { index: activeTab.index + 1, openerTabId: activeTab.id } : {})
+    });
 
     // Hide recording controls on the recorded tab
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -484,9 +494,13 @@ export default defineBackground(() => {
 
     // Get the DPR from the active tab (background SW doesn't have window)
     let dpr = 1;
+    let targetIndex: number | undefined;
+    let openerTabId: number | undefined;
     try {
       const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
       if (tab?.id) {
+        targetIndex = tab.index + 1;
+        openerTabId = tab.id;
         const results = await browser.scripting.executeScript({
           target: { tabId: tab.id },
           func: () => window.devicePixelRatio,
@@ -508,7 +522,11 @@ export default defineBackground(() => {
         timestamp: Date.now(),
       },
     });
-    browser.tabs.create({ url: editorUrl });
+    browser.tabs.create({ 
+      url: editorUrl,
+      ...(targetIndex !== undefined ? { index: targetIndex } : {}),
+      ...(openerTabId !== undefined ? { openerTabId: openerTabId } : {})
+    });
   }
 
   // ── Full-page capture content script (injected into tab) ──
@@ -568,7 +586,7 @@ export default defineBackground(() => {
     }
 
     // Listen for progress messages
-    chrome.runtime.onMessage.addListener((msg) => {
+    const progressListener = (msg: any) => {
       if (msg.type === 'FULLPAGE_SCROLL_PROGRESS') {
         currentY += viewportHeight;
 
@@ -578,6 +596,9 @@ export default defineBackground(() => {
           
           restoreFixedElements();
           window.scrollTo(0, originalScrollTop);
+
+          // Clean up listener to prevent duplicate captures on subsequent injections
+          chrome.runtime.onMessage.removeListener(progressListener);
 
           chrome.runtime.sendMessage({
             type: 'FULLPAGE_SCROLL_DONE',
@@ -589,7 +610,8 @@ export default defineBackground(() => {
           scrollAndCapture();
         }
       }
-    });
+    };
+    chrome.runtime.onMessage.addListener(progressListener);
 
     // Start capture
     scrollAndCapture();
