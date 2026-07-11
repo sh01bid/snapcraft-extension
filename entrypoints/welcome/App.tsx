@@ -6,6 +6,9 @@ export default function App() {
   }, []);
 
   const handleClose = () => {
+    if (chrome.runtime && chrome.runtime.openOptionsPage) {
+      chrome.runtime.openOptionsPage();
+    }
     window.close();
   };
 
