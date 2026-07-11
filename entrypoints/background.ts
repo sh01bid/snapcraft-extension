@@ -7,8 +7,8 @@ import type { Message, RegionBounds, AppSettings } from '../src/lib/types';
 export default defineBackground(() => {
   console.log('[ScreenKing] Background service worker started');
 
-  // ── Context Menu ──
-  browser.runtime.onInstalled.addListener(() => {
+  // ── Context Menu & Welcome Page ──
+  browser.runtime.onInstalled.addListener((details) => {
     chrome.contextMenus.create({
       id: 'screenking-visible',
       title: chrome.i18n.getMessage('contextMenuVisible') || 'Capture Visible Area',
@@ -38,6 +38,14 @@ export default defineBackground(() => {
       id: 'screenking-record-screen',
       title: chrome.i18n.getMessage('contextMenuRecordScreen') || 'Record Desktop',
       contexts: ['page'],
+    });
+
+    // Check if we need to show the welcome/upgrade page
+    chrome.storage.local.get(['_welcomeShown'], (res) => {
+      if (!res._welcomeShown) {
+        chrome.storage.local.set({ _welcomeShown: true });
+        browser.tabs.create({ url: browser.runtime.getURL('/welcome.html') });
+      }
     });
   });
 
