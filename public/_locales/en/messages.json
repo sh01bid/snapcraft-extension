@@ -354,5 +354,56 @@
   },
   "settingsShortcutChange": {
     "message": "To change shortcuts, visit "
+  },
+  "popupRateUs": {
+    "message": "Rate Us"
+  },
+  "editorRateUsTitle": {
+    "message": "Enjoying ScreenKing?"
+  },
+  "editorRateUsDesc": {
+    "message": "If you like ScreenKing, please consider leaving us a 5-star review. It helps us a lot!"
+  },
+  "editorRateUsConfirm": {
+    "message": "Rate 5 Stars"
+  },
+  "editorRateUsLater": {
+    "message": "Maybe Later"
+  },
+  "rateUsAskTitle": {
+    "message": "Do you enjoy using ScreenKing?"
+  },
+  "rateUsDislike": {
+    "message": "Not Good"
+  },
+  "rateUsOkay": {
+    "message": "Okay"
+  },
+  "rateUsLove": {
+    "message": "Love It"
+  },
+  "rateUsNoThanks": {
+    "message": "Don't ask again"
+  },
+  "rateUsAwesome": {
+    "message": "Awesome! 🎉"
+  },
+  "rateUsAwesomeDesc": {
+    "message": "Could you leave us a 5-star review? It really helps us a lot!"
+  },
+  "rateUsSorry": {
+    "message": "We're Sorry 😔"
+  },
+  "rateUsSorryDesc": {
+    "message": "Please tell us how we can improve."
+  },
+  "rateUsLater": {
+    "message": "Maybe Later"
+  },
+  "rateUsConfirm": {
+    "message": "Rate 5 Stars ⭐"
+  },
+  "rateUsFeedback": {
+    "message": "Give Feedback"
   }
 }

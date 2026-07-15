@@ -13,6 +13,8 @@ import {
 import { downloadBlob, generateFilename, copyImageToClipboard } from '../../utils/download';
 import { blobToDataUrl } from '../../utils/image';
 import { getSettings } from '../../lib/storage';
+import { t } from '../../lib/i18n';
+import { RateUsModal } from '../RateUsModal';
 import './EditorApp.css';
 
 // Predefined color palette
@@ -58,6 +60,26 @@ export default function EditorApp() {
   const [cropSelection, setCropSelection] = useState<{
     x: number; y: number; width: number; height: number;
   } | null>(null);
+  
+  // Rate Us prompt
+  const [showRateUs, setShowRateUs] = useState(false);
+
+  function triggerRateUsIfNeeded() {
+    if (localStorage.getItem('sc_has_rated')) return;
+    
+    const usageCount = parseInt(localStorage.getItem('sc_usage_count') || '0') + 1;
+    localStorage.setItem('sc_usage_count', usageCount.toString());
+    
+    if (usageCount < 3) return;
+
+    const lastPrompt = localStorage.getItem('sc_rate_prompt_time');
+    const now = Date.now();
+    // Show if never prompted, or prompted more than 7 days ago
+    if (!lastPrompt || (now - parseInt(lastPrompt)) > 7 * 24 * 60 * 60 * 1000) {
+      setShowRateUs(true);
+      localStorage.setItem('sc_rate_prompt_time', now.toString());
+    }
+  }
 
   // ── Load image from storage ──
   useEffect(() => {
@@ -460,7 +482,8 @@ export default function EditorApp() {
     const filename = generateFilename(settings.filenamePattern, format);
     await downloadBlob(blob, filename);
     await saveToHistory(blob);
-    showToast('Saved successfully!');
+    showToast(t('editorSaved', 'Saved successfully!'));
+    triggerRateUsIfNeeded();
   }
 
   async function handleCopy() {
@@ -469,7 +492,8 @@ export default function EditorApp() {
     const dataUrl = await blobToDataUrl(blob);
     await copyImageToClipboard(dataUrl);
     await saveToHistory(blob);
-    showToast('Copied to clipboard!');
+    showToast(t('editorCopied', 'Copied to clipboard!'));
+    triggerRateUsIfNeeded();
   }
 
   async function saveToHistory(blob: Blob) {
@@ -804,13 +828,19 @@ export default function EditorApp() {
       {/* Toast */}
       {toast && (
         <div className="editor-toast success">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <polyline points="22 4 12 14.01 9 11.01" />
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="20 6 9 17 4 12" />
           </svg>
           {toast}
         </div>
       )}
+
+      {/* Rate Us Modal */}
+      <RateUsModal 
+        open={showRateUs} 
+        onClose={() => setShowRateUs(false)} 
+        onRated={() => localStorage.setItem('sc_has_rated', 'true')} 
+      />
     </div>
   );
 }

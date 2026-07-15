@@ -354,5 +354,56 @@
   },
   "settingsShortcutChange": {
     "message": "如需修改快捷键，请访问 "
+  },
+  "popupRateUs": {
+    "message": "给个好评"
+  },
+  "editorRateUsTitle": {
+    "message": "喜欢 截图王 吗？"
+  },
+  "editorRateUsDesc": {
+    "message": "如果您觉得截图王对您有帮助，希望能给个5星好评，这会对我们有极大的鼓励！"
+  },
+  "editorRateUsConfirm": {
+    "message": "给个好评"
+  },
+  "editorRateUsLater": {
+    "message": "暂不需要"
+  },
+  "rateUsAskTitle": {
+    "message": "你喜欢用截图王吗？"
+  },
+  "rateUsDislike": {
+    "message": "不好用"
+  },
+  "rateUsOkay": {
+    "message": "还行"
+  },
+  "rateUsLove": {
+    "message": "很好用"
+  },
+  "rateUsNoThanks": {
+    "message": "不再询问"
+  },
+  "rateUsAwesome": {
+    "message": "太棒了！🎉"
+  },
+  "rateUsAwesomeDesc": {
+    "message": "能去应用商店给我们留个评价吗？这对我们有极大的鼓励！"
+  },
+  "rateUsSorry": {
+    "message": "很抱歉 😔"
+  },
+  "rateUsSorryDesc": {
+    "message": "请告诉我们需要改进的地方，帮助我们将截图王做得更好。"
+  },
+  "rateUsLater": {
+    "message": "下次一定"
+  },
+  "rateUsConfirm": {
+    "message": "去给个五星 ⭐"
+  },
+  "rateUsFeedback": {
+    "message": "提供建议"
   }
 }

@@ -377,3 +377,48 @@ html, body, #root {
 .editor-canvas.tool-crop {
   cursor: crosshair;
 }
+
+/* ── Modal ── */
+.editor-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: sc-fade-in var(--sc-transition-fast) ease-out;
+  backdrop-filter: blur(4px);
+}
+
+.editor-modal {
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-xl);
+  padding: var(--sc-space-6);
+  max-width: 400px;
+  width: 90%;
+  box-shadow: var(--sc-shadow-2xl);
+  animation: sc-slide-up var(--sc-transition-spring) both;
+  text-align: center;
+}
+
+.editor-modal-title {
+  font-size: var(--sc-text-lg);
+  font-weight: var(--sc-font-bold);
+  color: var(--sc-text-primary);
+  margin-bottom: var(--sc-space-2);
+}
+
+.editor-modal-desc {
+  font-size: var(--sc-text-sm);
+  color: var(--sc-text-secondary);
+  line-height: var(--sc-leading-relaxed);
+  margin-bottom: var(--sc-space-6);
+}
+
+.editor-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--sc-space-3);
+}

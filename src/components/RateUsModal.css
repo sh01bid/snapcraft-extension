@@ -1,0 +1,73 @@
+.editor-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: sc-fade-in var(--sc-transition-fast) ease-out;
+  backdrop-filter: blur(4px);
+}
+
+.editor-modal {
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-xl);
+  padding: var(--sc-space-6);
+  max-width: 400px;
+  width: 90%;
+  box-shadow: var(--sc-shadow-2xl);
+  animation: sc-slide-up var(--sc-transition-spring) both;
+  text-align: center;
+}
+
+.editor-modal-title {
+  font-size: var(--sc-text-lg);
+  font-weight: var(--sc-font-bold);
+  color: var(--sc-text-primary);
+  margin-bottom: var(--sc-space-2);
+}
+
+.editor-modal-desc {
+  font-size: var(--sc-text-sm);
+  color: var(--sc-text-secondary);
+  line-height: var(--sc-leading-relaxed);
+  margin-bottom: var(--sc-space-6);
+}
+
+.editor-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--sc-space-3);
+}
+
+.editor-action-btn {
+  padding: 8px 16px;
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-md);
+  color: var(--sc-text-secondary);
+  font-size: var(--sc-text-sm);
+  font-weight: var(--sc-font-medium);
+  cursor: pointer;
+  transition: all var(--sc-transition-fast) ease;
+}
+
+.editor-action-btn:hover {
+  background: var(--sc-bg-hover);
+  color: var(--sc-text-primary);
+}
+
+.editor-action-btn.confirm {
+  background: var(--sc-primary-500);
+  color: white;
+  border-color: var(--sc-primary-500);
+  box-shadow: 0 4px 12px rgba(248, 181, 0, 0.2);
+}
+
+.editor-action-btn.confirm:hover {
+  background: var(--sc-primary-400);
+  border-color: var(--sc-primary-400);
+  transform: translateY(-1px);
+}

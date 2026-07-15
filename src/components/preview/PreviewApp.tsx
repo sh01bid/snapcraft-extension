@@ -5,6 +5,7 @@ import { getCapture, deleteCapture, getSettings } from '../../lib/storage';
 import { downloadBlob, generateFilename } from '../../utils/download';
 import { convertWebMToMP4, getConversionWarning, type ConversionProgress } from '../../utils/mp4-converter';
 import { t } from '../../lib/i18n';
+import { RateUsModal } from '../RateUsModal';
 import './PreviewApp.css';
 
 export default function PreviewApp() {
@@ -22,6 +23,26 @@ export default function PreviewApp() {
   const [converting, setConverting] = useState(false);
   const [conversionProgress, setConversionProgress] = useState<ConversionProgress | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
+
+  // Rate Us prompt
+  const [showRateUs, setShowRateUs] = useState(false);
+
+  function triggerRateUsIfNeeded() {
+    if (localStorage.getItem('sc_has_rated')) return;
+    
+    const usageCount = parseInt(localStorage.getItem('sc_usage_count') || '0') + 1;
+    localStorage.setItem('sc_usage_count', usageCount.toString());
+    
+    if (usageCount < 3) return;
+
+    const lastPrompt = localStorage.getItem('sc_rate_prompt_time');
+    const now = Date.now();
+    // Show if never prompted, or prompted more than 7 days ago
+    if (!lastPrompt || (now - parseInt(lastPrompt)) > 7 * 24 * 60 * 60 * 1000) {
+      setShowRateUs(true);
+      localStorage.setItem('sc_rate_prompt_time', now.toString());
+    }
+  }
 
   useEffect(() => {
     loadRecording();
@@ -106,6 +127,7 @@ export default function PreviewApp() {
       const filename = generateFilename(pattern, 'webm');
       await downloadBlob(videoBlob, filename);
       showToast(t('previewDownloadedWebm'));
+      triggerRateUsIfNeeded();
     } else {
       // MP4 conversion
       try {
@@ -121,11 +143,13 @@ export default function PreviewApp() {
         const filename = generateFilename(pattern, 'mp4');
         await downloadBlob(mp4Blob, filename);
         showToast(t('previewDownloadedMp4'));
+        triggerRateUsIfNeeded();
       } catch (err: any) {
         console.error('[ScreenKing] MP4 conversion error:', err);
         showToast(`⚠️ ${t('previewConvertFallback', err.message)}`, 5000);
         const filename = generateFilename(pattern, 'webm');
         await downloadBlob(videoBlob, filename);
+        triggerRateUsIfNeeded();
       } finally {
         setConverting(false);
         setConversionProgress(null);
@@ -280,13 +304,16 @@ export default function PreviewApp() {
       {/* Toast */}
       {toast && (
         <div className="preview-toast">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
           {toast}
         </div>
       )}
+
+      {/* Rate Us Modal */}
+      <RateUsModal 
+        open={showRateUs} 
+        onClose={() => setShowRateUs(false)} 
+        onRated={() => localStorage.setItem('sc_has_rated', 'true')} 
+      />
     </div>
   );
 }
