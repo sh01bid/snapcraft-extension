@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { t } from '../../src/lib/i18n';
 
 export default function App() {
   useEffect(() => {
