@@ -25,19 +25,19 @@ export default function App() {
         </h1>
         
         <p className="description">
-          We've refreshed our brand with a brand new logo to bring you a more premium, modern, and seamless screen capturing experience.
+          {t('welcomeDesc1', "We've refreshed our brand with a brand new logo to bring you a more premium, modern, and seamless screen capturing experience.")}
           <br /><br />
-          All your favorite features for capturing and recording are here, and better than ever!
+          {t('welcomeDesc2', "All your favorite features for capturing and recording are here, and better than ever!")}
         </p>
 
         <div className="features">
-          <div className="feature-item">📸 Fast Screenshots</div>
-          <div className="feature-item">🎥 Screen Recording</div>
-          <div className="feature-item">✏️ Powerful Editor</div>
+          <div className="feature-item">{t('welcomeFeature1', "📸 Fast Screenshots")}</div>
+          <div className="feature-item">{t('welcomeFeature2', "🎥 Screen Recording")}</div>
+          <div className="feature-item">{t('welcomeFeature3', "✏️ Powerful Editor")}</div>
         </div>
 
         <button className="primary-btn" onClick={handleClose}>
-          Start Exploring
+          {t('welcomeButton', "Start Exploring")}
         </button>
       </div>
 

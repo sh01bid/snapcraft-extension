@@ -462,5 +462,23 @@
   },
   "formatMP4": {
     "message": "MP4 (H.264)"
+  },
+  "welcomeDesc1": {
+    "message": "我们用全新的 Logo 焕新了品牌，为您带来更高级、现代且无缝的截图体验。"
+  },
+  "welcomeDesc2": {
+    "message": "您最喜欢的所有截图和录屏功能都在这里，并且比以往更好用！"
+  },
+  "welcomeFeature1": {
+    "message": "📸 极速截图"
+  },
+  "welcomeFeature2": {
+    "message": "🎥 屏幕录制"
+  },
+  "welcomeFeature3": {
+    "message": "✏️ 强大的编辑器"
+  },
+  "welcomeButton": {
+    "message": "开始探索"
   }
 }

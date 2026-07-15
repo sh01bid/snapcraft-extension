@@ -462,5 +462,23 @@
   },
   "formatMP4": {
     "message": "MP4 (H.264)"
+  },
+  "welcomeDesc1": {
+    "message": "We've refreshed our brand with a brand new logo to bring you a more premium, modern, and seamless screen capturing experience."
+  },
+  "welcomeDesc2": {
+    "message": "All your favorite features for capturing and recording are here, and better than ever!"
+  },
+  "welcomeFeature1": {
+    "message": "📸 Fast Screenshots"
+  },
+  "welcomeFeature2": {
+    "message": "🎥 Screen Recording"
+  },
+  "welcomeFeature3": {
+    "message": "✏️ Powerful Editor"
+  },
+  "welcomeButton": {
+    "message": "Start Exploring"
   }
 }
