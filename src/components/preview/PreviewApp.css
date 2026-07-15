@@ -187,6 +187,11 @@ html, body, #root {
   cursor: pointer;
 }
 
+.format-select option {
+  background-color: var(--sc-bg-elevated);
+  color: var(--sc-text-primary);
+}
+
 .format-select:hover {
   border-color: var(--sc-border-hover);
 }

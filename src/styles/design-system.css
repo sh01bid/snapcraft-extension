@@ -33,6 +33,7 @@
   --sc-danger-600: #dc2626;
 
   /* ── Dark Theme (default) ── */
+  color-scheme: dark;
   --sc-bg-primary: #0a0a0a;
   --sc-bg-secondary: #141414;
   --sc-bg-tertiary: #1c1c1c;
@@ -125,6 +126,7 @@
 
 /* ── Light Theme Override ── */
 [data-theme="light"] {
+  color-scheme: light;
   --sc-bg-primary: #f8f9fa;
   --sc-bg-secondary: #f1f3f5;
   --sc-bg-tertiary: #e9ecef;

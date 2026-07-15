@@ -136,6 +136,11 @@ html, body, #root {
   transition: border-color var(--sc-transition-fast);
 }
 
+.setting-select option {
+  background-color: var(--sc-bg-elevated);
+  color: var(--sc-text-primary);
+}
+
 .setting-select:hover {
   border-color: var(--sc-border-hover);
 }
