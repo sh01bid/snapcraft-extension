@@ -171,10 +171,10 @@
     "message": "Copy"
   },
   "editorUndo": {
-    "message": "Undo"
+    "message": "Undo (Ctrl+Z)"
   },
   "editorRedo": {
-    "message": "Redo"
+    "message": "Redo (Ctrl+Shift+Z)"
   },
   "editorZoomIn": {
     "message": "Zoom In"
@@ -405,5 +405,62 @@
   },
   "rateUsFeedback": {
     "message": "Give Feedback"
+  },
+  "settingsVideoQualityDesc": {
+    "message": "Affects file size and clarity"
+  },
+  "settingsVideoFpsDesc": {
+    "message": "Frames per second"
+  },
+  "settingsThemeDesc": {
+    "message": "Visual appearance"
+  },
+  "welcomeTo": {
+    "message": "Welcome to"
+  },
+  "appName": {
+    "message": "ScreenKing"
+  },
+  "toolSelect": {
+    "message": "Select"
+  },
+  "toolPen": {
+    "message": "Pen"
+  },
+  "toolHighlighter": {
+    "message": "Highlighter"
+  },
+  "toolArrow": {
+    "message": "Arrow"
+  },
+  "toolLine": {
+    "message": "Line"
+  },
+  "toolRect": {
+    "message": "Rectangle"
+  },
+  "toolEllipse": {
+    "message": "Ellipse"
+  },
+  "toolText": {
+    "message": "Text"
+  },
+  "toolStep": {
+    "message": "Step Number"
+  },
+  "toolBlur": {
+    "message": "Blur/Mosaic"
+  },
+  "toolCrop": {
+    "message": "Crop"
+  },
+  "editorClearAll": {
+    "message": "Clear All"
+  },
+  "formatWebM": {
+    "message": "WebM"
+  },
+  "formatMP4": {
+    "message": "MP4 (H.264)"
   }
 }

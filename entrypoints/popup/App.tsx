@@ -194,7 +194,7 @@ function App() {
       <header className="popup-header">
         <div className="popup-logo">
           <div className="popup-logo-icon">{icons.logo}</div>
-          <span className="popup-logo-text">ScreenKing</span>
+          <span className="popup-logo-text">{t('appName', 'ScreenKing')}</span>
         </div>
         <div className="popup-header-actions">
           <button
@@ -317,7 +317,7 @@ function App() {
 
       {/* Footer */}
       <footer className="popup-footer">
-        <span className="popup-footer-text">ScreenKing</span>
+        <span className="popup-footer-text">{t('appName', 'ScreenKing')}</span>
         <span className="popup-footer-version">v{chrome.runtime.getManifest().version}</span>
       </footer>
     </div>

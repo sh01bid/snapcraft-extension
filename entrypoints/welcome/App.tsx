@@ -20,7 +20,7 @@ export default function App() {
         </div>
         
         <h1 className="title">
-          Welcome to <br /><span className="gradient-text">Screenshot King</span>
+          {t('welcomeTo', 'Welcome to')} <br /><span className="gradient-text">{t('appName', 'ScreenKing')}</span>
         </h1>
         
         <p className="description">

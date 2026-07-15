@@ -215,8 +215,8 @@ export default function PreviewApp() {
             onChange={(e) => setDownloadFormat(e.target.value as any)}
             disabled={converting}
           >
-            <option value="webm">WebM</option>
-            <option value="mp4">MP4 (H.264)</option>
+            <option value="webm">{t('formatWebM', 'WebM')}</option>
+            <option value="mp4">{t('formatMP4', 'MP4 (H.264)')}</option>
           </select>
 
           <button

@@ -25,17 +25,17 @@ const COLORS = [
 ];
 
 const TOOLS: Array<{ id: EditorTool; label: string; icon: string }> = [
-  { id: 'select', label: 'Select', icon: 'M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z' },
-  { id: 'pen', label: 'Pen', icon: 'M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z' },
-  { id: 'highlighter', label: 'Highlighter', icon: 'M9 11l-6 6v3h9l3-3M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4' },
-  { id: 'arrow', label: 'Arrow', icon: 'M5 12h14M12 5l7 7-7 7' },
-  { id: 'line', label: 'Line', icon: 'M4 20L20 4' },
-  { id: 'rect', label: 'Rectangle', icon: 'M3 3h18v18H3z' },
-  { id: 'ellipse', label: 'Ellipse', icon: 'M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10z' },
-  { id: 'text', label: 'Text', icon: 'M4 7V4h16v3M9 20h6M12 4v16' },
-  { id: 'step', label: 'Step Number', icon: 'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM10 8v8M14 8v4l-4 4' },
-  { id: 'blur', label: 'Blur/Mosaic', icon: 'M4 4h4v4H4zM12 4h4v4h-4zM4 12h4v4H4zM12 12h4v4h-4zM20 4h0M20 12h0M4 20h0M12 20h0M20 20h0' },
-  { id: 'crop', label: 'Crop', icon: 'M6 2v14a2 2 0 0 0 2 2h14M6 18H2M18 2v4M18 14v4M2 6h4M14 6h4' },
+  { id: 'select', label: t('toolSelect', 'Select'), icon: 'M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z' },
+  { id: 'pen', label: t('toolPen', 'Pen'), icon: 'M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z' },
+  { id: 'highlighter', label: t('toolHighlighter', 'Highlighter'), icon: 'M9 11l-6 6v3h9l3-3M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4' },
+  { id: 'arrow', label: t('toolArrow', 'Arrow'), icon: 'M5 12h14M12 5l7 7-7 7' },
+  { id: 'line', label: t('toolLine', 'Line'), icon: 'M4 20L20 4' },
+  { id: 'rect', label: t('toolRect', 'Rectangle'), icon: 'M3 3h18v18H3z' },
+  { id: 'ellipse', label: t('toolEllipse', 'Ellipse'), icon: 'M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10-4.5 10-10 10z' },
+  { id: 'text', label: t('toolText', 'Text'), icon: 'M4 7V4h16v3M9 20h6M12 4v16' },
+  { id: 'step', label: t('toolStep', 'Step Number'), icon: 'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM10 8v8M14 8v4l-4 4' },
+  { id: 'blur', label: t('toolBlur', 'Blur/Mosaic'), icon: 'M4 4h4v4H4zM12 4h4v4h-4zM4 12h4v4H4zM12 12h4v4h-4zM20 4h0M20 12h0M4 20h0M12 20h0M20 20h0' },
+  { id: 'crop', label: t('toolCrop', 'Crop'), icon: 'M6 2v14a2 2 0 0 0 2 2h14M6 18H2M18 2v4M18 14v4M2 6h4M14 6h4' },
 ];
 
 export default function EditorApp() {
@@ -660,19 +660,19 @@ export default function EditorApp() {
         <div className="editor-toolbar-divider" />
 
         {/* Undo/Redo */}
-        <button className="tool-btn" onClick={undo} title="Undo (Ctrl+Z)">
+        <button className="tool-btn" onClick={undo} title={t('editorUndo', 'Undo (Ctrl+Z)')}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 7v6h6" />
             <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
           </svg>
         </button>
-        <button className="tool-btn" onClick={redo} title="Redo (Ctrl+Shift+Z)">
+        <button className="tool-btn" onClick={redo} title={t('editorRedo', 'Redo (Ctrl+Shift+Z)')}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 7v6h-6" />
             <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13" />
           </svg>
         </button>
-        <button className="tool-btn" onClick={clearAll} title="Clear All">
+        <button className="tool-btn" onClick={clearAll} title={t('editorClearAll', 'Clear All')}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M3 6h18" />
             <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
@@ -687,7 +687,7 @@ export default function EditorApp() {
               <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
               <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
             </svg>
-            Copy
+            {t('editorCopy', 'Copy')}
           </button>
           <button className="editor-action-btn primary" onClick={handleSave}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -695,7 +695,7 @@ export default function EditorApp() {
               <polyline points="7 10 12 15 17 10" />
               <line x1="12" x2="12" y1="15" y2="3" />
             </svg>
-            Save
+            {t('editorSave', 'Save')}
           </button>
         </div>
       </div>
@@ -742,13 +742,13 @@ export default function EditorApp() {
 
         {/* Zoom Controls */}
         <div className="zoom-controls">
-          <button className="zoom-btn" onClick={zoomOut} title="Zoom Out">
+          <button className="zoom-btn" onClick={zoomOut} title={t('editorZoomOut', 'Zoom Out')}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12" /></svg>
           </button>
           <span className="zoom-label" onClick={zoomReset} style={{ cursor: 'pointer' }}>
             {Math.round(displayZoom * 100)}%
           </span>
-          <button className="zoom-btn" onClick={zoomIn} title="Zoom In">
+          <button className="zoom-btn" onClick={zoomIn} title={t('editorZoomIn', 'Zoom In')}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
           </button>
         </div>

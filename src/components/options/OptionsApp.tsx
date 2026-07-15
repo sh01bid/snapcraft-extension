@@ -141,7 +141,7 @@ export default function OptionsApp() {
             <div className="setting-row">
               <div>
                 <div className="setting-label">{t('settingsVideoQuality')}</div>
-                <div className="setting-description">Affects file size and clarity</div>
+                <div className="setting-description">{t('settingsVideoQualityDesc', 'Affects file size and clarity')}</div>
               </div>
               <select
                 className="setting-select"
@@ -157,7 +157,7 @@ export default function OptionsApp() {
             <div className="setting-row">
               <div>
                 <div className="setting-label">{t('settingsVideoFps')}</div>
-                <div className="setting-description">Frames per second</div>
+                <div className="setting-description">{t('settingsVideoFpsDesc', 'Frames per second')}</div>
               </div>
               <select
                 className="setting-select"
@@ -235,7 +235,7 @@ export default function OptionsApp() {
             <div className="setting-row">
               <div>
                 <div className="setting-label">{t('settingsTheme')}</div>
-                <div className="setting-description">Visual appearance</div>
+                <div className="setting-description">{t('settingsThemeDesc', 'Visual appearance')}</div>
               </div>
               <select
                 className="setting-select"

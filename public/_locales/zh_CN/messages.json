@@ -171,10 +171,10 @@
     "message": "复制"
   },
   "editorUndo": {
-    "message": "撤销"
+    "message": "撤销 (Ctrl+Z)"
   },
   "editorRedo": {
-    "message": "重做"
+    "message": "重做 (Ctrl+Shift+Z)"
   },
   "editorZoomIn": {
     "message": "放大"
@@ -405,5 +405,62 @@
   },
   "rateUsFeedback": {
     "message": "提供建议"
+  },
+  "settingsVideoQualityDesc": {
+    "message": "影响文件大小和清晰度"
+  },
+  "settingsVideoFpsDesc": {
+    "message": "每秒录制帧数"
+  },
+  "settingsThemeDesc": {
+    "message": "界面外观样式"
+  },
+  "welcomeTo": {
+    "message": "欢迎使用"
+  },
+  "appName": {
+    "message": "截图王"
+  },
+  "toolSelect": {
+    "message": "选择"
+  },
+  "toolPen": {
+    "message": "画笔"
+  },
+  "toolHighlighter": {
+    "message": "高亮笔"
+  },
+  "toolArrow": {
+    "message": "箭头"
+  },
+  "toolLine": {
+    "message": "直线"
+  },
+  "toolRect": {
+    "message": "矩形"
+  },
+  "toolEllipse": {
+    "message": "圆形"
+  },
+  "toolText": {
+    "message": "文字"
+  },
+  "toolStep": {
+    "message": "步骤序号"
+  },
+  "toolBlur": {
+    "message": "模糊/马赛克"
+  },
+  "toolCrop": {
+    "message": "裁剪"
+  },
+  "editorClearAll": {
+    "message": "清空全部"
+  },
+  "formatWebM": {
+    "message": "WebM"
+  },
+  "formatMP4": {
+    "message": "MP4 (H.264)"
   }
 }
